@@ -1,1 +1,5 @@
 theDemonStrator repo contains code for the DemonStrator - a demo boat used by the MARSSA community to demonstrate the use of MARSSA. 
+
+The MARSSA platform is highly innovative and abstract, making it hard to show case. In order to overcome this challenge we have purchased an Optimist sailing dinghy and transformed it into the first MARSSA Demonstrator.
+
+The optimist has been converted into an electric vessel, with two electric motors providing the thrust and various sensors and actuators providing real-time data and control. In the true MARSSA spirit a private cloud of computing power is present on board, making it possible to integrate systems from different vendors.
