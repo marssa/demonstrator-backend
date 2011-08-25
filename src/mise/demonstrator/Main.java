@@ -2,17 +2,10 @@ package mise.demonstrator;
 
 import mise.demonstrator.electrical_motor_control.MotorController;
 import mise.demonstrator.light_controller.LightController;
-import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.rudder_control.Rudder;
-import mise.marssa.data_types.MString;
-import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.float_datatypes.Percentage;
-import mise.marssa.exceptions.NoConnection;
-import mise.marssa.exceptions.NoValue;
+import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.exceptions.OutOfRange;
-import java.util.*;
-import java.sql.Timestamp;
 /**
  * @author Clayton Tabone
  *
