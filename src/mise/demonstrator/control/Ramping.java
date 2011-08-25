@@ -1,7 +1,7 @@
 /**
  * 
  */
-package mise.demonstrator.electrical_motor_control;
+package mise.demonstrator.control;
 
 import mise.marssa.interfaces.control.IController;
 import mise.marssa.interfaces.control.IRamping;

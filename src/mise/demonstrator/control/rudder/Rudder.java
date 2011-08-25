@@ -1,8 +1,8 @@
-package mise.demonstrator.rudder_control;
+package mise.demonstrator.control.rudder;
 
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.rudder_control.IRudder;
+import mise.marssa.control.rudder.IRudder;
 
 public class Rudder implements IRudder{
 	
@@ -79,7 +79,8 @@ public class Rudder implements IRudder{
 			Thread.sleep(time.getValue());
 			}
 		}
-public void rotateRight() throws InterruptedException{
+		
+	public void rotateRight() throws InterruptedException{
 	
 		startStop.setValue(true);
 			
@@ -140,7 +141,6 @@ public void rotateRight() throws InterruptedException{
 			Thread.sleep(time.getValue());
 			}
 		}
-	
 	}
 
 
