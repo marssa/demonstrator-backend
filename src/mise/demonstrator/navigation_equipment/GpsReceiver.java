@@ -15,6 +15,8 @@ import mise.marssa.data_types.composite_datatypes.Coordinate;
 import mise.marssa.data_types.composite_datatypes.Latitude;
 import mise.marssa.data_types.composite_datatypes.Longitude;
 import mise.marssa.data_types.float_datatypes.DegreesFloat;
+import mise.marssa.data_types.float_datatypes.MFloat;
+import mise.marssa.data_types.float_datatypes.distance.Metres;
 import mise.marssa.data_types.float_datatypes.speed.Knots;
 import mise.marssa.data_types.integer_datatypes.DegreesInteger;
 import mise.marssa.data_types.integer_datatypes.MInteger;
@@ -119,6 +121,8 @@ public class GpsReceiver implements IGpsReceiver {
 				double timestamp = ep.poll().getFixes().get(0).getTimestamp();
 				System.out.println(timestamp);
 				return new MDate((long) timestamp);
+				System.out.format("this is the time stamp", timestamp);
+				return new MDate((long) timestamp);
 			} catch(IOException e) {
 				if(i > Constants.RETRY_AMOUNT.getValue()) {
 					throw new NoConnection(e.getMessage(), e.getCause());
@@ -138,8 +142,22 @@ public class GpsReceiver implements IGpsReceiver {
 	 * @see mise.marssa.interfaces.navigation_equipment.IGpsReceiver#getElevation()
 	 */
 	@Override
-	public DegreesInteger getElevation() {
-		// TODO Auto-generated method stub
+	public DegreesFloat getElevation() throws NoConnection, NoValue {
+		for(int i = 0; i < Constants.RETRY_AMOUNT.getValue(); i++) {
+			try {
+				double altitude = ep.poll().getFixes().get(0).getAltitude();
+				//System.out.println("This altitude is " + altitude);
+				return new DegreesFloat((float) altitude);
+			} catch(IOException e) {
+				if(i > Constants.RETRY_AMOUNT.getValue()) {
+					throw new NoConnection(e.getMessage(), e.getCause());
+			}
+			}catch(ParseException e) {
+				if(i > Constants.RETRY_AMOUNT.getValue()) {
+					throw new NoValue("The Altitude is not available from the GPSReceiver." + e.getMessage(), e.getCause());
+				}
+			}
+		}
 		return null;
 	}
 
@@ -147,7 +165,7 @@ public class GpsReceiver implements IGpsReceiver {
 	 * @see mise.marssa.interfaces.navigation_equipment.IGpsReceiver#getHDOP()
 	 */
 	@Override
-	public Float getHDOP() {
+	public MFloat getHDOP() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -165,7 +183,7 @@ public class GpsReceiver implements IGpsReceiver {
 	 * @see mise.marssa.interfaces.navigation_equipment.IGpsReceiver#getPDOP()
 	 */
 	@Override
-	public Float getPDOP() {
+	public MFloat getPDOP() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -201,7 +219,7 @@ public class GpsReceiver implements IGpsReceiver {
 	 * @see mise.marssa.interfaces.navigation_equipment.IGpsReceiver#getSignalSrength()
 	 */
 	@Override
-	public Float getSignalSrength() {
+	public MFloat getSignalSrength() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -210,7 +228,7 @@ public class GpsReceiver implements IGpsReceiver {
 	 * @see mise.marssa.interfaces.navigation_equipment.IGpsReceiver#getSNR()
 	 */
 	@Override
-	public Float getSNR() {
+	public MFloat getSNR() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -219,9 +237,29 @@ public class GpsReceiver implements IGpsReceiver {
 	 * @see mise.marssa.interfaces.navigation_equipment.IGpsReceiver#getSOG()
 	 */
 	@Override
-	public Knots getSOG() {
+	public Knots getSOG() throws NoConnection, NoValue {
+		for(int i = 0; i < Constants.RETRY_AMOUNT.getValue(); i++) {
+			try {
+				double speed = ep.poll().getFixes().get(0).getSpeed();
+				//System.out.println("This altitude is " + altitude);
+				return new Knots((float) speed);
+				
+			} catch(IOException e) {
+				if(i > Constants.RETRY_AMOUNT.getValue()) {
+					throw new NoConnection(e.getMessage(), e.getCause());
+			}
+			}catch(ParseException e) {
+				if(i > Constants.RETRY_AMOUNT.getValue()) {
+					throw new NoValue("The Altitude is not available from the GPSReceiver." + e.getMessage(), e.getCause());
+				}
+			} catch (OutOfRange e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		// TODO Auto-generated method stub
 		return null;
+	
 	}
 
 	/* (non-Javadoc)
@@ -246,8 +284,34 @@ public class GpsReceiver implements IGpsReceiver {
 	 * @see mise.marssa.interfaces.navigation_equipment.IGpsReceiver#getVDOP()
 	 */
 	@Override
-	public Float getVDOP() {
+	public MFloat getVDOP() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public MFloat getEPT() throws NoConnection, NoValue {
+		for(int i = 0; i < Constants.RETRY_AMOUNT.getValue(); i++) {
+			try {
+				double EPT = ep.poll().getFixes().get(0).getCourse();     ///Suppose to be EPT, description of an EPT is http://www.devhardware.com/c/a/Mobile-Devices/TomTom-GO-920T-GPS-Review/2/
+				//System.out.println("This altitude is " + altitude);
+				return new Knots((float) EPT);
+				
+			} catch(IOException e) {
+				if(i > Constants.RETRY_AMOUNT.getValue()) {
+					throw new NoConnection(e.getMessage(), e.getCause());
+			}
+			}catch(ParseException e) {
+				if(i > Constants.RETRY_AMOUNT.getValue()) {
+					throw new NoValue("The Altitude is not available from the GPSReceiver." + e.getMessage(), e.getCause());
+				}
+			} catch (OutOfRange e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		// TODO Auto-generated method stub
+		return null;
+		
 	}
 }
