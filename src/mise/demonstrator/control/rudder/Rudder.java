@@ -2,13 +2,13 @@ package mise.demonstrator.control.rudder;
 
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.control.rudder.IRudder;
+import mise.marssa.interfaces.control.rudder.IRudder;
 
 public class Rudder implements IRudder{
 	
 	private MInteger time;
-	private static MInteger stepRight  = new MInteger(0);
-	private static MInteger stepLeft = new MInteger(0);
+	private MInteger stepRight  = new MInteger(0);
+	private MInteger stepLeft = new MInteger(0);
 	private MBoolean startStop = new MBoolean(false);
 	
 	
@@ -17,7 +17,7 @@ public class Rudder implements IRudder{
 		
 		}
 	
-	public void rotateLeft() throws InterruptedException{
+	public void rotateLeft() throws InterruptedException{ //TO DO --> Change left and right to SB & PS ? Is this turning left of stepper --> which will turn the boat towards startboard?...
 		
 		startStop.setValue(true);
 			

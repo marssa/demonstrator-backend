@@ -4,7 +4,7 @@
 package mise.demonstrator.control.rudder;
 
 import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.control.rudder.IRudderAngle;
+import mise.marssa.interfaces.control.rudder.IRudderAngle;
 
 /**
  * @author Warren Zahra
