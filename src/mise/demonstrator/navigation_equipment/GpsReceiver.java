@@ -7,6 +7,7 @@ import java.io.IOException;
 import de.taimos.gpsd4java.backend.GPSdEndpoint;
 import de.taimos.gpsd4java.types.ParseException;
 import de.taimos.gpsd4java.types.TPVObject;
+import mise.demonstrator.constants.Constants;
 import mise.marssa.data_types.MDate;
 import mise.marssa.data_types.MString;
 import mise.marssa.data_types.time.Hours;
@@ -23,7 +24,6 @@ import mise.marssa.exceptions.NoConnection;
 import mise.marssa.exceptions.NoValue;
 import mise.marssa.exceptions.OutOfRange;
 import mise.marssa.interfaces.navigation_equipment.IGpsReceiver;
-import mise.demonstrator.constants;
 
 /**
  * @author Clayton Tabone
@@ -119,6 +119,8 @@ public class GpsReceiver implements IGpsReceiver {
 		for(int i = 0; i < Constants.RETRY_AMOUNT.getValue(); i++) {
 			try {
 				double timestamp = ep.poll().getFixes().get(0).getTimestamp();
+				System.out.println(timestamp);
+				return new MDate((long) timestamp);
 				System.out.format("this is the time stamp", timestamp);
 				return new MDate((long) timestamp);
 			} catch(IOException e) {
@@ -156,7 +158,6 @@ public class GpsReceiver implements IGpsReceiver {
 				}
 			}
 		}
-		// TODO Auto-generated method stub
 		return null;
 	}
 
