@@ -4,9 +4,9 @@
 package mise.demonstrator.electrical_motor_control;
 
 import mise.marssa.interfaces.control.IController;
-import mise.marssa.interfaces.control.electrical_motor.IRamping;
-import mise.marssa.data_types.integer_datatypes.Integer;
-import mise.marssa.data_types.float_datatypes.Float;
+import mise.marssa.interfaces.control.IRamping;
+import mise.marssa.data_types.integer_datatypes.MInteger;
+import mise.marssa.data_types.float_datatypes.MFloat;
 
 /**
  * @author Clayton Tabone
@@ -20,14 +20,14 @@ public class Ramping implements IRamping {
 	// true means positive ramping
 	boolean direction = false;
 	
-	public Ramping(Integer stepDelay, Float stepSize, IController controller) {
+	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller) {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
 		this.controller = controller;
 		this.currentValue = 0;
 	}
 	
-	public Ramping(Integer stepDelay, Float stepSize, IController controller, Float initialValue) {
+	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, MFloat initialValue) {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
 		this.controller = controller;
@@ -38,7 +38,7 @@ public class Ramping implements IRamping {
 	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#rampTo(mise.marssa.data_types.float_datatypes.Percentage)
 	 */
 	@Override
-	public void rampTo(Float desiredValue) throws InterruptedException {
+	public void rampTo(MFloat desiredValue) throws InterruptedException {
 		float difference = desiredValue.getValue() - currentValue;
 		direction = (difference > 0);
 		while(true) {
@@ -47,11 +47,9 @@ public class Ramping implements IRamping {
 			} else {
 				currentValue -= stepSize;
 			}
-			controller.outputValue(new Float(currentValue));
+			controller.outputValue(new MFloat(currentValue));
             Thread.sleep(stepDelay);
-            if(direction && (currentValue >= desiredValue.getValue())) {
-            	break;
-            } else if(!direction && (currentValue <= desiredValue.getValue())) {
+            if((currentValue == desiredValue.getValue())) {
             	break;
             }
         }
