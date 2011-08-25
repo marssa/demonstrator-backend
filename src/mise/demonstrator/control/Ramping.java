@@ -1,7 +1,7 @@
 /**
  * 
  */
-package mise.demonstrator.electrical_motor_control;
+package mise.demonstrator.control;
 
 import mise.marssa.interfaces.control.IController;
 import mise.marssa.interfaces.control.IRamping;
@@ -49,7 +49,9 @@ public class Ramping implements IRamping {
 			}
 			controller.outputValue(new MFloat(currentValue));
             Thread.sleep(stepDelay);
-            if((currentValue == desiredValue.getValue())) {
+            if(direction && (currentValue >= desiredValue.getValue())) {
+            	break;
+            } else if(!direction && (currentValue <= desiredValue.getValue())) {
             	break;
             }
         }
