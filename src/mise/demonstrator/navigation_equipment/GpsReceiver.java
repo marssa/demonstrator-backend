@@ -23,7 +23,7 @@ import mise.marssa.exceptions.NoConnection;
 import mise.marssa.exceptions.NoValue;
 import mise.marssa.exceptions.OutOfRange;
 import mise.marssa.interfaces.navigation_equipment.IGpsReceiver;
-import mise.marssa.Constants;
+import mise.demonstrator.constants;
 
 /**
  * @author Clayton Tabone

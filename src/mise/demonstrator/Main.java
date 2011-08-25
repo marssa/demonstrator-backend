@@ -1,7 +1,7 @@
 package mise.demonstrator;
 
 import mise.demonstrator.electrical_motor_control.MotorController;
-import mise.demonstrator.light_controller.LightController;
+import mise.demonstrator.light_controller.LightToggle;
 import mise.demonstrator.rudder_control.Rudder;
 import mise.marssa.data_types.float_datatypes.Percentage;
 import mise.marssa.data_types.integer_datatypes.MInteger;
@@ -20,7 +20,7 @@ public class Main {
 	public static void main(java.lang.String[] args) throws OutOfRange, InterruptedException {
 		
 		MotorController mc = new MotorController();
-		LightController navigationLights = new LightController();
+		LightToggle navigationLights = new LightToggle();
 		
 		System.out.println(navigationLights.getLightState());
 		Percentage desiredValue = new Percentage(10f);
