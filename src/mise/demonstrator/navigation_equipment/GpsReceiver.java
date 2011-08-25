@@ -4,7 +4,6 @@
 package mise.demonstrator.navigation_equipment;
 
 import java.io.IOException;
-
 import de.taimos.gpsd4java.backend.GPSdEndpoint;
 import de.taimos.gpsd4java.types.ParseException;
 import de.taimos.gpsd4java.types.TPVObject;
@@ -37,6 +36,15 @@ public class GpsReceiver implements IGpsReceiver {
 	public GpsReceiver(MString host, MInteger port) {
 		ep = new GPSdEndpoint(host.getContents(), port.getValue());
 		ep.start();
+		try {
+			System.out.println("gpsd4java started " + ep.version());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -68,7 +76,7 @@ public class GpsReceiver implements IGpsReceiver {
 			}
 		}
 		// This code is unreachable but was added here to satisfy the compiler.
-		// The try/catch will loop for not more than three times and if not successful will return a NoConnection Exception
+		// The try/catch will loop for the RETRY_AMOUNT and if not successful will return a NoConnection Exception
 		return null;
 	}
 
@@ -99,7 +107,7 @@ public class GpsReceiver implements IGpsReceiver {
 			}
 		}
 		// This code is unreachable but was added here to satisfy the compiler.
-		// The try/catch will loop for not more than three times and if not successful will return a NoConnection Exception
+		// The try/catch will loop for the RETRY_AMOUNT and if not successful will return a NoConnection Exception
 		return null;
 	}
 
@@ -124,7 +132,7 @@ public class GpsReceiver implements IGpsReceiver {
 			}
 		}
 		// This code is unreachable but was added here to satisfy the compiler.
-		// The try/catch will loop for not more than three times and if not successful will return a NoConnection Exception
+		// The try/catch will loop for the RETRY_AMOUNT and if not successful will return a NoConnection Exception
 		return null;
 	}
 
