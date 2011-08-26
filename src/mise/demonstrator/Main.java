@@ -1,11 +1,12 @@
 package mise.demonstrator;
 
-import mise.demonstrator.electrical_motor_control.MotorController;
+import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.demonstrator.light_controller.LightToggle;
-import mise.demonstrator.rudder_control.Rudder;
+import mise.demonstrator.control.rudder.Rudder;
 import mise.marssa.data_types.float_datatypes.Percentage;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.exceptions.OutOfRange;
+import mise.marssa.data_types.MBoolean;
 /**
  * @author Clayton Tabone
  *
@@ -18,7 +19,7 @@ public class Main {
 	 * @throws InterruptedException 
 	 */
 	public static void main(java.lang.String[] args) throws OutOfRange, InterruptedException {
-		
+		/*
 		MotorController mc = new MotorController();
 		LightToggle navigationLights = new LightToggle();
 		
@@ -30,7 +31,7 @@ public class Main {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		/*
+		
 		 Timestamp ts = new Timestamp(0);
 		 System.out.println(ts);
 		 
@@ -41,14 +42,14 @@ public class Main {
 		 
 		MInteger delay = new MInteger(1000);
 		 Rudder myRudder = new Rudder(delay);
-		 myRudder.rotateRight();
-		 myRudder.rotateLeft();
-		 myRudder.rotateLeft();
-		 myRudder.rotateLeft();
-		 myRudder.rotateLeft();
-		 myRudder.rotateRight();
-		 myRudder.rotateRight();
-		 myRudder.rotateLeft();
+		 myRudder.rotate(new MBoolean (true));
+		 myRudder.rotate(new MBoolean (false));
+		 myRudder.rotate(new MBoolean (true));
+		 myRudder.rotate(new MBoolean (false));
+		 myRudder.rotate(new MBoolean (false));
+		 myRudder.rotate(new MBoolean (true));
+		 myRudder.rotate(new MBoolean (true));
+		 
 		 /*
 		 
 		MString host = new MString("192.168.1.1");

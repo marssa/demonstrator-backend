@@ -121,8 +121,6 @@ public class GpsReceiver implements IGpsReceiver {
 				double timestamp = ep.poll().getFixes().get(0).getTimestamp();
 				System.out.println(timestamp);
 				return new MDate((long) timestamp);
-				System.out.format("this is the time stamp", timestamp);
-				return new MDate((long) timestamp);
 			} catch(IOException e) {
 				if(i > Constants.RETRY_AMOUNT.getValue()) {
 					throw new NoConnection(e.getMessage(), e.getCause());

@@ -6,23 +6,21 @@ import mise.marssa.interfaces.control.rudder.IRudder;
 
 public class Rudder implements IRudder{
 	
-	private MInteger time;
-	private MInteger stepRight  = new MInteger(0);
-	private MInteger stepLeft = new MInteger(0);
-	private MBoolean startStop = new MBoolean(false);
+	private int time;
+	private int stepRight  = 0;
+	private int stepLeft = 0;
+	private boolean startStop = false;
 	
+	public Rudder (MInteger time) {
+		this.time  = time.getValue();	
+	}
 	
-	public Rudder (MInteger time){
-		this.time  = time;	
+	public void rotate(MBoolean direction) throws InterruptedException{
+		//TODO --> Change left and right to SB & PS ? Is this turning left of stepper --> which will turn the boat towards starboard?...
 		
-		}
-	
-	public void rotateLeft() throws InterruptedException{ //TO DO --> Change left and right to SB & PS ? Is this turning left of stepper --> which will turn the boat towards startboard?...
-		
-		startStop.setValue(true);
+		startStop = true;
 			
-		if (stepLeft.getValue() == 0)
-			{
+		if ((startStop && stepLeft == 0 && direction.getValue()) || (startStop && stepRight==3  && direction.getValue()== false)) {
 			/*
 			System.out.println("logic HIGH on 'CIO0'");
 			System.out.println("logic HIGH on 'CIO1'");
@@ -31,89 +29,13 @@ public class Rudder implements IRudder{
 			*/
 			System.out.println("1 1 0 0");
 			System.out.println("");
-			stepLeft = new MInteger(1);
-			stepRight= new MInteger(0);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
-		if (startStop.getValue() && stepLeft.getValue() == 1)
-			{/*
-			System.out.println("logic LOW on 'CIO0'");
-			System.out.println("logic HIGH on 'CIO1'");
-			System.out.println("logic HIGH on 'CIO2'");
-			System.out.println("logic LOW on 'CIO3'");
-			*/
-			System.out.println("0 1 1 0");
-			System.out.println("");
-			stepLeft= new MInteger(2);
-			stepRight= new MInteger(3);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
-		if (startStop.getValue() == true && stepLeft.getValue() == 2)
-			{/*
-			System.out.println("logic LOW on 'CIO0'");
-			System.out.println("logic LOW on 'CIO1'");
-			System.out.println("logic HIGH on 'CIO2'");
-			System.out.println("logic HIGH on 'CIO3'");
-			*/
-			System.out.println("0 0 1 1");
-			System.out.println("");
-			stepLeft= new MInteger(3);
-			stepRight= new MInteger(2);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
-		if (startStop.getValue() == true && stepLeft.getValue() == 3)
-			{/*
-			System.out.println("logic HIGH on 'CIO0'");
-			System.out.println("logic LOW on 'CIO1'");
-			System.out.println("logic LOW on 'CIO2'");
-			System.out.println("logic HIGH on 'CIO3'");
-			*/
-			System.out.println("1 0 0 1");
-			System.out.println("");
-			stepLeft= new MInteger(0);
-			stepRight= new MInteger(1);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
+			stepLeft = 1;
+			stepRight= 0;
+			startStop = !startStop;
+			Thread.sleep(time);
 		}
-		
-	public void rotateRight() throws InterruptedException{
-	
-		startStop.setValue(true);
-			
-		if (stepRight.getValue() == 0)
-			{/*
-			System.out.println("logic HIGH on 'CIO0'");
-			System.out.println("logic LOW on 'CIO1'");
-			System.out.println("logic LOW on 'CIO2'");
-			System.out.println("logic HIGH on 'CIO3'");
-			*/
-			System.out.println("1 0 0 1");
-			System.out.println("");
-			stepRight= new MInteger(1);
-			stepLeft= new MInteger(0);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
-		if (startStop.getValue() == true && stepRight.getValue() == 1)
-			{/*
-			System.out.println("logic LOW on 'CIO0'");
-			System.out.println("logic LOW on 'CIO1'");
-			System.out.println("logic HIGH on 'CIO2'");
-			System.out.println("logic HIGH on 'CIO3'");
-			*/
-			System.out.println("0 0 1 1");
-			System.out.println("");
-			stepRight= new MInteger(2);
-			stepLeft= new MInteger(3);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
-		if (startStop.getValue() == true && stepRight.getValue() == 2)
-			{/*
+		if ((startStop && stepLeft == 1 && direction.getValue()) || (startStop && stepRight==2  && direction.getValue()== false)) {
+			/*
 			System.out.println("logic LOW on 'CIO0'");
 			System.out.println("logic HIGH on 'CIO1'");
 			System.out.println("logic HIGH on 'CIO2'");
@@ -121,26 +43,40 @@ public class Rudder implements IRudder{
 			*/
 			System.out.println("0 1 1 0");
 			System.out.println("");
-			stepRight= new MInteger(3);
-			stepLeft= new MInteger(2);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
-		if (startStop.getValue() == true && stepRight.getValue() == 3)
-			{/*
-			System.out.println("logic HIGH on 'CIO0'");
-			System.out.println("logic HIGH on 'CIO1'");
-			System.out.println("logic LOW on 'CIO2'");
-			System.out.println("logic LOW on 'CIO3'");
+			stepLeft= 2;
+			stepRight= 3;
+			startStop = !startStop;
+			Thread.sleep(time);
+		}
+		if ((startStop == true && stepLeft == 2 && direction.getValue()) || (startStop && stepRight==1  && direction.getValue()== false)) {
+			/*
+			System.out.println("logic LOW on 'CIO0'");
+			System.out.println("logic LOW on 'CIO1'");
+			System.out.println("logic HIGH on 'CIO2'");
+			System.out.println("logic HIGH on 'CIO3'");
 			*/
-			System.out.println("1 1 0 0");
+			System.out.println("0 0 1 1");
 			System.out.println("");
-			stepRight= new MInteger(0);
-			stepLeft= new MInteger(1);
-			startStop.toggleValue();
-			Thread.sleep(time.getValue());
-			}
+			stepLeft= 3;
+			stepRight= 2;
+			startStop = !startStop;
+			Thread.sleep(time);
+		}
+		if ((startStop == true && stepLeft == 3 && direction.getValue()) || (startStop && stepRight==0  && direction.getValue()== false)) {
+			/*
+			System.out.println("logic HIGH on 'CIO0'");
+			System.out.println("logic LOW on 'CIO1'");
+			System.out.println("logic LOW on 'CIO2'");
+			System.out.println("logic HIGH on 'CIO3'");
+			*/
+			System.out.println("1 0 0 1");
+			System.out.println("");
+			stepLeft= 0;
+			stepRight= 1;
+			startStop =! startStop;
+			Thread.sleep(time);
 		}
 	}
+}
 
 
