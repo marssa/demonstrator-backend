@@ -27,6 +27,11 @@ public class Rudder implements IRudder{
 	private MFloat angle;
 	
 	private LabJack lb = null;
+	
+	/**
+	 * @author Warren Zahra
+	 *
+	 */
 	public Rudder (LabJack lb) {
 		this.lb = lb;
 	}
