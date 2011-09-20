@@ -3,6 +3,7 @@
  */
 package mise.demonstrator.control.electrical_motor;
 
+import mise.demonstrator.control.LabJack;
 import mise.demonstrator.control.Ramping;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.float_datatypes.MFloat;
@@ -16,11 +17,14 @@ public class MotorController implements IMotorController {
 
 	private final MInteger  STEP_DELAY = new MInteger(50);
 	private final MFloat STEP_SIZE = new MFloat(1.0f);
-	Ramping ramping;
+	private LabJack lj;
+	private Ramping ramping;
+	
 	/**
 	 * 
 	 */
-	public MotorController() {
+	public MotorController(LabJack lj) {
+		this.lj = lj;
 		this.ramping = new Ramping(STEP_DELAY, STEP_SIZE, this);
 	}
 
@@ -30,6 +34,7 @@ public class MotorController implements IMotorController {
 	@Override
 	public void outputValue(MFloat motorSpeed) {
 		System.out.println(motorSpeed);
+		
 	}
 	
 	public void rampTo(MFloat desiredValue) throws InterruptedException {

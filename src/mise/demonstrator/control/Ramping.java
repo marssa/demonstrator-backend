@@ -42,7 +42,9 @@ public class Ramping implements IRamping {
 		float difference = desiredValue.getValue() - currentValue;
 		direction = (difference > 0);
 		while(true) {
-			if(direction) {
+			if(difference == 0) {
+				// Do nothing. The desired value is the same as the current value.
+			} else if(direction) {
 				currentValue += stepSize;
 			} else {
 				currentValue -= stepSize;
@@ -54,5 +56,4 @@ public class Ramping implements IRamping {
             }
         }
 	}
-
 }

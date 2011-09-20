@@ -1,74 +1,92 @@
 package mise.demonstrator;
 
+import org.restlet.resource.ServerResource;
+import mise.demonstrator.constants.Constants;
+import mise.demonstrator.control.LabJack;
+import mise.demonstrator.control.LabJack.TimerConfigMode;
+import mise.demonstrator.control.LabJack.Timers;
 import mise.demonstrator.control.electrical_motor.MotorController;
-import mise.demonstrator.light_controller.LightToggle;
-import mise.demonstrator.control.rudder.Rudder;
-import mise.marssa.data_types.float_datatypes.Percentage;
-import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.exceptions.OutOfRange;
-import mise.marssa.data_types.MBoolean;
-/**
- * @author Clayton Tabone
+import mise.demonstrator.control.rudder.RudderController;
+import mise.demonstrator.control.lighting.NavigationLightsController;
+import mise.demonstrator.navigation_equipment.GpsReceiver;
+import mise.demonstrator.web_service.WebServices;
+
+/** @author Clayton Tabone
  *
  */
-public class Main {
+public class Main extends ServerResource {
 		
 	/**
 	 * @param args the args
-	 * @throws OutOfRange 
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
-	public static void main(java.lang.String[] args) throws OutOfRange, InterruptedException {
-		/*
-		MotorController mc = new MotorController();
-		LightToggle navigationLights = new LightToggle();
+	public static void main(java.lang.String[] args) {
+		// Initialise LabJack
+		LabJack labJack = null;
+		try {
+			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT);
+			labJack.setTimerMode(Timers.TIMER_0, TimerConfigMode.PWM_OUTPUT_16BIT);
+			labJack.setTimerMode(Timers.TIMER_1, TimerConfigMode.PWM_OUTPUT_16BIT);
+		} catch (Exception e1) {
+			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
+			e1.printStackTrace();
+			System.exit(1);
+		}
 		
-		System.out.println(navigationLights.getLightState());
-		Percentage desiredValue = new Percentage(10f);
+		NavigationLightsController navLightsController = new NavigationLightsController(labJack);
+		// TODO: MotorController needs to be modified to use an instance of LabJack
+		MotorController motorController = new MotorController(labJack);
+		RudderController rudderController = new RudderController(labJack);
+		// TODO attach physical GPSReceiver
+		GpsReceiver gpsReceiver = null;
+		//GpsReceiver gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
 		
 		try {
-			mc.rampTo(desiredValue);
+			WebServices webService = new WebServices(navLightsController, motorController, rudderController, gpsReceiver);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		/*
+		// NavigationLights Tests
+		System.out.println(navigationLights.getNavigationLightState());
+		Percentage desiredValue = new Percentage(10f);
+		
+		// MotorControl Tests
+		try {
+			motorController.rampTo(desiredValue);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
-		 Timestamp ts = new Timestamp(0);
-		 System.out.println(ts);
-		 
-		 System.out.println(ts.getTime());
-		 Date d=new Date();
-		 System.out.println("Today date is "+ d);
-		 */
-		 
-		MInteger delay = new MInteger(1000);
-		 Rudder myRudder = new Rudder(delay);
-		 myRudder.rotate(new MBoolean (true));
-		 myRudder.rotate(new MBoolean (false));
-		 myRudder.rotate(new MBoolean (true));
-		 myRudder.rotate(new MBoolean (false));
-		 myRudder.rotate(new MBoolean (false));
-		 myRudder.rotate(new MBoolean (true));
-		 myRudder.rotate(new MBoolean (true));
-		 
-		 /*
-		 
-		MString host = new MString("192.168.1.1");
-		MInteger port = new MInteger(2947);
-		
-		GpsReceiver gps = new GpsReceiver(host, port);
+		// Rudder Tests
 		try {
-			System.out.println("The GPS coordinates are " +gps.getCoordinate());
-			System.out.println("Altitude is " +gps.getElevation());
-			System.out.println("Course over ground "+gps.getCOG());
-			System.out.println("Speed over ground "+gps.getSOG());
-			//System.out.println("EPT "+gps.getEPT());      ///have to find the EPT
-			System.out.println("Time "+gps.getDate());
+			rudderController.rotate(new MBoolean (true));
+			rudderController.rotate(new MBoolean (false));
+			rudderController.rotate(new MBoolean (true));
+			rudderController.rotate(new MBoolean (false));
+			rudderController.rotate(new MBoolean (false));
+			rudderController.rotate(new MBoolean (true));
+			rudderController.rotate(new MBoolean (true));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		// GPSReceiver Tests
+		try {
+			System.out.println("The GPS coordinates are " + gpsReceiver.getCoordinate());
+			System.out.println("Altitude is " + gpsReceiver.getElevation());
+			System.out.println("Course over ground " + gpsReceiver.getCOG());
+			System.out.println("Speed over ground " + gpsReceiver.getSOG());
+			//System.out.println("EPT " + gps.getEPT());      ///have to find the EPT
+			System.out.println("Time " + gpsReceiver.getDate());
 		} catch (NoConnection e) {
 			e.printStackTrace();
 		} catch (NoValue e) {
 			e.printStackTrace();
 		}
-	*/	
+		*/
+
 	}
-	
 }
