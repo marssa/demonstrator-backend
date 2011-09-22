@@ -77,14 +77,15 @@ public class RudderController implements IRudderController {
 	}
 
 	@Override
-	public MFloat getAngle(MFloat voltageValue) {
-		if (voltageValue.getValue() < 2.5) {
-			voltageDifference = (float) (2.5 - voltageValue.getValue());
+	public MFloat getAngle() {
+	int voltageValue = 2;       //value that needs to be read from the labjack	
+		if (voltageValue < 2.5) {
+			voltageDifference = (float) (2.5 - voltageValue);
 			angleDifference = (float) (voltageDifference / 0.019);
 			angle = new MFloat(90 - angleDifference);
 		}
-		if (voltageValue.getValue() > 2.5) {
-			voltageDifference = (float) (voltageValue.getValue() -2.5);
+		if (voltageValue > 2.5) {
+			voltageDifference = (float) (voltageValue -2.5);
 			angleDifference = (float) (voltageDifference / 0.019);
 			angle = new MFloat(90 + angleDifference);
 		}

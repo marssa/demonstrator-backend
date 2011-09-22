@@ -7,6 +7,7 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
+import org.restlet.resource.Resource;
 import org.restlet.routing.Router;
 
 public class RudderControllerApplication extends Application {
@@ -40,7 +41,23 @@ public class RudderControllerApplication extends Application {
             }
         };
         
+        // Create the rotation handler
+        //TODO Change this to a Resource
+        Restlet angle = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		try {
+        			int direction = rudderController.getAngle();
+        			response.setEntity(Integer.toString(direction), MediaType.TEXT_PLAIN);
+        		} catch (InterruptedException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+				}
+            }
+        };
+        
         router.attach("/rotate/{direction}", rotate);
+        router.attach("/angle", angle);
         
         return router;
     }
