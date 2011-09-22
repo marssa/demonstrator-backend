@@ -35,7 +35,17 @@ public class NavigationLightsControllerApplication extends Application {
             }
         };
         
+     // Create the navigation lights state handler
+        Restlet navLightsState = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
+    			response.setEntity(navLightsController.getNavigationLightState().toString(), MediaType.TEXT_PLAIN);
+            }
+        };
+        
         router.attach("/navigationLights/{state}", navLights);
+        router.attach("/navigationLights", navLightsState);
         
         return router;
     }

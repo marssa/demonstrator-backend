@@ -22,6 +22,7 @@ import net.wimpi.modbus.procimg.SimpleRegister;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.MString;
 import mise.marssa.data_types.integer_datatypes.MInteger;
+import mise.marssa.exceptions.ConfigurationError;
 import mise.marssa.exceptions.NoConnection;
 
 /**
@@ -66,6 +67,13 @@ public class LabJack {
 	static public final MInteger FIO18_DIR_ADDR = new MInteger(6118);
 	static public final MInteger FIO19_DIR_ADDR = new MInteger(6119);
 	
+	/**
+	 * The register containing the number of timers enabled.
+	 * For the LabJack U3 this can be a value between 0 and 2
+	 * @see http://labjack.com/support/u3/users-guide/2.9
+	 */
+	static public final MInteger NUM_TIMERS_ENABLED_ADDR = new MInteger(50501);
+	
 	// TODO There must be something wrong here. FIO4 is operating in output mode, regardless of FIO4-dir
 	static public final MBoolean FIO_OUT_DIRECTION = new MBoolean(true);
 	static public final MBoolean FIO_IN_DIRECTION = new MBoolean(false);
@@ -75,22 +83,36 @@ public class LabJack {
 	static public final MInteger TIMER1_CONFIG_MODE_ADDR = new MInteger(7102);
 	
 	/**
+	 * The LabJack U3 has only two timers.
+	 * The number of timers enabled can be either none, one timer or two timers.<br />
+	 * Section 2.9 of the LabJack documentation has a good description of the available timers
+	 * 
+	 * @see http://labjack.com/support/u3/users-guide/2.9
+	 */
+	public enum TimersEnabled {
+		NONE(0),
+		ONE(1),
+		TWO(2);
+		
+		private TimersEnabled(int timersEnabled) { }
+	};
+	
+	/**
 	 * The LabJack U3 has only two timers.<br />
 	 * Section 2.9.1 of the LabJack documentation has a good description of these modes
 	 * @see http://labjack.com/support/u3/users-guide/2.9
+	 * @see mise.demonstrator.control.LabJack.TimersEnabled
 	 */
 	public enum Timers {
 		TIMER_0(0),								// Documented in section 2.9.1.1
 		TIMER_1(1);								// Documented in section 2.9.1.2
 		
-		private int timerNumber;
 		private MInteger timerConfigModeAddress;
 		private TimerConfigMode timerConfigMode;
 		
-		
 		private Timers(int timerNumber) {
-			this.timerNumber = timerNumber;
-			// Constuctor belongs to an enum class. Hence only 0 and 1 are permissible as the timerNumber
+			// Constructor belongs to an enum class
+			// Hence the only possible valuers for the timerNumber are 0 and 1
 			if(timerNumber == 0)
 				timerConfigModeAddress = LabJack.TIMER0_CONFIG_MODE_ADDR;
 			else
@@ -101,11 +123,11 @@ public class LabJack {
 			this.timerConfigMode = timerConfigMode;
 		}
 		
-		public TimerConfigMode getTimerConfigMode() {
+		private TimerConfigMode getTimerConfigMode() {
 			return timerConfigMode;
 		}
 		
-		public MInteger getTimerConfigModeAddress() {
+		private MInteger getTimerConfigModeAddress() {
 			return this.timerConfigModeAddress;
 		}
 	};
@@ -133,14 +155,7 @@ public class LabJack {
 		PERIOD_MEASURMENT_FALLING_16BIT(13),	// Documented in section 2.9.1.11
 		LINE_TO_LINE(14);						// Documented in section 2.9.1.12
 		
-		private int mode;
-		private TimerConfigMode(int mode) {
-			this.mode = mode;
-		}
-		
-		public MInteger getValue() {
-			return new MInteger(mode);
-		}
+		private TimerConfigMode(int mode) {	}
 	};
 	
 	/**
@@ -158,10 +173,7 @@ public class LabJack {
 		CLOCK_12_MHZ_DIVISOR(5),
 		CLOCK_48_MHZ_DIVISOR(6);
 		
-		private int clock;
-		private TimerBaseClock(int clock) {
-			this.clock = clock;
-		}
+		private TimerBaseClock(int clock) {	}
 	};
 	
 	/**
@@ -213,14 +225,14 @@ public class LabJack {
 			activeConnections.iterator().remove();
 		}
 		
-		public LabJackConnection getConnection(MString host, MInteger port) throws UnknownHostException, NoConnection {
+		public LabJackConnection getConnection(MString host, MInteger port, TimersEnabled numTimers) throws UnknownHostException, NoConnection {
 			if(activeConnections != null) {
 				for(LabJackConnection conn : activeConnections) {
 					if(conn.inUse(host, port))
 						return conn;
 				}
 			}
-			LabJack lj = new LabJack(host, port);
+			LabJack lj = new LabJack(host, port, numTimers);
 			LabJackConnection newConnectionPair = new LabJackConnection(host, port, lj);
 			activeConnections.add(newConnectionPair);
 			return newConnectionPair;
@@ -233,14 +245,18 @@ public class LabJack {
 	// The actual TCP connection to the LabJack used in this instance
 	private TCPMasterConnection masterConnection;
 	
+	// The number of timers
+	private TimersEnabled numTimers;
 	
-	private LabJack(MString host, MInteger port) throws UnknownHostException, NoConnection
+	private LabJack(MString host, MInteger port, TimersEnabled numTimers) throws UnknownHostException, NoConnection
 	{
 		try {
 			InetAddress address = InetAddress.getByName(host.getContents());  // the slave's address
 		    masterConnection = new TCPMasterConnection(address);
 		    masterConnection.setPort(port.getValue());
 		    masterConnection.connect();
+		    this.numTimers = numTimers;
+		    this.write(NUM_TIMERS_ENABLED_ADDR, new MInteger(numTimers.ordinal()));
 		} catch (UnknownHostException e) {
 			throw new NoConnection("Cannot find host: " + host + "Exception details\n" + e.getMessage(), e.getCause());
 		} catch (IOException e) {
@@ -274,14 +290,26 @@ public class LabJack {
      * @throws UnknownHostException
      * @throws NoConnection
      */
-    public static synchronized LabJack getInstance(MString host, MInteger port) throws UnknownHostException, NoConnection {
-    	LabJackConnection connection = connectionPairs.getConnection(host, port);
+    public static synchronized LabJack getInstance(MString host, MInteger port, TimersEnabled numTimers) throws UnknownHostException, NoConnection {
+    	LabJackConnection connection = connectionPairs.getConnection(host, port, numTimers);
     	return connection.lj;
     }
     
-    public void setTimerMode(Timers timer, TimerConfigMode timerConfigMode) {
+    /**
+     * @throws ConfigurationError 
+     * The number of timers enabled is set from the constructor.
+	 * Since this is variable, the timer selected here may not be available.
+	 * In this case the constructor will fail and raise an exception.
+     * @param timer the timer which will be configured
+     * @param timerConfigMode the mode for the specified timer
+     * @throws ConfigurationError
+     * @see mise.demonstrator.control.LabJack.TimersEnabled
+     */
+    public void setTimerMode(Timers timer, TimerConfigMode timerConfigMode) throws ConfigurationError {
+    	if((timer.ordinal() + 1) > numTimers.ordinal())
+    		throw new ConfigurationError("Timer " + timer.ordinal() + " is not enabled");
     	timer.setTimerConfigMode(timerConfigMode);
-    	write(timer.timerConfigModeAddress, timerConfigMode.getValue());
+    	write(timer.timerConfigModeAddress, new MInteger(timerConfigMode.ordinal()));
     }
 	
 	public void write(MInteger registerNumber, MInteger registerValue) {
@@ -318,14 +346,13 @@ public class LabJack {
 		write(registerNumber, new MInteger(highLow));
 	}
 	
-	
 	public void read(MInteger register, MInteger count) throws ModbusIOException, ModbusSlaveException, ModbusException{
 		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
 		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(register.getValue(), count.getValue());
 		ReadMultipleRegistersResponse res = null;
-		
 		transaction = new ModbusTCPTransaction(masterConnection);
 		
+	}
 		transaction.setRequest(req);
 		transaction.execute();
 		
