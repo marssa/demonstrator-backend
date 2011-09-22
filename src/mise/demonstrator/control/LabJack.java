@@ -13,6 +13,8 @@ import net.wimpi.modbus.ModbusException;
 import net.wimpi.modbus.ModbusIOException;
 import net.wimpi.modbus.ModbusSlaveException;
 import net.wimpi.modbus.io.ModbusTCPTransaction;
+import net.wimpi.modbus.msg.ReadMultipleRegistersRequest;
+import net.wimpi.modbus.msg.ReadMultipleRegistersResponse;
 import net.wimpi.modbus.msg.WriteSingleRegisterRequest;
 import net.wimpi.modbus.net.TCPMasterConnection;
 import net.wimpi.modbus.procimg.SimpleRegister;
@@ -231,6 +233,7 @@ public class LabJack {
 	// The actual TCP connection to the LabJack used in this instance
 	private TCPMasterConnection masterConnection;
 	
+	
 	private LabJack(MString host, MInteger port) throws UnknownHostException, NoConnection
 	{
 		try {
@@ -296,12 +299,15 @@ public class LabJack {
 		} catch (ModbusIOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(1);
 		} catch (ModbusSlaveException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(1);
 		} catch (ModbusException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	
@@ -312,22 +318,21 @@ public class LabJack {
 		write(registerNumber, new MInteger(highLow));
 	}
 	
-	/*
-	public void read(MInteger register, MInteger count) throws ModbusIOException, ModbusSlaveException, ModbusException{
-		
-			//3r. Prepare the request
-			readRegisterRequest = new ReadInputRegistersRequest(register.getValue(), count.getValue());
-			//readDiscreteRequest = new ReadInputDiscretesRequest(register.getValue(), count.getValue());
 	
-			//4r. Prepare the transaction
-			transaction = new ModbusTCPTransaction(connection);
-			transaction.setRequest(readRegisterRequest);
-			
-			//5r. Execute the READ transaction
-            transaction.execute();
-            readResponse = (ReadInputRegistersResponse) transaction.getResponse();
-            System.out.println("Hex Value of register " + "= "+readResponse.getHexMessage());
+	public void read(MInteger register, MInteger count) throws ModbusIOException, ModbusSlaveException, ModbusException{
+		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
+		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(register.getValue(), count.getValue());
+		ReadMultipleRegistersResponse res = null;
 		
-	}*/
+		transaction = new ModbusTCPTransaction(masterConnection);
+		
+		transaction.setRequest(req);
+		transaction.execute();
+		
+		res = (ReadMultipleRegistersResponse) transaction.getResponse();
+		System.out.println("Digital Inputs Status=" + res.getRegisterValue(0));
+		
+		masterConnection.close();
+	}
 }
 
