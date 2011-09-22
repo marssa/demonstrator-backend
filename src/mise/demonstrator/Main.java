@@ -5,6 +5,7 @@ import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.LabJack;
 import mise.demonstrator.control.LabJack.TimerConfigMode;
 import mise.demonstrator.control.LabJack.Timers;
+import mise.demonstrator.control.LabJack.TimersEnabled;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.control.lighting.NavigationLightsController;
@@ -24,9 +25,9 @@ public class Main extends ServerResource {
 		// Initialise LabJack
 		LabJack labJack = null;
 		try {
-			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT);
+			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT, TimersEnabled.TWO);
 			labJack.setTimerMode(Timers.TIMER_0, TimerConfigMode.PWM_OUTPUT_16BIT);
-			labJack.setTimerMode(Timers.TIMER_1, TimerConfigMode.PWM_OUTPUT_16BIT);
+			//labJack.setTimerMode(Timers.TIMER_1, TimerConfigMode.PWM_OUTPUT_16BIT);
 		} catch (Exception e1) {
 			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
 			e1.printStackTrace();
@@ -42,7 +43,7 @@ public class Main extends ServerResource {
 		//GpsReceiver gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
 		
 		try {
-			WebServices webService = new WebServices(navLightsController, motorController, rudderController, gpsReceiver);
+			new WebServices(navLightsController, motorController, rudderController, gpsReceiver);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
