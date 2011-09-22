@@ -40,7 +40,8 @@ private final MInteger UnLights = LabJack.FIO4_ADDR;
 	}
 	
 	public void setUnderwaterLightState(MBoolean newState){
-		lb.write(UnLights,new MBoolean (lightState));
+		this.lightState = newState.getValue();
+		lb.write(UnLights,newState);
 	}
 
 	

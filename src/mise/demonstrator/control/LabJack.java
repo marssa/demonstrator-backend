@@ -330,7 +330,7 @@ public class LabJack {
 		transaction.execute();
 		
 		res = (ReadMultipleRegistersResponse) transaction.getResponse();
-		System.out.println("Digital Inputs Status=" + res.getRegisterValue(0));
+		System.out.println("Digital Inputs Status=" + res.getRegisterValue(3));
 		
 		masterConnection.close();
 	}
