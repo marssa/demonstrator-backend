@@ -7,6 +7,8 @@ import mise.marssa.interfaces.control.IController;
 import mise.marssa.interfaces.control.IRamping;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.float_datatypes.MFloat;
+import mise.marssa.exceptions.ConfigurationError;
+import mise.marssa.exceptions.OutOfRange;
 
 /**
  * @author Clayton Tabone
@@ -38,7 +40,7 @@ public class Ramping implements IRamping {
 	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#rampTo(mise.marssa.data_types.float_datatypes.Percentage)
 	 */
 	@Override
-	public void rampTo(MFloat desiredValue) throws InterruptedException {
+	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
 		float difference = desiredValue.getValue() - currentValue;
 		direction = (difference > 0);
 		while(true) {

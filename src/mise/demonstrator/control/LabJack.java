@@ -15,6 +15,7 @@ import net.wimpi.modbus.ModbusSlaveException;
 import net.wimpi.modbus.io.ModbusTCPTransaction;
 import net.wimpi.modbus.msg.ReadMultipleRegistersRequest;
 import net.wimpi.modbus.msg.ReadMultipleRegistersResponse;
+import net.wimpi.modbus.msg.WriteMultipleRegistersRequest;
 import net.wimpi.modbus.msg.WriteSingleRegisterRequest;
 import net.wimpi.modbus.net.TCPMasterConnection;
 import net.wimpi.modbus.procimg.SimpleRegister;
@@ -22,8 +23,10 @@ import net.wimpi.modbus.procimg.SimpleRegister;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.MString;
 import mise.marssa.data_types.integer_datatypes.MInteger;
+import mise.marssa.data_types.integer_datatypes.MLong;
 import mise.marssa.exceptions.ConfigurationError;
 import mise.marssa.exceptions.NoConnection;
+import mise.marssa.exceptions.OutOfRange;
 
 /**
  * @author Warren Zahra
@@ -74,19 +77,25 @@ public class LabJack {
 	 */
 	static public final MInteger NUM_TIMERS_ENABLED_ADDR = new MInteger(50501);
 	
+	/**
+	 * The register containing the timer base clock.
+	 * @see mise.demonstrator.control.LabJack.TimerBaseClock
+	 */
+	static public final MInteger TIMER_BASE_CLOCK_ADDR = new MInteger(7000);
+	
+	/**
+	 * The register containing the timer clock divisor.
+	 * @see mise.demonstrator.control.LabJack.TimerBaseClock
+	 */
+	static public final MInteger TIMER_CLOCK_DIVISOR_ADDR = new MInteger(7002);
+	
 	// TODO There must be something wrong here. FIO4 is operating in output mode, regardless of FIO4-dir
 	static public final MBoolean FIO_OUT_DIRECTION = new MBoolean(true);
 	static public final MBoolean FIO_IN_DIRECTION = new MBoolean(false);
 	
-	// Timer mode addresses
-	static public final MInteger TIMER0_CONFIG_MODE_ADDR = new MInteger(7100);
-	static public final MInteger TIMER1_CONFIG_MODE_ADDR = new MInteger(7102);
-	
 	/**
 	 * The LabJack U3 has only two timers.
 	 * The number of timers enabled can be either none, one timer or two timers.<br />
-	 * Section 2.9 of the LabJack documentation has a good description of the available timers
-	 * 
 	 * @see http://labjack.com/support/u3/users-guide/2.9
 	 */
 	public enum TimersEnabled {
@@ -99,24 +108,40 @@ public class LabJack {
 	
 	/**
 	 * The LabJack U3 has only two timers.<br />
-	 * Section 2.9.1 of the LabJack documentation has a good description of these modes
-	 * @see http://labjack.com/support/u3/users-guide/2.9
+	 * @see http://labjack.com/support/u3/users-guide/2.9.1
 	 * @see mise.demonstrator.control.LabJack.TimersEnabled
 	 */
 	public enum Timers {
 		TIMER_0(0),								// Documented in section 2.9.1.1
 		TIMER_1(1);								// Documented in section 2.9.1.2
 		
-		private MInteger timerConfigModeAddress;
+		// Timer mode addresses
+		private final MInteger TIMER0_CONFIG_MODE_ADDR = new MInteger(7100);
+		private final MInteger TIMER1_CONFIG_MODE_ADDR = new MInteger(7102);
+		
+		// Timer mode addresses
+		private final MInteger TIMER0_VALUE_ADDR = new MInteger(7200);
+		private final MInteger TIMER1_VALUE_ADDR = new MInteger(7202);
+		
 		private TimerConfigMode timerConfigMode;
+		private MInteger timerConfigModeAddress;
+		private MLong timerValue;
+		private MInteger timerValueAddress;
+		
 		
 		private Timers(int timerNumber) {
 			// Constructor belongs to an enum class
-			// Hence the only possible valuers for the timerNumber are 0 and 1
-			if(timerNumber == 0)
-				timerConfigModeAddress = LabJack.TIMER0_CONFIG_MODE_ADDR;
-			else
-				timerConfigModeAddress = LabJack.TIMER1_CONFIG_MODE_ADDR;
+			// Hence the only possible values for the timerNumber are 0 and 1
+			switch(timerNumber) {
+				case 0:
+					timerConfigModeAddress = TIMER0_CONFIG_MODE_ADDR;
+					timerValueAddress = TIMER0_VALUE_ADDR;
+					break;
+				case 1:
+					timerConfigModeAddress = TIMER1_CONFIG_MODE_ADDR;
+					timerValueAddress = TIMER1_VALUE_ADDR;
+					break;
+			}
 		}
 		
 		private void setTimerConfigMode(TimerConfigMode timerConfigMode) {
@@ -130,13 +155,24 @@ public class LabJack {
 		private MInteger getTimerConfigModeAddress() {
 			return this.timerConfigModeAddress;
 		}
+		
+		private MLong getTimerValue() {
+			return this.timerValue;
+		}
+		
+		private void setTimerValue(MLong timerValue) {
+			this.timerValue = timerValue;
+		}
+		
+		private MInteger getTimerValueAddress() {
+			return this.timerValueAddress;
+		}
 	};
 	
 	/**
 	 * Timer base clock can have a mode between 0 and 6.<br />
-	 * <b>Note: Both timers use the same timer clock!</b><br />
-	 * Section 2.9.1 of the LabJack documentation has a good description of these modes
-	 * @see http://labjack.com/support/u3/users-guide/2.9
+	 * <b>Note: Both timers use the same timer clock!</b>
+	 * @see http://labjack.com/support/u3/users-guide/2.9.1
 	 */
 	public enum TimerConfigMode {
 		PWM_OUTPUT_16BIT(0),					// Documented in section 2.9.1.1
@@ -163,6 +199,7 @@ public class LabJack {
 	 * <b>Note: Both timers use the same timer clock!</b><br />
 	 * Section 2.9.1.1 of the LabJack documentation has a good description of these modes
 	 * @see http://labjack.com/support/u3/users-guide/2.9
+	 * @see mise.demonstrator.control.LabJack.TIMER_CLOCK_ADDR
 	 */
 	public enum TimerBaseClock {
 		CLOCK_4_MHZ(0),
@@ -246,7 +283,12 @@ public class LabJack {
 	private TCPMasterConnection masterConnection;
 	
 	// The number of timers
-	private TimersEnabled numTimers;
+	private TimersEnabled numTimers = TimersEnabled.NONE;
+	
+	// The base clock of the timers
+	private TimerBaseClock timerBaseClock;
+	
+	private MLong timerClockDivisor;
 	
 	private LabJack(MString host, MInteger port, TimersEnabled numTimers) throws UnknownHostException, NoConnection
 	{
@@ -296,7 +338,7 @@ public class LabJack {
     }
     
     /**
-     * @throws ConfigurationError 
+     * Sets the timer mode
      * The number of timers enabled is set from the constructor.
 	 * Since this is variable, the timer selected here may not be available.
 	 * In this case the constructor will fail and raise an exception.
@@ -309,7 +351,53 @@ public class LabJack {
     	if((timer.ordinal() + 1) > numTimers.ordinal())
     		throw new ConfigurationError("Timer " + timer.ordinal() + " is not enabled");
     	timer.setTimerConfigMode(timerConfigMode);
-    	write(timer.timerConfigModeAddress, new MInteger(timerConfigMode.ordinal()));
+    	writeMultiple(timer.timerConfigModeAddress, new MLong(timerConfigMode.ordinal()));
+    }
+    
+    /** 
+     * Sets the base clock for the LabJack timers 
+     * @param timerBaseClock the base clock for the LabJack timers
+     * @see mise.demonstrator.control.LabJack.TimerBaseClock
+     * @see mise.demonstrator.control.LabJack.TIMER_BASE_CLOCK_ADDR
+     */
+    public void setTimerBaseClock(TimerBaseClock timerBaseClock) {
+    	this.timerBaseClock = timerBaseClock;
+    	writeMultiple(LabJack.TIMER_BASE_CLOCK_ADDR, new MLong(timerBaseClock.ordinal()));
+    }
+    
+    /**
+     * Sets the value of the given timer
+     * The number of timers enabled is set from the constructor.
+	 * Since this is variable, the timer selected here may not be available.<br />
+	 * Note: 0 means duty cycle = 100% and 65535 means duty cycle = 0%
+     * @param timer the timer which will be configured
+     * @param timerValue the value for the given timer
+     * @throws ConfigurationError
+     * @throws OutOfRange 
+     * @see mise.demonstrator.control.LabJack.TimersEnabled
+     */
+    public void setTimerValue(Timers timer, MLong timerValue) throws ConfigurationError, OutOfRange {
+    	if((timer.ordinal() + 1) > numTimers.ordinal())
+    		throw new ConfigurationError("Timer " + timer.ordinal() + " is not enabled");
+    	if(timerValue.getValue() >= Math.pow(2, 32))
+    		throw new OutOfRange("Timer Value must be a value between 0 and 4294967294 (2^32 - 1)");
+    	timer.setTimerValue(timerValue);
+    	writeMultiple(timer.timerValueAddress, timerValue);
+    }
+    
+    /** 
+     * Sets the base clock for the LabJack timers<br />
+     * <b>Note: The timer clock divisor value must be between 1 and 256, otherwise an OutOfRange will be thrown!</b>
+     * @param timerBaseClock the base clock for the LabJack timers
+     * @throws OutOfRange
+     * @see mise.demonstrator.control.LabJack.TimerBaseClock
+     * @see mise.demonstrator.control.LabJack.TIMER_CLOCK_DIVISOR_ADDR
+     */
+    public void setTimerClockDivisor(MLong timerClockDivisor) throws OutOfRange {
+    	if(timerClockDivisor.getValue() < 1 || timerClockDivisor.getValue() > 256)
+    		throw new OutOfRange("Timer Clock Divisor must be a value between 1 and 256");
+    	this.timerClockDivisor = timerClockDivisor;
+    	writeMultiple(LabJack.TIMER_BASE_CLOCK_ADDR, new MLong(timerClockDivisor.getValue()));
     }
 	
 	public void write(MInteger registerNumber, MInteger registerValue) {
@@ -346,13 +434,41 @@ public class LabJack {
 		write(registerNumber, new MInteger(highLow));
 	}
 	
+	public void writeMultiple(MInteger registerNumber, MLong registerValue) {
+		SimpleRegister registerLSB = new SimpleRegister((int) (registerValue.getValue() & 0xFFFF));
+		SimpleRegister registerMSB = new SimpleRegister((int) ((registerValue.getValue() & 0xFFFF0000) >> 16));
+		SimpleRegister[] registerArray = {registerLSB, registerMSB};
+		
+		WriteMultipleRegistersRequest writeRequest = new WriteMultipleRegistersRequest(registerNumber.getValue(), registerArray);
+		
+	    // Prepare the transaction
+		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
+	    transaction.setRequest(writeRequest);
+	    //WriteSingleRegisterResponse writeResponse = (WriteSingleRegisterResponse) transaction.getResponse();
+	   
+	    // Execute the transaction repeat times
+	    try {
+			transaction.execute();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		} catch (ModbusSlaveException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		} catch (ModbusException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
 	public void read(MInteger register, MInteger count) throws ModbusIOException, ModbusSlaveException, ModbusException{
 		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
 		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(register.getValue(), count.getValue());
 		ReadMultipleRegistersResponse res = null;
 		transaction = new ModbusTCPTransaction(masterConnection);
-		
-	}
 		transaction.setRequest(req);
 		transaction.execute();
 		

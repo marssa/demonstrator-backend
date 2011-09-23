@@ -2,6 +2,8 @@ package mise.demonstrator.web_service.rudder;
 
 import mise.demonstrator.control.rudder.RudderController;
 import mise.marssa.data_types.MBoolean;
+import mise.marssa.data_types.float_datatypes.MFloat;
+
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -46,13 +48,8 @@ public class RudderControllerApplication extends Application {
         Restlet angle = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
-        		try {
-        			int direction = rudderController.getAngle();
-        			response.setEntity(Integer.toString(direction), MediaType.TEXT_PLAIN);
-        		} catch (InterruptedException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
-				}
+    			MFloat direction = rudderController.getAngle();
+    			response.setEntity(direction.toString(), MediaType.TEXT_PLAIN);
             }
         };
         
