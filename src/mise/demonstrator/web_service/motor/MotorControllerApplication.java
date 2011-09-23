@@ -2,6 +2,9 @@ package mise.demonstrator.web_service.motor;
 
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.data_types.float_datatypes.MFloat;
+import mise.marssa.exceptions.ConfigurationError;
+import mise.marssa.exceptions.OutOfRange;
+
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -38,6 +41,12 @@ public class MotorControllerApplication extends Application {
         		} catch (InterruptedException e) {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
+				} catch (ConfigurationError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OutOfRange e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
         		/*
         		String message = "Resource URI  : "

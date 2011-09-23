@@ -11,6 +11,8 @@ import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.web_service.WebServices;
+import mise.marssa.data_types.integer_datatypes.MInteger;
+import mise.marssa.data_types.integer_datatypes.MLong;
 
 /** @author Clayton Tabone
  *
@@ -27,7 +29,10 @@ public class Main extends ServerResource {
 		try {
 			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT, TimersEnabled.TWO);
 			labJack.setTimerMode(Timers.TIMER_0, TimerConfigMode.PWM_OUTPUT_16BIT);
-			//labJack.setTimerMode(Timers.TIMER_1, TimerConfigMode.PWM_OUTPUT_16BIT);
+			labJack.setTimerMode(Timers.TIMER_1, TimerConfigMode.PWM_OUTPUT_16BIT);
+			labJack.setTimerBaseClock(LabJack.TimerBaseClock.CLOCK_4_MHZ_DIVISOR);
+			labJack.setTimerClockDivisor(new MLong(2));
+			labJack.setTimerValue(Timers.TIMER_0, new MLong(65535));
 		} catch (Exception e1) {
 			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
 			e1.printStackTrace();
