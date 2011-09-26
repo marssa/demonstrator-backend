@@ -1,5 +1,10 @@
 package mise.demonstrator.control.rudder;
 
+import java.io.IOException;
+
+import net.wimpi.modbus.ModbusException;
+import net.wimpi.modbus.ModbusIOException;
+import net.wimpi.modbus.ModbusSlaveException;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.LabJack;
 import mise.marssa.data_types.MBoolean;
@@ -30,6 +35,13 @@ public class RudderController implements IRudderController {
 	
 	public RudderController (LabJack lj) {
 		this.lj = lj;
+	}
+	
+	public void rotateMultiple(MInteger multiple,MBoolean direction) throws InterruptedException{
+		for (int x = 0;x<multiple.getValue(); x++){
+			rotate(direction);
+		}
+				
 	}
 	
 	@Override
@@ -77,8 +89,9 @@ public class RudderController implements IRudderController {
 	}
 
 	@Override
-	public MFloat getAngle() {
-	int voltageValue = 2;       //value that needs to be read from the labjack	
+	public MFloat getAngle() throws IOException  {
+		System.out.println("The voltage is "+lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue());
+	   	float voltageValue = lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue();       //value that needs to be read from the labjack	
 		if (voltageValue < 2.5) {
 			voltageDifference = (float) (2.5 - voltageValue);
 			angleDifference = (float) (voltageDifference / 0.019);
@@ -88,6 +101,9 @@ public class RudderController implements IRudderController {
 			voltageDifference = (float) (voltageValue -2.5);
 			angleDifference = (float) (voltageDifference / 0.019);
 			angle = new MFloat(90 + angleDifference);
+		}
+		if (voltageValue == 2.5){
+			angle = new MFloat(0);
 		}
 		return angle;
 	}

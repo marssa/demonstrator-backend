@@ -3,6 +3,8 @@
  */
 package mise.demonstrator.control;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -22,6 +24,7 @@ import net.wimpi.modbus.procimg.SimpleRegister;
 
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.MString;
+import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.integer_datatypes.MLong;
 import mise.marssa.exceptions.ConfigurationError;
@@ -464,18 +467,40 @@ public class LabJack {
 		}
 	}
 	
-	public void read(MInteger register, MInteger count) throws ModbusIOException, ModbusSlaveException, ModbusException{
+	public MFloat read(MInteger ref, MInteger count,MInteger AIN) throws IOException {
 		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
-		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(register.getValue(), count.getValue());
+		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(ref.getValue(), count.getValue());
 		ReadMultipleRegistersResponse res = null;
 		transaction = new ModbusTCPTransaction(masterConnection);
 		transaction.setRequest(req);
-		transaction.execute();
+		
+		try {
+			transaction.execute();
+		} catch (ModbusIOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusSlaveException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ModbusException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		res = (ReadMultipleRegistersResponse) transaction.getResponse();
-		System.out.println("Digital Inputs Status=" + res.getRegisterValue(3));
+		int reg1 = AIN.getValue()*2;
+		int reg2 = (AIN.getValue()*2) +1;
 		
+		byte[] lsb = res.getRegister(reg1).toBytes();
+		byte[] msb = res.getRegister(reg2).toBytes();
+		    
+		byte[] both = {lsb[0], lsb[1], msb[0], msb[1]};
+		 
+		ByteArrayInputStream bais = new ByteArrayInputStream(both);
+		DataInputStream din = new DataInputStream(bais);
+		float voltage = (float) (din.readFloat());
 		masterConnection.close();
+		return new MFloat (voltage);
 	}
 }
 

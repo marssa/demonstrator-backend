@@ -51,7 +51,7 @@ public class Constants {
 	 */
 	public final static class RUDDER {
 		// TODO What exactly should RUDDER_DELAY represent?
-		public final static MInteger RUDDER_DELAY = new MInteger(2000);
+		public final static MInteger RUDDER_DELAY = new MInteger(50);
 	}
 	
 	/**
