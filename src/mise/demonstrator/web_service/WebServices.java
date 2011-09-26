@@ -9,6 +9,7 @@ import org.restlet.resource.ServerResource;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.demonstrator.control.lighting.NavigationLightsController;
+import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.web_service.lighting.NavigationLightsControllerApplication;
@@ -28,7 +29,7 @@ public class WebServices extends ServerResource {
 	 * @throws Exception 
 	 * 
 	 */
-	public WebServices(NavigationLightsController navLightsController, MotorController motorController, RudderController rudderController, GpsReceiver gpsReceiver) throws Exception {
+	public WebServices(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController, MotorController motorController, RudderController rudderController, GpsReceiver gpsReceiver) throws Exception {
 		/*
 		Restlet restlet = new Restlet() {
             @Override
@@ -46,7 +47,7 @@ public class WebServices extends ServerResource {
 	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.PORT.getValue());
 
 	    // Attach the navigation lights control application
-	    component.getDefaultHost().attach("/lighting", new NavigationLightsControllerApplication(navLightsController));
+	    component.getDefaultHost().attach("/lighting", new NavigationLightsControllerApplication(navLightsController, underwaterLightsController));
 	    
 	    // Attach the motor control application
 	    component.getDefaultHost().attach("/motor", new MotorControllerApplication(motorController));

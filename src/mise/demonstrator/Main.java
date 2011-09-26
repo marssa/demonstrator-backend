@@ -9,6 +9,7 @@ import mise.demonstrator.control.LabJack.TimersEnabled;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.control.lighting.NavigationLightsController;
+import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.web_service.WebServices;
 import mise.marssa.data_types.integer_datatypes.MInteger;
@@ -28,6 +29,7 @@ public class Main extends ServerResource {
 	public static void main(java.lang.String[] args) {
 		LabJack labJack = null;
 		NavigationLightsController navLightsController;
+		UnderwaterLightsController underwaterLightsController;
 		MotorController motorController;
 		RudderController rudderController;
 		
@@ -43,12 +45,13 @@ public class Main extends ServerResource {
 		// Initialise Controllers and Receivers
 		try {
 			navLightsController = new NavigationLightsController(labJack);
+			underwaterLightsController = new UnderwaterLightsController(labJack);
 			motorController = new MotorController(labJack);
 			rudderController = new RudderController(labJack);
 			// TODO attach physical GPSReceiver
 			GpsReceiver gpsReceiver = null;
 			//GpsReceiver gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
-			new WebServices(navLightsController, motorController, rudderController, gpsReceiver);
+			new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
 		} catch (ConfigurationError e) {
 			e.printStackTrace();
 			System.exit(1);
