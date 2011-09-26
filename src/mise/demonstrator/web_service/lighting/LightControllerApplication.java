@@ -10,12 +10,12 @@ import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.routing.Router;
 
-public class NavigationLightsControllerApplication extends Application {
+public class LightControllerApplication extends Application {
 	
 	NavigationLightsController navLightsController = null;
 	UnderwaterLightsController underwaterLightsController = null;
 	
-	public NavigationLightsControllerApplication(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
+	public LightControllerApplication(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
 		this.navLightsController = navLightsController;
 	}
 

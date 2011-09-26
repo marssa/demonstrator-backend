@@ -15,24 +15,24 @@ import mise.marssa.interfaces.control.lighting.ILightToggle;
 public class UnderwaterLightsController implements ILightToggle {
 
 	private boolean lightState = false;
-	private LabJack lb = null;
+	private LabJack lj = null;
 
 	private final MInteger UnLights = LabJack.FIO4_ADDR;
 
 	
 	public UnderwaterLightsController (LabJack lb) {
-		this.lb =lb;
+		this.lj =lb;
 	}
 	
 	public UnderwaterLightsController (MBoolean newState) {
 		lightState = newState.getValue();
-		lb.write(UnLights,new MBoolean (lightState));
+		lj.write(UnLights,new MBoolean (lightState));
 	}
 	
 
 	public void toggleLight() {
 		lightState = !lightState;
-		lb.write(UnLights,new MBoolean (lightState));
+		lj.write(UnLights,new MBoolean (lightState));
 	}
 	
 	public MBoolean getUnderwaterLightState() {
@@ -41,7 +41,7 @@ public class UnderwaterLightsController implements ILightToggle {
 	
 	public void setUnderwaterLightState(MBoolean newState){
 		this.lightState = newState.getValue();
-		lb.write(UnLights,newState);
+		lj.write(UnLights,newState);
 	}
 
 	

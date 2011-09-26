@@ -12,7 +12,7 @@ import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
-import mise.demonstrator.web_service.lighting.NavigationLightsControllerApplication;
+import mise.demonstrator.web_service.lighting.LightControllerApplication;
 import mise.demonstrator.web_service.motor.MotorControllerApplication;
 import mise.demonstrator.web_service.rudder.RudderControllerApplication;
 
@@ -46,8 +46,8 @@ public class WebServices extends ServerResource {
 	    // Add a new HTTP server listening on the given port
 	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.PORT.getValue());
 
-	    // Attach the navigation lights control application
-	    component.getDefaultHost().attach("/lighting", new NavigationLightsControllerApplication(navLightsController, underwaterLightsController));
+	    // Attach the light control application
+	    component.getDefaultHost().attach("/lighting", new LightControllerApplication(navLightsController, underwaterLightsController));
 	    
 	    // Attach the motor control application
 	    component.getDefaultHost().attach("/motor", new MotorControllerApplication(motorController));

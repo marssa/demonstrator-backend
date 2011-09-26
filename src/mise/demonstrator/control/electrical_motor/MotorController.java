@@ -7,6 +7,7 @@ import mise.demonstrator.control.LabJack;
 import mise.demonstrator.control.Ramping;
 import mise.demonstrator.control.LabJack.TimerConfigMode;
 import mise.demonstrator.control.LabJack.Timers;
+import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.integer_datatypes.MLong;
 import mise.marssa.data_types.float_datatypes.MFloat;
@@ -20,10 +21,12 @@ import mise.marssa.interfaces.control.electrical_motor.IMotorController;
  */
 public class MotorController implements IMotorController {
 
-	private final MInteger  STEP_DELAY = new MInteger(50);
+	private final MInteger STEP_DELAY = new MInteger(50);
 	private final MFloat STEP_SIZE = new MFloat(1.0f);
 	private LabJack lj;
 	private Ramping ramping;
+	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
+	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
 	
 	/**
 	 * @throws ConfigurationError 
@@ -46,9 +49,26 @@ public class MotorController implements IMotorController {
 	 */
 	@Override
 	public void outputValue(MFloat motorSpeed) throws ConfigurationError, OutOfRange {
-		System.out.println(motorSpeed);
 		MLong actualValue = new MLong((long) ((Math.pow(2, 32) - 1) * Math.abs(motorSpeed.getValue()) / 100.0));
 		lj.setTimerValue(LabJack.Timers.TIMER_0, actualValue);
+		lj.setTimerValue(LabJack.Timers.TIMER_1, actualValue);
+	}
+	
+	@Override
+	public void setPolaritySignal(Polarity polarity) {
+		switch (polarity) {
+		case POSITIVE:
+			lj.write(MOTOR_0_DIRECTION, new MBoolean(true));
+			lj.write(MOTOR_1_DIRECTION, new MBoolean(true));
+			break;
+		case NEGATIVE:
+			lj.write(MOTOR_0_DIRECTION, new MBoolean(false));
+			lj.write(MOTOR_1_DIRECTION, new MBoolean(false));
+			break;
+		case OFF:
+			// TODO handle the case to switch off the motors
+			break;
+		}
 	}
 	
 	@Override

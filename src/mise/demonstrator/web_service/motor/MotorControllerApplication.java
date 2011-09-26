@@ -39,13 +39,13 @@ public class MotorControllerApplication extends Application {
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
         		} catch (InterruptedException e) {
-        			// TODO Auto-generated catch block
+        			response.setStatus(Status.INFO_PROCESSING, "The ramping algorithm has been interrupted");
         			e.printStackTrace();
 				} catch (ConfigurationError e) {
-					response.setStatus(Status.INFO_MISC_WARNING, "The value of the speed resource has an incorrect format");
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The request has returned a ConfigurationError");
 					e.printStackTrace();
 				} catch (OutOfRange e) {
-					// TODO Auto-generated catch block
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The specified value is out of range");
 					e.printStackTrace();
 				}
         		/*

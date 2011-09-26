@@ -10,6 +10,7 @@ import mise.demonstrator.control.LabJack;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.data_types.integer_datatypes.MInteger;
+import mise.marssa.exceptions.NoConnection;
 import mise.marssa.interfaces.control.rudder.IRudderController;
 
 /**
@@ -89,21 +90,24 @@ public class RudderController implements IRudderController {
 	}
 
 	@Override
-	public MFloat getAngle() throws IOException  {
-		System.out.println("The voltage is "+lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue());
-	   	float voltageValue = lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue();       //value that needs to be read from the labjack	
-		if (voltageValue < 2.5) {
-			voltageDifference = (float) (2.5 - voltageValue);
-			angleDifference = (float) (voltageDifference / 0.019);
-			angle = new MFloat(90 - angleDifference);
-		}
-		if (voltageValue > 2.5) {
-			voltageDifference = (float) (voltageValue -2.5);
-			angleDifference = (float) (voltageDifference / 0.019);
-			angle = new MFloat(90 + angleDifference);
-		}
-		if (voltageValue == 2.5){
-			angle = new MFloat(0);
+	public MFloat getAngle() throws NoConnection {
+		try {
+			float voltageValue = lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue();       //value that needs to be read from the labjack
+			if (voltageValue < 2.5) {
+				voltageDifference = (float) (2.5 - voltageValue);
+				angleDifference = (float) (voltageDifference / 0.019);
+				angle = new MFloat(90 - angleDifference);
+			}
+			if (voltageValue > 2.5) {
+				voltageDifference = (float) (voltageValue -2.5);
+				angleDifference = (float) (voltageDifference / 0.019);
+				angle = new MFloat(90 + angleDifference);
+			}
+			if (voltageValue == 2.5){
+				angle = new MFloat(0);
+			}
+		} catch(IOException e) {
+			throw new NoConnection("Cannot read from LabJack\n" + e.getMessage(), e.getCause());
 		}
 		return angle;
 	}
