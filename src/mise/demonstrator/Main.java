@@ -13,6 +13,8 @@ import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.web_service.WebServices;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.integer_datatypes.MLong;
+import mise.marssa.exceptions.ConfigurationError;
+import mise.marssa.exceptions.OutOfRange;
 
 /** @author Clayton Tabone
  *
@@ -24,34 +26,38 @@ public class Main extends ServerResource {
 	 * @throws Exception 
 	 */
 	public static void main(java.lang.String[] args) {
-		// Initialise LabJack
 		LabJack labJack = null;
+		NavigationLightsController navLightsController;
+		MotorController motorController;
+		RudderController rudderController;
+		
+		// Initialise LabJack
 		try {
 			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT, TimersEnabled.TWO);
-			labJack.setTimerMode(Timers.TIMER_0, TimerConfigMode.PWM_OUTPUT_16BIT);
-			labJack.setTimerMode(Timers.TIMER_1, TimerConfigMode.PWM_OUTPUT_16BIT);
-			labJack.setTimerBaseClock(LabJack.TimerBaseClock.CLOCK_4_MHZ_DIVISOR);
-			labJack.setTimerClockDivisor(new MLong(2));
-			labJack.setTimerValue(Timers.TIMER_0, new MLong(65535));
-		} catch (Exception e1) {
+		} catch (Exception e) {
 			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
-			e1.printStackTrace();
+			e.printStackTrace();
 			System.exit(1);
 		}
 		
-		NavigationLightsController navLightsController = new NavigationLightsController(labJack);
-		// TODO: MotorController needs to be modified to use an instance of LabJack
-		MotorController motorController = new MotorController(labJack);
-		RudderController rudderController = new RudderController(labJack);
-		// TODO attach physical GPSReceiver
-		GpsReceiver gpsReceiver = null;
-		//GpsReceiver gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
-		
+		// Initialise Controllers and Receivers
 		try {
+			navLightsController = new NavigationLightsController(labJack);
+			motorController = new MotorController(labJack);
+			rudderController = new RudderController(labJack);
+			// TODO attach physical GPSReceiver
+			GpsReceiver gpsReceiver = null;
+			//GpsReceiver gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
 			new WebServices(navLightsController, motorController, rudderController, gpsReceiver);
+		} catch (ConfigurationError e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (OutOfRange e) {
+			e.printStackTrace();
+			System.exit(1);
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			System.exit(1);
 		}
 		
 		/*
