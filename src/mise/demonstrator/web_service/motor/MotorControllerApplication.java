@@ -28,8 +28,8 @@ public class MotorControllerApplication extends Application {
     public synchronized Restlet createInboundRoot() {
         Router router = new Router(getContext());
         
-        // Create the motor speed handler
-        Restlet speed = new Restlet() {
+        // Create the motor speed control handler
+        Restlet speedControl = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
         		try {
@@ -42,7 +42,7 @@ public class MotorControllerApplication extends Application {
         			// TODO Auto-generated catch block
         			e.printStackTrace();
 				} catch (ConfigurationError e) {
-					// TODO Auto-generated catch block
+					response.setStatus(Status.INFO_MISC_WARNING, "The value of the speed resource has an incorrect format");
 					e.printStackTrace();
 				} catch (OutOfRange e) {
 					// TODO Auto-generated catch block
@@ -60,7 +60,16 @@ public class MotorControllerApplication extends Application {
             }
         };
         
-        router.attach("/speed/{speed}", speed);
+     // Create the motor speed monitoring handler
+        Restlet speedMonitor = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+    			response.setEntity(motorController.getValue().toString(), MediaType.TEXT_PLAIN);
+            }
+        };
+        
+        router.attach("/speed/{speed}", speedControl);
+        router.attach("/speed", speedMonitor);
         
         return router;
     }

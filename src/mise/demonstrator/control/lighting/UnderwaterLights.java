@@ -12,12 +12,12 @@ import mise.marssa.interfaces.control.lighting.ILightToggle;
  * @author Warren Zahra
  *
  */
-public class UnderwaterLights implements ILightToggle{
+public class UnderwaterLights implements ILightToggle {
 
-private boolean lightState = false;
-private LabJack lb = null;
+	private boolean lightState = false;
+	private LabJack lb = null;
 
-private final MInteger UnLights = LabJack.FIO4_ADDR;
+	private final MInteger UnLights = LabJack.FIO4_ADDR;
 
 	
 	public UnderwaterLights (LabJack lb) {

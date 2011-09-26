@@ -58,4 +58,9 @@ public class Ramping implements IRamping {
             }
         }
 	}
+
+	@Override
+	public MFloat getCurrentValue() {
+		return new MFloat(currentValue);
+	}
 }
