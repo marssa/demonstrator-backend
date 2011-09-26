@@ -12,7 +12,9 @@ import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
+import mise.demonstrator.web_service.lightControlPage.LightControlPageApplication;
 import mise.demonstrator.web_service.lighting.LightControllerApplication;
+import mise.demonstrator.web_service.motionControlPage.MotorControlPageApplication;
 import mise.demonstrator.web_service.motor.MotorControllerApplication;
 import mise.demonstrator.web_service.rudder.RudderControllerApplication;
 
@@ -54,6 +56,12 @@ public class WebServices extends ServerResource {
 
 	    // Attach the rudder control application
 	    component.getDefaultHost().attach("/rudder", new RudderControllerApplication(rudderController));
+	    
+	    // Attach the motion control feedback application 
+	    component.getDefaultHost().attach("/motionControlPage", new MotorControlPageApplication(motorController, rudderController));
+	    
+	    // Attach the motion control feedback application
+	    component.getDefaultHost().attach("/lightControlPage", new LightControlPageApplication(navLightsController, underwaterLightsController));
 	    
 	    // Start the component
 	    component.start();

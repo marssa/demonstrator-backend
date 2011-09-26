@@ -17,6 +17,7 @@ public class LightControllerApplication extends Application {
 	
 	public LightControllerApplication(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
 		this.navLightsController = navLightsController;
+		this.underwaterLightsController = underwaterLightsController;
 	}
 
     /**
