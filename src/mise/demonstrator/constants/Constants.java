@@ -25,7 +25,7 @@ public class Constants {
 	 * @author Clayton Tabone
 	 */
 	public final static class LABJACK {
-		public final static MString HOST = new MString("192.168.2.14");
+		public final static MString HOST = new MString("192.168.1.1");
 		public final static MInteger PORT = new MInteger(5021);
 	}
 	
@@ -34,6 +34,7 @@ public class Constants {
 	 * @author Clayton Tabone
 	 */
 	public final static class WEB_SERVICES {
+		public final static MString HOST = new MString("192.168.1.1");
 		public final static MInteger PORT = new MInteger(8182);
 	}
 	

@@ -46,7 +46,7 @@ public class WebServices extends ServerResource {
 		
 		///*
 	    // Add a new HTTP server listening on the given port
-	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.PORT.getValue());
+	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.HOST.getContents(), Constants.WEB_SERVICES.PORT.getValue());
 
 	    // Attach the light control application
 	    component.getDefaultHost().attach("/lighting", new LightControllerApplication(navLightsController, underwaterLightsController));
