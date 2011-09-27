@@ -17,7 +17,7 @@ public class UnderwaterLights implements ILightToggle {
 	private boolean lightState = false;
 	private LabJack lb = null;
 
-	private final MInteger UnLights = LabJack.FIO4_ADDR;
+	private final MInteger UnLights = LabJack.FIO13_ADDR;
 
 	
 	public UnderwaterLights (LabJack lb) {

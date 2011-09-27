@@ -10,7 +10,7 @@ public class NavigationLightsController implements ILightToggle{
 	private boolean lightState;
 	private LabJack lj;
 	
-	static private final MInteger NAV_LIGHTS = LabJack.FIO4_ADDR;
+	static private final MInteger NAV_LIGHTS = LabJack.FIO12_ADDR;
 	
 	public NavigationLightsController(LabJack lj) {
 		// TODO There must be something wrong here. FIO4 is operating in output mode, regardless of FIO4-dir

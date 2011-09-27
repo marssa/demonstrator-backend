@@ -55,6 +55,13 @@ public class LabJack {
 	static public final MInteger FIO18_ADDR = new MInteger(6018);
 	static public final MInteger FIO19_ADDR = new MInteger(6019);
 	
+	//AIN addresses
+	static public final MInteger AIN0_ADDR = new MInteger(0);
+	static public final MInteger AIN1_ADDR = new MInteger(1);
+	static public final MInteger AIN2_ADDR = new MInteger(2);
+	static public final MInteger AIN3_ADDR = new MInteger(3);
+	
+	
 	// Direction addresses
 	static public final MInteger FIO4_DIR_ADDR = new MInteger(6104);
 	static public final MInteger FIO5_DIR_ADDR = new MInteger(6105);

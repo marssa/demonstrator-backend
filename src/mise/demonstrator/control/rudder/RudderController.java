@@ -90,8 +90,7 @@ public class RudderController implements IRudderController {
 
 	@Override
 	public MFloat getAngle() throws IOException  {
-		System.out.println("The voltage is "+lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue());
-	   	float voltageValue = lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue();       //value that needs to be read from the labjack	
+		float voltageValue = lj.read(new MInteger (0),new MInteger (8),lj.AIN0_ADDR).getValue();       //value that needs to be read from the labjack at AIN0
 		if (voltageValue < 2.5) {
 			voltageDifference = (float) (2.5 - voltageValue);
 			angleDifference = (float) (voltageDifference / 0.019);
