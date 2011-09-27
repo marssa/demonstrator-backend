@@ -3,12 +3,14 @@ package mise.demonstrator.web_service.rudder;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.float_datatypes.MFloat;
+import mise.marssa.exceptions.NoConnection;
 
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
+import org.restlet.data.Status;
 import org.restlet.resource.Resource;
 import org.restlet.routing.Router;
 
@@ -48,8 +50,13 @@ public class RudderControllerApplication extends Application {
         Restlet angle = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
-    			MFloat direction = rudderController.getAngle();
-    			response.setEntity(direction.toString(), MediaType.TEXT_PLAIN);
+        		try {
+        			MFloat direction = rudderController.getAngle();
+        			response.setEntity(direction.toString(), MediaType.TEXT_PLAIN);
+        		} catch (NoConnection e) {
+        			response.setStatus(Status.INFO_CONTINUE, "Cannot set the rudder angle. NoConnection error returned.");
+        			e.printStackTrace();
+        		}
             }
         };
         

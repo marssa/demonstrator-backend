@@ -9,9 +9,12 @@ import org.restlet.resource.ServerResource;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.demonstrator.control.lighting.NavigationLightsController;
+import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
-import mise.demonstrator.web_service.lighting.NavigationLightsControllerApplication;
+import mise.demonstrator.web_service.lightControlPage.LightControlPageApplication;
+import mise.demonstrator.web_service.lighting.LightControllerApplication;
+import mise.demonstrator.web_service.motionControlPage.MotorControlPageApplication;
 import mise.demonstrator.web_service.motor.MotorControllerApplication;
 import mise.demonstrator.web_service.rudder.RudderControllerApplication;
 
@@ -28,7 +31,7 @@ public class WebServices extends ServerResource {
 	 * @throws Exception 
 	 * 
 	 */
-	public WebServices(NavigationLightsController navLightsController, MotorController motorController, RudderController rudderController, GpsReceiver gpsReceiver) throws Exception {
+	public WebServices(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController, MotorController motorController, RudderController rudderController, GpsReceiver gpsReceiver) throws Exception {
 		/*
 		Restlet restlet = new Restlet() {
             @Override
@@ -45,14 +48,20 @@ public class WebServices extends ServerResource {
 	    // Add a new HTTP server listening on the given port
 	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.PORT.getValue());
 
-	    // Attach the navigation lights control application
-	    component.getDefaultHost().attach("/lighting", new NavigationLightsControllerApplication(navLightsController));
+	    // Attach the light control application
+	    component.getDefaultHost().attach("/lighting", new LightControllerApplication(navLightsController, underwaterLightsController));
 	    
 	    // Attach the motor control application
 	    component.getDefaultHost().attach("/motor", new MotorControllerApplication(motorController));
 
 	    // Attach the rudder control application
 	    component.getDefaultHost().attach("/rudder", new RudderControllerApplication(rudderController));
+	    
+	    // Attach the motion control feedback application 
+	    component.getDefaultHost().attach("/motionControlPage", new MotorControlPageApplication(motorController, rudderController));
+	    
+	    // Attach the motion control feedback application
+	    component.getDefaultHost().attach("/lightControlPage", new LightControlPageApplication(navLightsController, underwaterLightsController));
 	    
 	    // Start the component
 	    component.start();

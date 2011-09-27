@@ -1,6 +1,7 @@
 package mise.demonstrator.web_service.lighting;
 
 import mise.demonstrator.control.lighting.NavigationLightsController;
+import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.marssa.data_types.MBoolean;
 import org.restlet.Application;
 import org.restlet.Request;
@@ -9,12 +10,14 @@ import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.routing.Router;
 
-public class NavigationLightsControllerApplication extends Application {
+public class LightControllerApplication extends Application {
 	
 	NavigationLightsController navLightsController = null;
+	UnderwaterLightsController underwaterLightsController = null;
 	
-	public NavigationLightsControllerApplication(NavigationLightsController navLightsController) {
+	public LightControllerApplication(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
 		this.navLightsController = navLightsController;
+		this.underwaterLightsController = underwaterLightsController;
 	}
 
     /**
@@ -35,7 +38,7 @@ public class NavigationLightsControllerApplication extends Application {
             }
         };
         
-     // Create the navigation lights state handler
+        // Create the navigation lights state handler
         Restlet navLightsState = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
@@ -44,8 +47,30 @@ public class NavigationLightsControllerApplication extends Application {
             }
         };
         
+        // Create the underwater lights state handler
+        Restlet underwaterLights = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
+    			boolean state = Boolean.parseBoolean(request.getAttributes().get("state").toString());
+    			underwaterLightsController.setUnderwaterLightState(new MBoolean(state));
+    			response.setEntity("Setting navigation lights state to " + (state ? "on" : "off"), MediaType.TEXT_PLAIN);
+            }
+        };
+        
+        // Create the underwater lights state handler
+        Restlet underwaterLightsState = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
+    			response.setEntity(underwaterLightsController.getUnderwaterLightState().toString(), MediaType.TEXT_PLAIN);
+            }
+        };
+        
         router.attach("/navigationLights/{state}", navLights);
         router.attach("/navigationLights", navLightsState);
+        router.attach("/underwaterLights/{state}", underwaterLights);
+        router.attach("/underwaterLights", underwaterLightsState);
         
         return router;
     }
