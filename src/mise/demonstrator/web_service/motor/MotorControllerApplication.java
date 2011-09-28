@@ -1,5 +1,6 @@
 package mise.demonstrator.web_service.motor;
 
+import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.exceptions.ConfigurationError;
@@ -60,7 +61,51 @@ public class MotorControllerApplication extends Application {
             }
         };
         
-     // Create the motor speed monitoring handler
+        // Create the increase motor speed control handler
+        Restlet increaseSpeed = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		try {
+        			motorController.increase(Constants.MOTOR.STEP_SIZE);
+    				response.setEntity("Increasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
+        		} catch (NumberFormatException e) {
+        			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
+        		} catch (InterruptedException e) {
+        			response.setStatus(Status.INFO_PROCESSING, "The ramping algorithm has been interrupted");
+        			e.printStackTrace();
+				} catch (ConfigurationError e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The request has returned a ConfigurationError");
+					e.printStackTrace();
+				} catch (OutOfRange e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The specified value is out of range");
+					e.printStackTrace();
+				}
+            }
+        };
+        
+        // Create the decrease motor speed control handler
+        Restlet decreaseSpeed = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		try {
+        			motorController.decrease(Constants.MOTOR.STEP_SIZE);
+    				response.setEntity("Decreasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
+        		} catch (NumberFormatException e) {
+        			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
+        		} catch (InterruptedException e) {
+        			response.setStatus(Status.INFO_PROCESSING, "The ramping algorithm has been interrupted");
+        			e.printStackTrace();
+				} catch (ConfigurationError e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The request has returned a ConfigurationError");
+					e.printStackTrace();
+				} catch (OutOfRange e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The specified value is out of range");
+					e.printStackTrace();
+				}
+            }
+        };
+        
+        // Create the motor speed monitoring handler
         Restlet speedMonitor = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
@@ -69,6 +114,8 @@ public class MotorControllerApplication extends Application {
         };
         
         router.attach("/speed/{speed}", speedControl);
+        router.attach("/increaseSpeed", increaseSpeed);
+        router.attach("/decreaseSpeed", decreaseSpeed);
         router.attach("/speed", speedMonitor);
         
         return router;

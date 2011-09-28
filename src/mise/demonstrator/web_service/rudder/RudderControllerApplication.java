@@ -1,8 +1,10 @@
 package mise.demonstrator.web_service.rudder;
 
+import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.float_datatypes.MFloat;
+import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.exceptions.NoConnection;
 
 import org.restlet.Application;
@@ -45,6 +47,23 @@ public class RudderControllerApplication extends Application {
             }
         };
         
+     // Create the rotation handler
+        Restlet rotateMore = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		try {
+        			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
+        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
+        			//rudderController.rotate(new MBoolean(direction));
+        			rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(direction));
+        			response.setEntity("Rotating the rudder MORE in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
+        		} catch (InterruptedException e) {
+        			// TODO Auto-generated catch block
+        			e.printStackTrace();
+				}
+            }
+        };
+        
         // Create the rotation handler
         //TODO Change this to a Resource
         Restlet angle = new Restlet() {
@@ -61,6 +80,7 @@ public class RudderControllerApplication extends Application {
         };
         
         router.attach("/rotate/{direction}", rotate);
+        router.attach("/rotateMore/{direction}", rotateMore);
         router.attach("/angle", angle);
         
         return router;

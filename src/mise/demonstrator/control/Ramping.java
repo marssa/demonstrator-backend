@@ -23,22 +23,24 @@ public class Ramping implements IRamping {
 	// true means positive ramping
 	boolean direction = false;
 	
-	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller) {
+	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller) throws ConfigurationError, OutOfRange {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
 		this.controller = controller;
 		this.currentValue = 0;
+		controller.outputValue(new MFloat(this.currentValue));
 	}
 	
-	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, MFloat initialValue) {
+	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, MFloat initialValue) throws ConfigurationError, OutOfRange {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
 		this.controller = controller;
 		this.currentValue = initialValue.getValue();
+		controller.outputValue(new MFloat(this.currentValue));
 	}
 	
 	/* (non-Javadoc)
-	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#rampTo(mise.marssa.data_types.float_datatypes.Percentage)
+	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#rampTo(mise.marssa.data_types.float_datatypes.MFloat)
 	 */
 	@Override
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
@@ -62,6 +64,22 @@ public class Ramping implements IRamping {
             	break;
             }
         }
+	}
+	
+	/* (non-Javadoc)
+	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#increase(mise.marssa.data_types.float_datatypes.MFloat)
+	 */
+	@Override
+	public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+		rampTo(new MFloat(currentValue + incrementValue.getValue()));
+	}
+	
+	/* (non-Javadoc)
+	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#decrease(mise.marssa.data_types.float_datatypes.MFloat)
+	 */
+	@Override
+	public void decrease(MFloat decrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+		rampTo(new MFloat(currentValue - decrementValue.getValue()));
 	}
 
 	@Override

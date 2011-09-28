@@ -3,6 +3,7 @@
  */
 package mise.demonstrator.control.electrical_motor;
 
+import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.LabJack;
 import mise.demonstrator.control.Ramping;
 import mise.demonstrator.control.LabJack.TimerConfigMode;
@@ -42,6 +43,7 @@ public class MotorController implements IMotorController {
 		lj.setTimerValue(Timers.TIMER_0, new MLong((long) Math.pow(2, 32) - 1));
 		lj.setTimerValue(Timers.TIMER_1, new MLong((long) Math.pow(2, 32) - 1));
 		this.ramping = new Ramping(STEP_DELAY, STEP_SIZE, this);
+		
 	}
 
 	/* (non-Javadoc)
@@ -77,6 +79,27 @@ public class MotorController implements IMotorController {
 	}
 	
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
-		this.ramping.rampTo(desiredValue);
+		if(desiredValue.getValue() > Constants.MOTOR.MAX_VALUE.getValue())
+			this.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
+		else if(desiredValue.getValue() > Constants.MOTOR.MIN_VALUE.getValue())
+			this.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
+		else
+			this.ramping.rampTo(desiredValue);
+	}
+	
+	public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+		float currentValue = this.ramping.getCurrentValue().getValue();
+		if((currentValue + Constants.MOTOR.STEP_SIZE.getValue()) > Constants.MOTOR.MAX_VALUE.getValue())
+			this.rampTo(Constants.MOTOR.MAX_VALUE);
+		else
+			this.ramping.increase(incrementValue);
+	}
+	
+	public void decrease(MFloat decrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+		float currentValue = this.ramping.getCurrentValue().getValue();
+		if((currentValue - Constants.MOTOR.STEP_SIZE.getValue()) < Constants.MOTOR.MIN_VALUE.getValue())
+			this.rampTo(Constants.MOTOR.MIN_VALUE);
+		else
+			this.ramping.decrease(decrementValue);
 	}
 }
