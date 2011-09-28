@@ -355,9 +355,10 @@ public class LabJack {
      * @param timer the timer which will be configured
      * @param timerConfigMode the mode for the specified timer
      * @throws ConfigurationError
+     * @throws NoConnection 
      * @see mise.demonstrator.control.LabJack.TimersEnabled
      */
-    public void setTimerMode(Timers timer, TimerConfigMode timerConfigMode) throws ConfigurationError {
+    public void setTimerMode(Timers timer, TimerConfigMode timerConfigMode) throws ConfigurationError, NoConnection {
     	if((timer.ordinal() + 1) > numTimers.ordinal())
     		throw new ConfigurationError("Timer " + timer.ordinal() + " is not enabled");
     	timer.setTimerConfigMode(timerConfigMode);
@@ -367,10 +368,11 @@ public class LabJack {
     /** 
      * Sets the base clock for the LabJack timers 
      * @param timerBaseClock the base clock for the LabJack timers
+     * @throws NoConnection 
      * @see mise.demonstrator.control.LabJack.TimerBaseClock
      * @see mise.demonstrator.control.LabJack.TIMER_BASE_CLOCK_ADDR
      */
-    public void setTimerBaseClock(TimerBaseClock timerBaseClock) {
+    public void setTimerBaseClock(TimerBaseClock timerBaseClock) throws NoConnection {
     	this.timerBaseClock = timerBaseClock;
     	writeMultiple(LabJack.TIMER_BASE_CLOCK_ADDR, new MLong(timerBaseClock.ordinal()));
     }
@@ -386,7 +388,7 @@ public class LabJack {
      * @throws OutOfRange 
      * @see mise.demonstrator.control.LabJack.TimersEnabled
      */
-    public void setTimerValue(Timers timer, MLong timerValue) throws ConfigurationError, OutOfRange {
+    public void setTimerValue(Timers timer, MLong timerValue) throws NoConnection, OutOfRange, ConfigurationError {
     	if((timer.ordinal() + 1) > numTimers.ordinal())
     		throw new ConfigurationError("Timer " + timer.ordinal() + " is not enabled");
     	if(timerValue.getValue() >= Math.pow(2, 32))
@@ -400,17 +402,19 @@ public class LabJack {
      * <b>Note: The timer clock divisor value must be between 1 and 256, otherwise an OutOfRange will be thrown!</b>
      * @param timerBaseClock the base clock for the LabJack timers
      * @throws OutOfRange
+     * @throws ConfigurationError 
+     * @throws NoConnection 
      * @see mise.demonstrator.control.LabJack.TimerBaseClock
      * @see mise.demonstrator.control.LabJack.TIMER_CLOCK_DIVISOR_ADDR
      */
-    public void setTimerClockDivisor(MLong timerClockDivisor) throws OutOfRange {
+    public void setTimerClockDivisor(MLong timerClockDivisor) throws OutOfRange, NoConnection{
     	if(timerClockDivisor.getValue() < 1 || timerClockDivisor.getValue() > 256)
     		throw new OutOfRange("Timer Clock Divisor must be a value between 1 and 256");
     	this.timerClockDivisor = timerClockDivisor;
     	writeMultiple(LabJack.TIMER_BASE_CLOCK_ADDR, new MLong(timerClockDivisor.getValue()));
     }
 	
-	public void write(MInteger registerNumber, MInteger registerValue) {
+	public void write(MInteger registerNumber, MInteger registerValue)  throws NoConnection {
 		SimpleRegister register = new SimpleRegister(registerValue.getValue());
 		WriteSingleRegisterRequest writeRequest = new WriteSingleRegisterRequest(registerNumber.getValue(), register);
 		
@@ -423,28 +427,22 @@ public class LabJack {
 	    try {
 			transaction.execute();
 		} catch (ModbusIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
+			throw new NoConnection ("Cannot write to LabJack FIO port" + (registerNumber.getValue() - 6000)+"\n" + e.getMessage(), e.getCause());
 		} catch (ModbusSlaveException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
+			throw new NoConnection ("ModBus Slave exception cannot write to register" + (registerNumber.getValue() - 6000)+"\n" + e.getMessage(), e.getCause());
 		} catch (ModbusException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
+			throw new NoConnection ("ModBus exception cannot write to register" + (registerNumber.getValue() - 6000)+"\n"+ e.getMessage(), e.getCause());
 		}
 	}
 	
-	public void write(MInteger registerNumber, MBoolean state) {
+	public void write(MInteger registerNumber, MBoolean state) throws NoConnection {
 		   
 		int highLow = (state.getValue() ? 1 : 0);
 		
 		write(registerNumber, new MInteger(highLow));
 	}
 	
-	public void writeMultiple(MInteger registerNumber, MLong registerValue) {
+	public void writeMultiple(MInteger registerNumber, MLong registerValue)throws NoConnection {
 		SimpleRegister registerLSB = new SimpleRegister((int) (registerValue.getValue() & 0xFFFF));
 		SimpleRegister registerMSB = new SimpleRegister((int) ((registerValue.getValue() & 0xFFFF0000) >> 16));
 		SimpleRegister[] registerArray = {registerLSB, registerMSB};
@@ -460,39 +458,30 @@ public class LabJack {
 	    try {
 			transaction.execute();
 		} catch (ModbusIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
+			throw new NoConnection ("Cannot write to LabJack FIO port" + (registerNumber.getValue() - 6000)+"\n" + e.getMessage(), e.getCause());
 		} catch (ModbusSlaveException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
+			throw new NoConnection ("ModBus Slave exception cannot write to register" + (registerNumber.getValue() - 6000)+"\n" + e.getMessage(), e.getCause());
 		} catch (ModbusException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
+			throw new NoConnection ("ModBus exception cannot write to register" + (registerNumber.getValue() - 6000)+"\n"+ e.getMessage(), e.getCause());
 		}
 	}
 	
-	public MFloat read(MInteger ref, MInteger count,MInteger AIN) throws IOException {
+	public MFloat read(MInteger ref, MInteger count,MInteger AIN) throws  NoConnection, IOException {
 		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
 		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(ref.getValue(), count.getValue());
 		ReadMultipleRegistersResponse res = null;
 		transaction = new ModbusTCPTransaction(masterConnection);
 		transaction.setRequest(req);
 		
-		try {
-			transaction.execute();
-		} catch (ModbusIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ModbusSlaveException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ModbusException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		  try {
+				transaction.execute();
+			} catch (ModbusIOException e) {
+				throw new NoConnection ("Cannot read from LabJack port AIN"+ AIN +"\n" + e.getMessage(), e.getCause());
+			} catch (ModbusSlaveException e) {
+				throw new NoConnection ("ModBus Slave exception cannot write to register\n" + e.getMessage(), e.getCause());
+			} catch (ModbusException e) {
+				throw new NoConnection ("ModBus exception cannot write to register\n" + e.getMessage(), e.getCause());
+			}
 		
 		res = (ReadMultipleRegistersResponse) transaction.getResponse();
 		int reg1 = AIN.getValue()*2;

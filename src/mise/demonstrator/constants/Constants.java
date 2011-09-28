@@ -4,6 +4,7 @@
 package mise.demonstrator.constants;
 
 import mise.marssa.data_types.MString;
+import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 
 /**
@@ -47,12 +48,23 @@ public class Constants {
 	}
 	
 	/**
+	 * Motor Constants
+	 * @author Clayton Tabone
+	 */
+	public final static class MOTOR {
+		public final static MFloat STEP_SIZE = new MFloat(10);
+		public final static MFloat MAX_VALUE = new MFloat(100);
+		public final static MFloat MIN_VALUE = new MFloat(-100);
+	}
+	
+	/**
 	 * Rudder Constants
 	 * @author Clayton Tabone
 	 */
 	public final static class RUDDER {
 		// TODO What exactly should RUDDER_DELAY represent?
 		public final static MInteger RUDDER_DELAY = new MInteger(50);
+		public final static MInteger ROTATIONS = new MInteger(5);
 	}
 	
 	/**
