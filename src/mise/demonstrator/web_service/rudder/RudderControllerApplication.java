@@ -4,7 +4,6 @@ import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.exceptions.NoConnection;
 
 import org.restlet.Application;
@@ -13,7 +12,6 @@ import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
-import org.restlet.resource.Resource;
 import org.restlet.routing.Router;
 
 public class RudderControllerApplication extends Application {
@@ -37,7 +35,7 @@ public class RudderControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		try {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
+        			boolean direction = !Boolean.parseBoolean(request.getAttributes().get("direction").toString());
         			rudderController.rotate(new MBoolean(direction));
         			response.setEntity("Rotating the rudder in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
         		} catch (InterruptedException e) {
@@ -53,7 +51,7 @@ public class RudderControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		try {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
+        			boolean direction = !Boolean.parseBoolean(request.getAttributes().get("direction").toString());
         			//rudderController.rotate(new MBoolean(direction));
         			rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(direction));
         			response.setEntity("Rotating the rudder MORE in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);

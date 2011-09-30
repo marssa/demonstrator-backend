@@ -22,12 +22,47 @@ import mise.marssa.interfaces.control.electrical_motor.IMotorController;
  */
 public class MotorController implements IMotorController {
 
+	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
+	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
 	private final MInteger STEP_DELAY = new MInteger(50);
 	private final MFloat STEP_SIZE = new MFloat(1.0f);
 	private LabJack lj;
 	private Ramping ramping;
-	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
-	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
+	private Thread rampingThread;
+	private RampingTask rampingTask = null;
+	
+	private class RampingTask implements Runnable {
+		private MotorController mc;
+		MFloat desiredValue;
+		
+		public RampingTask(MotorController mc, MFloat desiredValue) {
+			this.mc = mc;
+			this.desiredValue = desiredValue;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				synchronized(this) {
+					if(desiredValue.getValue() > Constants.MOTOR.MAX_VALUE.getValue())
+						this.mc.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
+					else if(desiredValue.getValue() < Constants.MOTOR.MIN_VALUE.getValue())
+						this.mc.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
+					else
+						this.mc.ramping.rampTo(desiredValue);
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ConfigurationError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OutOfRange e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	/**
 	 * @throws ConfigurationError 
@@ -43,7 +78,6 @@ public class MotorController implements IMotorController {
 		lj.setTimerValue(Timers.TIMER_0, new MLong((long) Math.pow(2, 32) - 1));
 		lj.setTimerValue(Timers.TIMER_1, new MLong((long) Math.pow(2, 32) - 1));
 		this.ramping = new Ramping(STEP_DELAY, STEP_SIZE, this);
-		
 	}
 
 	/* (non-Javadoc)
@@ -51,6 +85,7 @@ public class MotorController implements IMotorController {
 	 */
 	@Override
 	public void outputValue(MFloat motorSpeed) throws ConfigurationError, OutOfRange {
+		System.out.println(motorSpeed);
 		MLong actualValue = new MLong((long) ((Math.pow(2, 32) - 1) * Math.abs(motorSpeed.getValue()) / 100.0));
 		lj.setTimerValue(LabJack.Timers.TIMER_0, actualValue);
 		lj.setTimerValue(LabJack.Timers.TIMER_1, actualValue);
@@ -79,12 +114,17 @@ public class MotorController implements IMotorController {
 	}
 	
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
-		if(desiredValue.getValue() > Constants.MOTOR.MAX_VALUE.getValue())
-			this.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
-		else if(desiredValue.getValue() > Constants.MOTOR.MIN_VALUE.getValue())
-			this.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
-		else
-			this.ramping.rampTo(desiredValue);
+		if(this.rampingTask != null) {
+			if(this.rampingThread.isAlive()) {
+				this.rampingThread.interrupt();
+				this.rampingThread.join();
+			}
+		}
+		synchronized (this) {
+			this.rampingTask = new RampingTask(this, desiredValue);
+			this.rampingThread = new Thread(rampingTask);
+			rampingThread.start();
+		}
 	}
 	
 	public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange {

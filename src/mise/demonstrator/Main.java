@@ -3,8 +3,6 @@ package mise.demonstrator;
 import org.restlet.resource.ServerResource;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.LabJack;
-import mise.demonstrator.control.LabJack.TimerConfigMode;
-import mise.demonstrator.control.LabJack.Timers;
 import mise.demonstrator.control.LabJack.TimersEnabled;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.demonstrator.control.rudder.RudderController;
@@ -12,8 +10,6 @@ import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.web_service.WebServices;
-import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.data_types.integer_datatypes.MLong;
 import mise.marssa.exceptions.ConfigurationError;
 import mise.marssa.exceptions.OutOfRange;
 

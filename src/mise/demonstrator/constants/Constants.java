@@ -13,6 +13,8 @@ import mise.marssa.data_types.integer_datatypes.MInteger;
  */
 public class Constants {
 	
+	public static String environment = System.getProperty("environment", "production");
+	
 	/**
 	 * General Constants
 	 * @author Clayton Tabone
@@ -35,7 +37,7 @@ public class Constants {
 	 * @author Clayton Tabone
 	 */
 	public final static class WEB_SERVICES {
-		public final static MString HOST = new MString("192.168.1.1");
+		public final static MString HOST = (environment == "production") ? new MString("localhost") : new MString("192.168.1.1");
 		public final static MInteger PORT = new MInteger(8182);
 	}
 	

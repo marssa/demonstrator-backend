@@ -2,9 +2,6 @@ package mise.demonstrator.control.rudder;
 
 import java.io.IOException;
 
-import net.wimpi.modbus.ModbusException;
-import net.wimpi.modbus.ModbusIOException;
-import net.wimpi.modbus.ModbusSlaveException;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.LabJack;
 import mise.marssa.data_types.MBoolean;

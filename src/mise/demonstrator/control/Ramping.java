@@ -5,7 +5,6 @@ package mise.demonstrator.control;
 
 import mise.marssa.interfaces.control.IController;
 import mise.marssa.interfaces.control.IRamping;
-import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.exceptions.ConfigurationError;
