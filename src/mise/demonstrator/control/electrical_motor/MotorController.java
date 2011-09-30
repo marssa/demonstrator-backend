@@ -93,7 +93,11 @@ public class MotorController implements IMotorController {
 	public void outputValue(MFloat motorSpeed) throws ConfigurationError, OutOfRange, NoConnection {
 		System.out.println(motorSpeed);
 		MLong actualValue = new MLong((long) ((Math.pow(2, 32) - 1) * Math.abs(motorSpeed.getValue()) / 100.0));
-		lj.setTimerValue(LabJack.Timers.TIMER_0, actualValue);
+		/*
+		 * The Motor connected to TIMER_0 is slightly faster.
+		 * Hence it is being scaled down to 90% of the requested value.
+		 */
+		lj.setTimerValue(LabJack.Timers.TIMER_0, new MLong((long) (actualValue.getValue() * 0.9)));
 		lj.setTimerValue(LabJack.Timers.TIMER_1, actualValue);
 	}
 	

@@ -3,6 +3,7 @@
  */
 package mise.demonstrator.constants;
 
+import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.MString;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.data_types.integer_datatypes.MInteger;
@@ -12,8 +13,14 @@ import mise.marssa.data_types.integer_datatypes.MInteger;
  *
  */
 public class Constants {
-	
-	public static String environment = System.getProperty("environment", "production");
+	/**
+	 * System Properties
+	 * @author Clayton Tabone
+	 */
+	public final static class SYSTEM {
+		public static MString ENVIRONMENT = new MString(System.getProperty("mise.demonstrator.constants.environment", "production"));
+		public static MString MODBUS_DEBUG = new MString(System.getProperty("net.wimpi.modbus.debug", (ENVIRONMENT.getContents() == "development") ? "true" : "false"));
+	}
 	
 	/**
 	 * General Constants
@@ -37,7 +44,7 @@ public class Constants {
 	 * @author Clayton Tabone
 	 */
 	public final static class WEB_SERVICES {
-		public final static MString HOST = (environment == "production") ? new MString("localhost") : new MString("192.168.1.1");
+		public final static MString HOST = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "192.168.1.1" : "localhost");
 		public final static MInteger PORT = new MInteger(8182);
 	}
 	
