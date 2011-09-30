@@ -6,6 +6,7 @@ package mise.demonstrator.control.lighting;
 import mise.demonstrator.control.LabJack;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.integer_datatypes.MInteger;
+import mise.marssa.exceptions.NoConnection;
 import mise.marssa.interfaces.control.lighting.ILightToggle;
 
 /**
@@ -24,13 +25,13 @@ public class UnderwaterLightsController implements ILightToggle {
 		this.lj =lb;
 	}
 	
-	public UnderwaterLightsController (MBoolean newState) {
+	public UnderwaterLightsController (MBoolean newState) throws NoConnection {
 		lightState = newState.getValue();
 		lj.write(UnLights,new MBoolean (lightState));
 	}
 	
 
-	public void toggleLight() {
+	public void toggleLight() throws NoConnection {
 		lightState = !lightState;
 		lj.write(UnLights,new MBoolean (lightState));
 	}
@@ -39,7 +40,7 @@ public class UnderwaterLightsController implements ILightToggle {
 		return new MBoolean (lightState);
 	}
 	
-	public void setUnderwaterLightState(MBoolean newState){
+	public void setUnderwaterLightState(MBoolean newState) throws NoConnection{
 		this.lightState = newState.getValue();
 		lj.write(UnLights,newState);
 	}

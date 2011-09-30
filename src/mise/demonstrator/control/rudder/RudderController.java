@@ -31,11 +31,13 @@ public class RudderController implements IRudderController {
 	
 	private LabJack lj;
 	
-	public RudderController (LabJack lj) {
+	public RudderController (LabJack lj) throws NoConnection, InterruptedException {
 		this.lj = lj;
+		rotate(new MBoolean (false));
+		rotate(new MBoolean (true));
 	}
 	
-	public void rotateMultiple(MInteger multiple,MBoolean direction) throws InterruptedException{
+	public void rotateMultiple(MInteger multiple,MBoolean direction) throws InterruptedException, NoConnection{
 		for (int x = 0;x<multiple.getValue(); x++){
 			rotate(direction);
 		}
@@ -43,7 +45,7 @@ public class RudderController implements IRudderController {
 	}
 	
 	@Override
-	public void rotate(MBoolean direction) throws InterruptedException {
+	public void rotate(MBoolean direction) throws NoConnection, InterruptedException  {
 		if ((stepLeft == 0 && direction.getValue()) || (stepRight==3  && direction.getValue()== false)) {
 			lj.write(STEPPER1, HIGH);
 			lj.write(STEPPER2, HIGH);
@@ -90,17 +92,17 @@ public class RudderController implements IRudderController {
 	public MFloat getAngle() throws NoConnection {
 		try {
 			float voltageValue = lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue();       //value that needs to be read from the labjack
-			if (voltageValue < 2.5) {
-				voltageDifference = (float) (2.5 - voltageValue);
-				angleDifference = (float) (voltageDifference / 0.019);
-				angle = new MFloat(90 - angleDifference);
+			if (voltageValue < 2.45) {
+				voltageDifference = (float) (2.45 - voltageValue);
+				angleDifference = (float) (voltageDifference * 57.14);
+				angle = new MFloat(angleDifference);
 			}
-			if (voltageValue > 2.5) {
-				voltageDifference = (float) (voltageValue -2.5);
-				angleDifference = (float) (voltageDifference / 0.019);
-				angle = new MFloat(90 + angleDifference);
+			if (voltageValue > 2.45) {
+				voltageDifference = (float) (voltageValue -2.45);
+				angleDifference = (float) (voltageDifference * 57.14);
+				angle = new MFloat(-angleDifference);
 			}
-			if (voltageValue == 2.5){
+			if (voltageValue == 2.45){
 				angle = new MFloat(0);
 			}
 		} catch(IOException e) {
