@@ -3,11 +3,14 @@ package mise.demonstrator.web_service.lighting;
 import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.marssa.data_types.MBoolean;
+import mise.marssa.exceptions.NoConnection;
+
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.MediaType;
+import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
 public class LightControllerApplication extends Application {
@@ -33,7 +36,12 @@ public class LightControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
     			boolean state = Boolean.parseBoolean(request.getAttributes().get("state").toString());
-    			navLightsController.setNavigationLightState(new MBoolean(state));
+    			try {
+					navLightsController.setNavigationLightState(new MBoolean(state));
+				} catch (NoConnection e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
+					e.printStackTrace();
+				}
     			response.setEntity("Setting navigation lights state to " + (state ? "on" : "off"), MediaType.TEXT_PLAIN);
             }
         };
@@ -53,7 +61,12 @@ public class LightControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
     			boolean state = Boolean.parseBoolean(request.getAttributes().get("state").toString());
-    			underwaterLightsController.setUnderwaterLightState(new MBoolean(state));
+    			try {
+					underwaterLightsController.setUnderwaterLightState(new MBoolean(state));
+				} catch (NoConnection e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
+					e.printStackTrace();
+				}
     			response.setEntity("Setting navigation lights state to " + (state ? "on" : "off"), MediaType.TEXT_PLAIN);
             }
         };

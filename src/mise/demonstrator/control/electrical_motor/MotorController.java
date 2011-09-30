@@ -13,6 +13,7 @@ import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.integer_datatypes.MLong;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.exceptions.ConfigurationError;
+import mise.marssa.exceptions.NoConnection;
 import mise.marssa.exceptions.OutOfRange;
 import mise.marssa.interfaces.control.electrical_motor.IMotorController;
 
@@ -40,6 +41,7 @@ public class MotorController implements IMotorController {
 			this.desiredValue = desiredValue;
 		}
 		
+		// TODO These exceptions have to be properly handled
 		@Override
 		public void run() {
 			try {
@@ -60,6 +62,9 @@ public class MotorController implements IMotorController {
 			} catch (OutOfRange e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch (NoConnection e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -67,9 +72,10 @@ public class MotorController implements IMotorController {
 	/**
 	 * @throws ConfigurationError 
 	 * @throws OutOfRange 
+	 * @throws NoConnection 
 	 * 
 	 */
-	public MotorController(LabJack lj) throws ConfigurationError, OutOfRange {
+	public MotorController(LabJack lj) throws ConfigurationError, OutOfRange, NoConnection {
 		this.lj = lj;
 		lj.setTimerMode(Timers.TIMER_0, TimerConfigMode.PWM_OUTPUT_16BIT);
 		lj.setTimerMode(Timers.TIMER_1, TimerConfigMode.PWM_OUTPUT_16BIT);
@@ -84,7 +90,7 @@ public class MotorController implements IMotorController {
 	 * @see mise.marssa.interfaces.electrical_motor_control.IMotorController#outputMotorSpeed(mise.marssa.data_types.float_datatypes.speed.PercentSpeed)
 	 */
 	@Override
-	public void outputValue(MFloat motorSpeed) throws ConfigurationError, OutOfRange {
+	public void outputValue(MFloat motorSpeed) throws ConfigurationError, OutOfRange, NoConnection {
 		System.out.println(motorSpeed);
 		MLong actualValue = new MLong((long) ((Math.pow(2, 32) - 1) * Math.abs(motorSpeed.getValue()) / 100.0));
 		lj.setTimerValue(LabJack.Timers.TIMER_0, actualValue);
@@ -92,7 +98,7 @@ public class MotorController implements IMotorController {
 	}
 	
 	@Override
-	public void setPolaritySignal(Polarity polarity) {
+	public void setPolaritySignal(Polarity polarity) throws NoConnection {
 		switch (polarity) {
 		case POSITIVE:
 			lj.write(MOTOR_0_DIRECTION, new MBoolean(true));
@@ -127,7 +133,7 @@ public class MotorController implements IMotorController {
 		}
 	}
 	
-	public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+	public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
 		float currentValue = this.ramping.getCurrentValue().getValue();
 		if((currentValue + Constants.MOTOR.STEP_SIZE.getValue()) > Constants.MOTOR.MAX_VALUE.getValue())
 			this.rampTo(Constants.MOTOR.MAX_VALUE);
@@ -135,7 +141,7 @@ public class MotorController implements IMotorController {
 			this.ramping.increase(incrementValue);
 	}
 	
-	public void decrease(MFloat decrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+	public void decrease(MFloat decrementValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
 		float currentValue = this.ramping.getCurrentValue().getValue();
 		if((currentValue - Constants.MOTOR.STEP_SIZE.getValue()) < Constants.MOTOR.MIN_VALUE.getValue())
 			this.rampTo(Constants.MOTOR.MIN_VALUE);

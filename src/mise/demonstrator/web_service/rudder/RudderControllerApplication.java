@@ -5,7 +5,6 @@ import mise.demonstrator.control.rudder.RudderController;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.exceptions.NoConnection;
-
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -59,28 +58,11 @@ public class RudderControllerApplication extends Application {
         			rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(direction));
         			response.setEntity("Rotating the rudder MORE in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
         		} catch (InterruptedException e) {
-        			// TODO Auto-generated catch block
+        			response.setStatus(Status.INFO_PROCESSING, "The rudder rotateMore routine has been interrupted");
         			e.printStackTrace();
 				} catch (NoConnection e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The transaction has failed");
 					e.printStackTrace();
-				}
-            }
-        };
-        
-     // Create the rotation handler
-        Restlet rotateMore = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		try {
-        			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        			boolean direction = !Boolean.parseBoolean(request.getAttributes().get("direction").toString());
-        			//rudderController.rotate(new MBoolean(direction));
-        			rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(direction));
-        			response.setEntity("Rotating the rudder MORE in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
-        		} catch (InterruptedException e) {
-        			// TODO Auto-generated catch block
-        			e.printStackTrace();
 				}
             }
         };

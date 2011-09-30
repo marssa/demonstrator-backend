@@ -4,6 +4,7 @@ import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.exceptions.ConfigurationError;
+import mise.marssa.exceptions.NoConnection;
 import mise.marssa.exceptions.OutOfRange;
 
 import org.restlet.Application;
@@ -79,6 +80,9 @@ public class MotorControllerApplication extends Application {
 				} catch (OutOfRange e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The specified value is out of range");
 					e.printStackTrace();
+				} catch (NoConnection e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
+					e.printStackTrace();
 				}
             }
         };
@@ -88,18 +92,21 @@ public class MotorControllerApplication extends Application {
         	@Override
             public void handle(Request request, Response response) {
         		try {
-        			motorController.decrease(Constants.MOTOR.STEP_SIZE);
+					motorController.decrease(Constants.MOTOR.STEP_SIZE);
     				response.setEntity("Decreasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
         		} catch (InterruptedException e) {
-        			response.setStatus(Status.INFO_PROCESSING, "The ramping algorithm has been interrupted");
+        			response.setStatus(Status.INFO_PROCESSING, "The ramping routinee has been interrupted");
         			e.printStackTrace();
 				} catch (ConfigurationError e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The request has returned a ConfigurationError");
 					e.printStackTrace();
 				} catch (OutOfRange e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The specified value is out of range");
+					e.printStackTrace();
+				} catch (NoConnection e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
 					e.printStackTrace();
 				}
             }
