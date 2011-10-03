@@ -312,7 +312,7 @@ public class LabJack {
 		} catch (UnknownHostException e) {
 			throw new NoConnection("Cannot find host: " + host + "Exception details\n" + e.getMessage(), e.getCause());
 		} catch (IOException e) {
-			throw new NoConnection("Cannot connect to host: " + host.getContents() + " Exception details\n" + e.getMessage(), e.getCause());
+			throw new NoConnection("Cannot connect to LabJack on host: " + host.getContents() + "\nException details:\n" + e.getMessage(), e.getCause());
 		} catch (Exception e) {
 			throw new NoConnection("Network failure (TCPMasterConnection): " + host + "Exception details\n" + e.getMessage(), e.getCause());
 		}

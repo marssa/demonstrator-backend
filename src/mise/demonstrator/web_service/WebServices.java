@@ -32,21 +32,14 @@ public class WebServices extends ServerResource {
 	 * 
 	 */
 	public WebServices(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController, MotorController motorController, RudderController rudderController, GpsReceiver gpsReceiver) throws Exception {
-		/*
-		Restlet restlet = new Restlet() {
-            @Override
-            public void handle(Request request, Response response) {
-                response.setEntity("Hello World!", MediaType.TEXT_PLAIN);
-            }
-        };
-
-        // Create the HTTP server and listen on port 8182
-        new Server(Protocol.HTTP, 8182, restlet).start();
-        */
-		
-		///*
 	    // Add a new HTTP server listening on the given port
 	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.HOST.getContents(), Constants.WEB_SERVICES.PORT.getValue());
+	    
+	    // Add new client connector for the FILE protocol
+	    component.getClients().add(Protocol.FILE);
+	    
+	    // Attach the static file server application
+	    component.getDefaultHost().attach("", new StaticFileServerApplication());
 
 	    // Attach the light control application
 	    component.getDefaultHost().attach("/lighting", new LightControllerApplication(navLightsController, underwaterLightsController));
@@ -65,6 +58,5 @@ public class WebServices extends ServerResource {
 	    
 	    // Start the component
 	    component.start();
-	    //*/
 	}
 }

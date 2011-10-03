@@ -34,7 +34,7 @@ public class RudderControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		try {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        			boolean direction = !Boolean.parseBoolean(request.getAttributes().get("direction").toString());
+        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
         			rudderController.rotate(new MBoolean(direction));
         			response.setEntity("Rotating the rudder in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
         		} catch (InterruptedException e) {
@@ -47,7 +47,7 @@ public class RudderControllerApplication extends Application {
             }
         };
         
-     // Create the rotation handler
+        // Create the rotation handler
         Restlet rotateMore = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
