@@ -37,7 +37,7 @@ public class MotorControlPageApplication extends Application {
 				try {
 					MFloat motorSpeed = motorController.getValue();
 					MFloat rudderAngle = rudderController.getAngle();
-					response.setEntity("{\"motor\":" + motorSpeed.toJSON() + ",\"rudder\":" + rudderAngle.toJSON().getContents() + "}", MediaType.APPLICATION_JSON);
+					response.setEntity("{\"motor\":" + motorSpeed.toJSON().getContents() + ",\"rudder\":" + rudderAngle.toJSON().getContents() + "}", MediaType.APPLICATION_JSON);
 				} catch (NoConnection e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
 					e.printStackTrace();
