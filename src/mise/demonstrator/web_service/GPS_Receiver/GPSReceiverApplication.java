@@ -38,7 +38,7 @@ public class GPSReceiverApplication extends Application {
             public void handle(Request request, Response response) {
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         		try {
-					response.setEntity("{\"coordinates\":" + gpsReceiver.getCoordinate().toJSON().getContents() + "}", MediaType.APPLICATION_JSON);
+					response.setEntity( gpsReceiver.getCoordinate().toJSON().getContents() , MediaType.APPLICATION_JSON);
 				} catch (NoConnection e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
 					e.printStackTrace();
