@@ -98,6 +98,5 @@ public class Main extends ServerResource {
 			e.printStackTrace();
 		}
 		*/
-
 	}
 }

@@ -3,7 +3,7 @@
  */
 package mise.demonstrator.constants;
 
-import mise.marssa.data_types.MBoolean;
+import java.io.File;
 import mise.marssa.data_types.MString;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.data_types.integer_datatypes.MInteger;
@@ -18,8 +18,9 @@ public class Constants {
 	 * @author Clayton Tabone
 	 */
 	public final static class SYSTEM {
-		public static MString ENVIRONMENT = new MString(System.getProperty("mise.demonstrator.constants.environment", "production"));
-		public static MString MODBUS_DEBUG = new MString(System.getProperty("net.wimpi.modbus.debug", (ENVIRONMENT.getContents() == "development") ? "true" : "false"));
+		public final static MString ENVIRONMENT = new MString(System.getProperty("mise.demonstrator.constants.environment", "production"));
+		public final static MString MODBUS_DEBUG = new MString(System.getProperty("net.wimpi.modbus.debug", (ENVIRONMENT.getContents() == "development") ? "true" : "false"));
+		public final static MString ROOT_URI = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "/root/demonstrator/theDemonStrator-Front-End" : new File(System.getProperty("mise.demonstrator.constants.workspace"), "theDemonStrator-Front-End").toString());
 	}
 	
 	/**
