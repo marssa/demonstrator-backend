@@ -33,7 +33,7 @@ public class LightControlPageApplication extends Application {
             public void handle(Request request, Response response) {
 				MBoolean navLightsState = navLightsController.getNavigationLightState();
 				MBoolean underWaterLightsState = underwaterLightsController.getUnderwaterLightState();
-				response.setEntity("{\"navLights\":\"" + navLightsState + "\",\"underwaterLights\":\"" + underWaterLightsState + "\"}", MediaType.APPLICATION_JSON);
+				response.setEntity("{\"navLights\":\"" + navLightsState.toJSON() + "\",\"underwaterLights\":\"" + underWaterLightsState.toJSON().getContents() + "\"}", MediaType.APPLICATION_JSON);
             }
         };
         
