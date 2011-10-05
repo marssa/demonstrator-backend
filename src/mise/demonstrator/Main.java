@@ -19,8 +19,7 @@ import mise.marssa.exceptions.OutOfRange;
 public class Main extends ServerResource {
 		
 	/**
-	 * @param args the args
-	 * @throws Exception 
+	 * @param args the args 
 	 */
 	public static void main(java.lang.String[] args) {
 		LabJack labJack = null;
@@ -28,6 +27,8 @@ public class Main extends ServerResource {
 		UnderwaterLightsController underwaterLightsController;
 		MotorController motorController;
 		RudderController rudderController;
+		GpsReceiver gpsReceiver;
+		WebServices webServices;
 		
 		// Initialise LabJack
 		try {
@@ -45,9 +46,12 @@ public class Main extends ServerResource {
 			motorController = new MotorController(labJack);
 			rudderController = new RudderController(labJack);
 			// TODO attach physical GPSReceiver
-			GpsReceiver gpsReceiver = null;
-			//GpsReceiver gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
-			new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
+			//GpsReceiver gpsReceiver = null;
+			gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
+			//System.out.println(gpsReceiver.getCoordinate());
+			webServices = new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
+			webServices.start();
+			
 		} catch (ConfigurationError e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -58,7 +62,6 @@ public class Main extends ServerResource {
 			e1.printStackTrace();
 			System.exit(1);
 		}
-		
 		/*
 		// NavigationLights Tests
 		System.out.println(navigationLights.getNavigationLightState());

@@ -4,6 +4,8 @@
 package mise.demonstrator.navigation_equipment;
 
 import java.io.IOException;
+import java.util.List;
+
 import de.taimos.gpsd4java.backend.GPSdEndpoint;
 import de.taimos.gpsd4java.types.ParseException;
 import de.taimos.gpsd4java.types.TPVObject;
@@ -84,25 +86,28 @@ public class GpsReceiver implements IGpsReceiver {
 	 */
 	@Override
 	public Coordinate getCoordinate() throws NoConnection, NoValue, OutOfRange {
-		for(int i = 0; i < Constants.GENERAL.RETRY_AMOUNT.getValue(); i++) {
+		//for(int i = 0; i < Constants.GENERAL.RETRY_AMOUNT.getValue(); i++) {
 			try {
-				TPVObject tpv = ep.poll().getFixes().get(0);
+				List<TPVObject> tpvList = ep.poll().getFixes();
+				if(tpvList.isEmpty())
+					throw new NoConnection("No TPV object could be read");
+				TPVObject tpv = tpvList.get(0);
 				Latitude latitude = new Latitude(new DegreesFloat((float) tpv.getLatitude()));
 				Longitude longitude = new Longitude(new DegreesFloat((float) tpv.getLongitude()));
 				return new Coordinate(latitude, longitude);
 			} catch(IOException e) {
-				if(i > Constants.GENERAL.RETRY_AMOUNT.getValue()) {
+				//if(i > Constants.GENERAL.RETRY_AMOUNT.getValue()) {
 					throw new NoConnection(e.getMessage(), e.getCause());
-				}
+				//}
 			} catch(ParseException e) {
-				if(i > Constants.GENERAL.RETRY_AMOUNT.getValue()) {
+				//if(i > Constants.GENERAL.RETRY_AMOUNT.getValue()) {
 					throw new NoValue(e.getMessage(), e.getCause());
-				}
+				//}
 			}
-		}
+		//}
 		// This code is unreachable but was added here to satisfy the compiler.
 		// The try/catch will loop for the RETRY_AMOUNT and if not successful will return a NoConnection Exception
-		return null;
+		//return null;
 	}
 
 	/* (non-Javadoc)

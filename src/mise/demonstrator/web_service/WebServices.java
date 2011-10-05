@@ -12,6 +12,7 @@ import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
+import mise.demonstrator.web_service.GPS_Receiver.GPSReceiverApplication;
 import mise.demonstrator.web_service.lightControlPage.LightControlPageApplication;
 import mise.demonstrator.web_service.lighting.LightControllerApplication;
 import mise.demonstrator.web_service.motionControlPage.MotorControlPageApplication;
@@ -50,13 +51,28 @@ public class WebServices extends ServerResource {
 	    // Attach the rudder control application
 	    component.getDefaultHost().attach("/rudder", new RudderControllerApplication(rudderController));
 	    
+	    // Attach the GPS receiver application
+	    component.getDefaultHost().attach("/gps", new GPSReceiverApplication(gpsReceiver));
+	    
 	    // Attach the motion control feedback application 
 	    component.getDefaultHost().attach("/motionControlPage", new MotorControlPageApplication(motorController, rudderController));
 	    
 	    // Attach the motion control feedback application
 	    component.getDefaultHost().attach("/lightControlPage", new LightControlPageApplication(navLightsController, underwaterLightsController));
-	    
-	    // Start the component
+	}
+	
+	public void start() throws Exception {
+		// Start the component
 	    component.start();
+	}
+
+	public void stop() throws Throwable {
+		finalize();
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		component.stop();
 	}
 }

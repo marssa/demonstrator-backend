@@ -53,7 +53,7 @@ public class GPSReceiverApplication extends Application {
         };
         
        
-        router.attach("/coordinates/",coordinates);
+        router.attach("/coordinates",coordinates);
         
         return router;
     }
