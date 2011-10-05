@@ -11,6 +11,7 @@ import org.restlet.data.Status;
 import org.restlet.routing.Router;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.Ramping;
+import mise.demonstrator.control.Ramping.RampingType;
 import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.exceptions.ConfigurationError;
@@ -25,7 +26,7 @@ public class RampingTest {
 		
 		public TestController() {
 			try {
-				ramping = new Ramping(new MInteger(50), new MFloat(1.0f), this);
+				ramping = new Ramping(new MInteger(50), new MFloat(1.0f), this, RampingType.ACCELERATED);
 			} catch (ConfigurationError e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -67,11 +68,12 @@ public class RampingTest {
 			return null;
 		}
 	}
-	
 	private static class RampingTestApplication extends Application {
 	    /**
 	     * Creates a root Restlet that will receive all incoming calls.
 	     */
+
+		TestController controller = new TestController();
 	    @Override
 	    public synchronized Restlet createInboundRoot() {
 	        Router router = new Router(getContext());
@@ -80,8 +82,8 @@ public class RampingTest {
 	        Restlet lightState = new Restlet() {
 	        	@Override
 	            public void handle(Request request, Response response) {
+	        		
 					try {
-						TestController controller = new TestController();
 	        			float value = Float.parseFloat(request.getAttributes().get("desiredValue").toString());
 	        			controller.rampTo(new MFloat(value));
 	        			response.setEntity("Ramping motor speed to " + value + "%", MediaType.TEXT_PLAIN);

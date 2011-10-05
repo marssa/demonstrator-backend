@@ -3,8 +3,6 @@
  */
 package mise.demonstrator.control;
 
-import mise.demonstrator.control.LabJack.TimersEnabled;
-import mise.demonstrator.control.Ramping.RampingType;
 import mise.marssa.interfaces.control.IController;
 import mise.marssa.interfaces.control.IRamping;
 import mise.marssa.data_types.integer_datatypes.MInteger;
@@ -81,14 +79,14 @@ public class Ramping implements IRamping {
 			if (rampType == RampingType.ACCELERATED){
 				
 				if(this.polarity  == IController.Polarity.POSITIVE && direction == false){
-					if (desiredValue.getValue() < 0)
-						currentValue = 0; 
-					else if (desiredValue.getValue() >0)
-						currentValue = desiredValue.getValue(); 				
-					 }
-				else if(IController.Polarity.NEGATIVE != null && direction == true){
 					if (desiredValue.getValue() > 0)
-						currentValue = 0;
+						currentValue = desiredValue.getValue();
+					else if (desiredValue.getValue() <0)
+						currentValue = -1;				
+					 }
+				else if(this.polarity  == IController.Polarity.NEGATIVE && direction == true){
+					if (desiredValue.getValue() > 0)
+						currentValue = 1;
 					else if (desiredValue.getValue() <0)
 						currentValue = desiredValue.getValue(); 
 					 }
