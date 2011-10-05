@@ -17,7 +17,7 @@ import org.restlet.routing.Router;
 
 public class MotorControllerApplication extends Application {
 	
-	MotorController motorController = null;
+	MotorController motorController;
 	
 	public MotorControllerApplication(MotorController motorController) {
 		this.motorController = motorController;
