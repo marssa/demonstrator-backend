@@ -3,6 +3,8 @@
  */
 package mise.demonstrator.control;
 
+import mise.demonstrator.control.LabJack.TimersEnabled;
+import mise.demonstrator.control.Ramping.RampingType;
 import mise.marssa.interfaces.control.IController;
 import mise.marssa.interfaces.control.IRamping;
 import mise.marssa.data_types.integer_datatypes.MInteger;
@@ -18,24 +20,34 @@ import mise.marssa.exceptions.OutOfRange;
 public class Ramping implements IRamping {
 	int stepDelay;
 	float currentValue, stepSize;
-	IController controller;
-	
+	private IController controller;
+	private RampingType rampType;
 	// true means positive ramping
 	boolean direction = false;
+	private IController.Polarity polarity;
 	
-	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller) throws ConfigurationError, OutOfRange, NoConnection {
+	public enum RampingType{
+		DEFAULT(0),
+		ACCELERATED(1);
+		
+		private RampingType(int rampingType) { }
+	};
+	
+	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, RampingType rampType) throws ConfigurationError, OutOfRange, NoConnection {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
 		this.controller = controller;
 		this.currentValue = 0;
+		this.rampType  = rampType;
 		controller.outputValue(new MFloat(this.currentValue));
 	}
 	
-	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, MFloat initialValue) throws ConfigurationError, OutOfRange, NoConnection {
+	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, MFloat initialValue, RampingType rampType) throws ConfigurationError, OutOfRange, NoConnection {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
 		this.controller = controller;
 		this.currentValue = initialValue.getValue();
+		this.rampType  = rampType;
 		controller.outputValue(new MFloat(this.currentValue));
 	}
 	
@@ -49,15 +61,39 @@ public class Ramping implements IRamping {
 		while(true) {
 			if(difference == 0) {
 				// Do nothing. The desired value is the same as the current value.
-			} else if(direction) {
-				if(currentValue == stepSize)
-					controller.setPolaritySignal(IController.Polarity.POSITIVE);
+			}
+						
+			if(direction) {
+				if(currentValue == stepSize) {
+					this.polarity = IController.Polarity.POSITIVE;
+					controller.setPolaritySignal(this.polarity);
+				}
 				currentValue += stepSize;
-			} else {
-				if(currentValue == -stepSize)
-					controller.setPolaritySignal(IController.Polarity.NEGATIVE);
+			}
+			else {
+				if(currentValue == -stepSize) {
+					this.polarity = IController.Polarity.NEGATIVE;
+					controller.setPolaritySignal(this.polarity);
+				 }
 				currentValue -= stepSize;
 			}
+			
+			if (rampType == RampingType.ACCELERATED){
+				
+				if(this.polarity  == IController.Polarity.POSITIVE && direction == false){
+					if (desiredValue.getValue() < 0)
+						currentValue = 0; 
+					else if (desiredValue.getValue() >0)
+						currentValue = desiredValue.getValue(); 				
+					 }
+				else if(IController.Polarity.NEGATIVE != null && direction == true){
+					if (desiredValue.getValue() > 0)
+						currentValue = 0;
+					else if (desiredValue.getValue() <0)
+						currentValue = desiredValue.getValue(); 
+					 }
+			}
+			
 			controller.outputValue(new MFloat(currentValue));
             Thread.sleep(stepDelay);
             if((currentValue == desiredValue.getValue())) {

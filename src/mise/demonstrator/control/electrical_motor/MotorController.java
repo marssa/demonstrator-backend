@@ -8,6 +8,7 @@ import mise.demonstrator.control.LabJack;
 import mise.demonstrator.control.Ramping;
 import mise.demonstrator.control.LabJack.TimerConfigMode;
 import mise.demonstrator.control.LabJack.Timers;
+import mise.demonstrator.control.Ramping.RampingType;
 import mise.marssa.data_types.MBoolean;
 import mise.marssa.data_types.integer_datatypes.MInteger;
 import mise.marssa.data_types.integer_datatypes.MLong;
@@ -25,7 +26,7 @@ public class MotorController implements IMotorController {
 
 	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
 	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
-	private final MInteger STEP_DELAY = new MInteger(50);
+	private final MInteger STEP_DELAY = new MInteger(20);
 	private final MFloat STEP_SIZE = new MFloat(1.0f);
 	private LabJack lj;
 	private Ramping ramping;
@@ -83,7 +84,7 @@ public class MotorController implements IMotorController {
 		lj.setTimerClockDivisor(new MLong(2));
 		lj.setTimerValue(Timers.TIMER_0, new MLong((long) Math.pow(2, 32) - 1));
 		lj.setTimerValue(Timers.TIMER_1, new MLong((long) Math.pow(2, 32) - 1));
-		this.ramping = new Ramping(STEP_DELAY, STEP_SIZE, this);
+		this.ramping = new Ramping(STEP_DELAY, STEP_SIZE, this, RampingType.ACCELERATED );
 	}
 
 	/* (non-Javadoc)
@@ -124,6 +125,7 @@ public class MotorController implements IMotorController {
 	}
 	
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
+	 
 		if(this.rampingTask != null) {
 			if(this.rampingThread.isAlive()) {
 				this.rampingThread.interrupt();
