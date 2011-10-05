@@ -55,9 +55,11 @@ public class Ramping implements IRamping {
 	@Override
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
 		float difference = desiredValue.getValue() - currentValue;
+		
 		direction = (difference > 0);
 		while(true) {
-			if(difference == 0) {
+			
+			if(difference == 0) {break;
 				// Do nothing. The desired value is the same as the current value.
 			}
 						
@@ -83,14 +85,22 @@ public class Ramping implements IRamping {
 						currentValue = desiredValue.getValue();
 					else if (desiredValue.getValue() <0)
 						currentValue = -1;				
-					 }
+					else
+					currentValue=0;
+					
+				}
 				else if(this.polarity  == IController.Polarity.NEGATIVE && direction == true){
 					if (desiredValue.getValue() > 0)
 						currentValue = 1;
 					else if (desiredValue.getValue() <0)
 						currentValue = desiredValue.getValue(); 
+					else
+						currentValue=0;
+					
 					 }
-			}
+				
+	            }
+			
 			
 			controller.outputValue(new MFloat(currentValue));
             Thread.sleep(stepDelay);
