@@ -27,7 +27,7 @@ public class RudderController implements IRudderController {
 	private int stepLeft = 0;
 	private float voltageDifference =0;
 	private float angleDifference =0;
-	private MFloat angle;
+	private static MFloat angle;
 	
 	private LabJack lj;
 	
@@ -37,11 +37,28 @@ public class RudderController implements IRudderController {
 		rotate(new MBoolean (true));
 	}
 	
-	public void rotateMultiple(MInteger multiple,MBoolean direction) throws InterruptedException, NoConnection{
+	public synchronized void rotateMultiple(MInteger multiple,MBoolean direction) throws InterruptedException, NoConnection{
 		for (int x = 0;x<multiple.getValue(); x++){
 			rotate(direction);
+			if(angle.getValue()>30 && direction.getValue()== true){
+				break;
+			}
+			else if(angle.getValue()<-30 && direction.getValue()== false){
+				break;
+			}
 		}
 				
+	}
+	public synchronized void rotateExtreme(MBoolean direction) throws InterruptedException, NoConnection{
+		
+		while(angle.getValue()<30 && direction.getValue()== true){
+		rotate(direction);
+		}
+		
+		while(angle.getValue()>-32 && direction.getValue()== false){
+			rotate(direction);
+		}
+						
 	}
 	
 	@Override
@@ -55,6 +72,7 @@ public class RudderController implements IRudderController {
 			stepRight= 0;
 			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.getValue());	
 			return;
+			
 		}
 		if ((stepLeft == 1 && direction.getValue()) || (stepRight==2  && direction.getValue()== false)) {
 			lj.write(STEPPER1, LOW);
