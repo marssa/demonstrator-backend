@@ -82,9 +82,29 @@ public class RudderControllerApplication extends Application {
             }
         };
         
+        // Create the rotation handler to rotate to the extremes
+        Restlet rotateFull = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		try {
+        			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
+        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
+        			rudderController.rotateExtreme(new MBoolean(direction));
+        			response.setEntity("Rotating the rudder to the extreme = " + direction, MediaType.TEXT_PLAIN);
+        		} catch (InterruptedException e) {
+        			response.setStatus(Status.INFO_PROCESSING, "The rudder rotateMore routine has been interrupted");
+        			e.printStackTrace();
+				} catch (NoConnection e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The transaction has failed");
+					e.printStackTrace();
+				}
+            }
+        };
+        
         router.attach("/rotate/{direction}", rotate);
         router.attach("/rotateMore/{direction}", rotateMore);
         router.attach("/angle", angle);
+        router.attach("/rotateFull/{direction}", rotateFull);
         
         return router;
     }
