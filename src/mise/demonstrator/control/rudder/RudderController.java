@@ -39,13 +39,14 @@ public class RudderController implements IRudderController {
 	
 	public synchronized void rotateMultiple(MInteger multiple,MBoolean direction) throws InterruptedException, NoConnection{
 		for (int x = 0;x<multiple.getValue(); x++){
-			rotate(direction);
+			
 			if(angle.getValue()>30 && direction.getValue()== true){
 				break;
 			}
 			else if(angle.getValue()<-30 && direction.getValue()== false){
 				break;
 			}
+			rotate(direction);
 		}
 				
 	}
