@@ -40,12 +40,7 @@ public class RampingTest {
 		}
 		
 		public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
-			try {
-				ramping.rampTo(desiredValue);
-			} catch (NoConnection e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ramping.rampTo(desiredValue);
 		}
 		
 		@Override

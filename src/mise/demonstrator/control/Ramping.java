@@ -23,9 +23,85 @@ public class Ramping implements IRamping {
 	// true means positive ramping
 	boolean direction = false;
 	private IController.Polarity polarity;
-	/**
+<<<<<<< .mine	/**
 	 * The enum is used to select the type of ramping
 	 */
+=======	private Thread rampingThread;
+	private RampingTask rampingTask = null;
+	
+>>>>>>> .theirs	private class RampingTask implements Runnable {
+		MFloat desiredValue;
+		
+		public RampingTask(MFloat desiredValue) {
+			this.desiredValue = desiredValue;
+		}
+		
+		// TODO These exceptions have to be properly handled
+		@Override
+		public void run() {
+			try {
+				float difference = desiredValue.getValue() - currentValue;
+				
+				direction = (difference > 0);
+				while(true) {
+					
+					if(difference == 0) {
+						// Do nothing. The desired value is the same as the current value.
+					} else if(direction) {
+						if(currentValue == stepSize) {
+							polarity = IController.Polarity.POSITIVE;
+							controller.setPolaritySignal(polarity);
+						}
+						currentValue += stepSize;
+					} else {
+						if(currentValue == -stepSize) {
+							polarity = IController.Polarity.NEGATIVE;
+							controller.setPolaritySignal(polarity);
+						 }
+						currentValue -= stepSize;
+					}
+					
+					if (rampType == RampingType.ACCELERATED) {
+						
+						if(polarity  == IController.Polarity.POSITIVE && !direction) {
+							if (desiredValue.getValue() > 0)
+								currentValue = desiredValue.getValue();
+							else if (desiredValue.getValue() <0)
+								currentValue = -1;				
+							else
+							currentValue=0;
+						}
+						else if(polarity  == IController.Polarity.NEGATIVE && direction) {
+							if (desiredValue.getValue() > 0)
+								currentValue = 1;
+							else if (desiredValue.getValue() <0)
+								currentValue = desiredValue.getValue(); 
+							else
+								currentValue=0;
+						}
+		            }
+					controller.outputValue(new MFloat(currentValue));
+					if((currentValue == desiredValue.getValue())) {
+		            	break;
+		            }
+		            Thread.sleep(stepDelay);
+		        }
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ConfigurationError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OutOfRange e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoConnection e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public enum RampingType{
 		DEFAULT(0),
 		ACCELERATED(1);
@@ -58,61 +134,22 @@ public class Ramping implements IRamping {
 	 * The enum is used to select the type of ramping
 	 */
 	@Override
-	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
-		float difference = desiredValue.getValue() - currentValue;
-		
-		direction = (difference > 0);
-		while(true) {
-			
-			if(difference == 0) {break;
-				// Do nothing. The desired value is the same as the current value.
+	public void rampTo(MFloat desiredValue) throws InterruptedException {
+		// Check if the ramping task exists
+		if(this.rampingTask != null) {
+			// Check if the ramping thread is running
+			if(this.rampingThread.isAlive()) {
+				// If the ramping thread is running, interrupt it
+				this.rampingThread.interrupt();
+				// After interrupting the thread, wait for it to terminate
+				this.rampingThread.join();
 			}
-						
-			if(direction) {
-				if(currentValue == stepSize) {
-					this.polarity = IController.Polarity.POSITIVE;
-					controller.setPolaritySignal(this.polarity);
-				}
-				currentValue += stepSize;
-			}
-			else {
-				if(currentValue == -stepSize) {
-					this.polarity = IController.Polarity.NEGATIVE;
-					controller.setPolaritySignal(this.polarity);
-				 }
-				currentValue -= stepSize;
-			}
-			
-			if (rampType == RampingType.ACCELERATED){
-				
-				if(this.polarity  == IController.Polarity.POSITIVE && direction == false){
-					if (desiredValue.getValue() > 0)
-						currentValue = desiredValue.getValue();
-					else if (desiredValue.getValue() <0)
-						currentValue = -1;				
-					else
-					currentValue=0;
-					
-				}
-				else if(this.polarity  == IController.Polarity.NEGATIVE && direction == true){
-					if (desiredValue.getValue() > 0)
-						currentValue = 1;
-					else if (desiredValue.getValue() <0)
-						currentValue = desiredValue.getValue(); 
-					else
-						currentValue=0;
-					
-					 }
-				
-	            }
-			
-			
-			controller.outputValue(new MFloat(currentValue));
-            Thread.sleep(stepDelay);
-            if((currentValue == desiredValue.getValue())) {
-            	break;
-            }
-        }
+		}
+		synchronized (this) {
+			this.rampingTask = new RampingTask(desiredValue);
+			this.rampingThread = new Thread(rampingTask);
+			rampingThread.start();
+		}
 	}
 	
 	/* (non-Javadoc)

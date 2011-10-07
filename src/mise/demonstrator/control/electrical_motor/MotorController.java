@@ -30,45 +30,6 @@ public class MotorController implements IMotorController {
 	private final MFloat STEP_SIZE = new MFloat(1.0f);
 	private LabJack lj;
 	private Ramping ramping;
-	private Thread rampingThread;
-	private RampingTask rampingTask = null;
-	
-	private class RampingTask implements Runnable {
-		private MotorController mc;
-		MFloat desiredValue;
-		
-		public RampingTask(MotorController mc, MFloat desiredValue) {
-			this.mc = mc;
-			this.desiredValue = desiredValue;
-		}
-		
-		// TODO These exceptions have to be properly handled
-		@Override
-		public void run() {
-			try {
-				synchronized(this) {
-					if(desiredValue.getValue() > Constants.MOTOR.MAX_VALUE.getValue())
-						this.mc.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
-					else if(desiredValue.getValue() < Constants.MOTOR.MIN_VALUE.getValue())
-						this.mc.ramping.rampTo(Constants.MOTOR.MAX_VALUE);
-					else
-						this.mc.ramping.rampTo(desiredValue);
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ConfigurationError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OutOfRange e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoConnection e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
 	
 	/**
 	 * @throws ConfigurationError 
@@ -125,18 +86,7 @@ public class MotorController implements IMotorController {
 	}
 	
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
-	 
-		if(this.rampingTask != null) {
-			if(this.rampingThread.isAlive()) {
-				this.rampingThread.interrupt();
-				this.rampingThread.join();
-			}
-		}
-		synchronized (this) {
-			this.rampingTask = new RampingTask(this, desiredValue);
-			this.rampingThread = new Thread(rampingTask);
-			rampingThread.start();
-		}
+		ramping.rampTo(desiredValue);
 	}
 	
 	public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
