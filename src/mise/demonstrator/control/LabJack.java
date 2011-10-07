@@ -414,6 +414,11 @@ public class LabJack {
     	writeMultiple(LabJack.TIMER_BASE_CLOCK_ADDR, new MLong(timerClockDivisor.getValue()));
     }
 	
+    /**
+	 * This write method is used to write to registers 
+	 * RegisterNumber is the register to write to while the registerValue is the value to write in the register(1 is used
+	 * for logic high while 0 is used for logic low) 
+	 */
 	public void write(MInteger registerNumber, MInteger registerValue)  throws NoConnection {
 		SimpleRegister register = new SimpleRegister(registerValue.getValue());
 		WriteSingleRegisterRequest writeRequest = new WriteSingleRegisterRequest(registerNumber.getValue(), register);
@@ -434,7 +439,9 @@ public class LabJack {
 			throw new NoConnection ("ModBus exception cannot write to register" + (registerNumber.getValue() - 6000)+"\n"+ e.getMessage(), e.getCause());
 		}
 	}
-	
+	/**
+	 * A modification of the write method to accept boolean as a parameter true to set logic to hgigh flase to low 
+	 */
 	public void write(MInteger registerNumber, MBoolean state) throws NoConnection {
 		   
 		int highLow = (state.getValue() ? 1 : 0);
@@ -466,6 +473,10 @@ public class LabJack {
 		}
 	}
 	
+	/**
+	 * this method is used to read from a register/port. The ref and count MIntegers are to select the registers that are going to be read. 
+	 * The AIN is the value which is going to be read 
+	 */
 	public MFloat read(MInteger ref, MInteger count,MInteger AIN) throws  NoConnection, IOException {
 		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
 		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(ref.getValue(), count.getValue());

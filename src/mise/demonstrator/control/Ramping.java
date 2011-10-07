@@ -23,7 +23,9 @@ public class Ramping implements IRamping {
 	// true means positive ramping
 	boolean direction = false;
 	private IController.Polarity polarity;
-	
+	/**
+	 * The enum is used to select the type of ramping
+	 */
 	public enum RampingType{
 		DEFAULT(0),
 		ACCELERATED(1);
@@ -51,6 +53,9 @@ public class Ramping implements IRamping {
 	
 	/* (non-Javadoc)
 	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#rampTo(mise.marssa.data_types.float_datatypes.MFloat)
+	 */
+	/**
+	 * The enum is used to select the type of ramping
 	 */
 	@Override
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
