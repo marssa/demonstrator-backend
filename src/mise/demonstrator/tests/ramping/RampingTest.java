@@ -1,4 +1,4 @@
-package mise.demonstrator.test.ramping;
+package mise.demonstrator.tests.ramping;
 
 import org.restlet.Application;
 import org.restlet.Component;

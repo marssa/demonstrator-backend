@@ -290,7 +290,8 @@ public class LabJack {
 	static private LabJackConnections connectionPairs = new LabJackConnections();
 	
 	// The actual TCP connection to the LabJack used in this instance
-	private TCPMasterConnection masterConnection;
+	private TCPMasterConnection readConnection;
+	private TCPMasterConnection writeConnection;
 	
 	// The number of timers
 	private TimersEnabled numTimers = TimersEnabled.NONE;
@@ -304,9 +305,12 @@ public class LabJack {
 	{
 		try {
 			InetAddress address = InetAddress.getByName(host.getContents());  // the slave's address
-		    masterConnection = new TCPMasterConnection(address);
-		    masterConnection.setPort(port.getValue());
-		    masterConnection.connect();
+		    readConnection = new TCPMasterConnection(address);
+		    readConnection.setPort(port.getValue());
+		    readConnection.connect();
+		    writeConnection = new TCPMasterConnection(address);
+		    writeConnection.setPort(port.getValue());
+		    writeConnection.connect();
 		    this.numTimers = numTimers;
 		    this.write(NUM_TIMERS_ENABLED_ADDR, new MInteger(numTimers.ordinal()));
 		} catch (UnknownHostException e) {
@@ -319,7 +323,8 @@ public class LabJack {
 	}
 	
 	protected void finalize() throws Throwable {
-    	masterConnection.close();
+    	readConnection.close();
+    	writeConnection.close();
     	connectionPairs.remove();
     	super.finalize(); //not necessary if extending Object.
     }
@@ -419,7 +424,7 @@ public class LabJack {
 		WriteSingleRegisterRequest writeRequest = new WriteSingleRegisterRequest(registerNumber.getValue(), register);
 		
 	    // Prepare the transaction
-		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
+		ModbusTCPTransaction transaction = new ModbusTCPTransaction(writeConnection);
 	    transaction.setRequest(writeRequest);
 	    //WriteSingleRegisterResponse writeResponse = (WriteSingleRegisterResponse) transaction.getResponse();
 	   
@@ -450,7 +455,7 @@ public class LabJack {
 		WriteMultipleRegistersRequest writeRequest = new WriteMultipleRegistersRequest(registerNumber.getValue(), registerArray);
 		
 	    // Prepare the transaction
-		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
+		ModbusTCPTransaction transaction = new ModbusTCPTransaction(writeConnection);
 	    transaction.setRequest(writeRequest);
 	    //WriteSingleRegisterResponse writeResponse = (WriteSingleRegisterResponse) transaction.getResponse();
 	   
@@ -467,10 +472,10 @@ public class LabJack {
 	}
 	
 	public MFloat read(MInteger ref, MInteger count,MInteger AIN) throws  NoConnection, IOException {
-		ModbusTCPTransaction transaction = new ModbusTCPTransaction(masterConnection);
+		ModbusTCPTransaction transaction = new ModbusTCPTransaction(readConnection);
 		ReadMultipleRegistersRequest req = new ReadMultipleRegistersRequest(ref.getValue(), count.getValue());
 		ReadMultipleRegistersResponse res = null;
-		transaction = new ModbusTCPTransaction(masterConnection);
+		transaction = new ModbusTCPTransaction(readConnection);
 		transaction.setRequest(req);
 		
 		  try {
@@ -495,7 +500,6 @@ public class LabJack {
 		ByteArrayInputStream bais = new ByteArrayInputStream(both);
 		DataInputStream din = new DataInputStream(bais);
 		float voltage = (float) (din.readFloat());
-		masterConnection.close();
 		return new MFloat (voltage);
 	}
 }

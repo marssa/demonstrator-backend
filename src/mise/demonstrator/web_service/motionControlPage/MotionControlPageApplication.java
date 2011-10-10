@@ -13,12 +13,12 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
-public class MotorControlPageApplication extends Application {
+public class MotionControlPageApplication extends Application {
 	
 	MotorController motorController = null;
 	RudderController rudderController = null;
 	
-	public MotorControlPageApplication(MotorController motorController, RudderController rudderController) {
+	public MotionControlPageApplication(MotorController motorController, RudderController rudderController) {
 		this.motorController = motorController;
 		this.rudderController = rudderController;
 	}

@@ -15,7 +15,7 @@ import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.web_service.GPS_Receiver.GPSReceiverApplication;
 import mise.demonstrator.web_service.lightControlPage.LightControlPageApplication;
 import mise.demonstrator.web_service.lighting.LightControllerApplication;
-import mise.demonstrator.web_service.motionControlPage.MotorControlPageApplication;
+import mise.demonstrator.web_service.motionControlPage.MotionControlPageApplication;
 import mise.demonstrator.web_service.motor.MotorControllerApplication;
 import mise.demonstrator.web_service.rudder.RudderControllerApplication;
 
@@ -55,7 +55,7 @@ public class WebServices extends ServerResource {
 	    component.getDefaultHost().attach("/gps", new GPSReceiverApplication(gpsReceiver));
 	    
 	    // Attach the motion control feedback application 
-	    component.getDefaultHost().attach("/motionControlPage", new MotorControlPageApplication(motorController, rudderController));
+	    component.getDefaultHost().attach("/motionControlPage", new MotionControlPageApplication(motorController, rudderController));
 	    
 	    // Attach the motion control feedback application
 	    component.getDefaultHost().attach("/lightControlPage", new LightControlPageApplication(navLightsController, underwaterLightsController));
