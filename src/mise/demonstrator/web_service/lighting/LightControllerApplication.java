@@ -1,5 +1,6 @@
 package mise.demonstrator.web_service.lighting;
 
+import java.util.ArrayList;
 import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.marssa.data_types.MBoolean;
@@ -9,16 +10,19 @@ import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
 public class LightControllerApplication extends Application {
 	
-	NavigationLightsController navLightsController = null;
-	UnderwaterLightsController underwaterLightsController = null;
+	private ArrayList<CacheDirective> cacheDirectives;
+	private NavigationLightsController navLightsController;
+	private UnderwaterLightsController underwaterLightsController;
 	
-	public LightControllerApplication(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
+	public LightControllerApplication(ArrayList<CacheDirective> cacheDirectives, NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
+		this.cacheDirectives = cacheDirectives;
 		this.navLightsController = navLightsController;
 		this.underwaterLightsController = underwaterLightsController;
 	}
@@ -34,15 +38,16 @@ public class LightControllerApplication extends Application {
         Restlet navLights = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
     			boolean state = Boolean.parseBoolean(request.getAttributes().get("state").toString());
     			try {
 					navLightsController.setNavigationLightState(new MBoolean(state));
+					response.setEntity("Setting navigation lights state to " + (state ? "on" : "off"), MediaType.TEXT_PLAIN);
 				} catch (NoConnection e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
 					e.printStackTrace();
 				}
-    			response.setEntity("Setting navigation lights state to " + (state ? "on" : "off"), MediaType.TEXT_PLAIN);
             }
         };
         
@@ -50,6 +55,7 @@ public class LightControllerApplication extends Application {
         Restlet navLightsState = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
     			response.setEntity(navLightsController.getNavigationLightState().toString(), MediaType.TEXT_PLAIN);
             }
@@ -59,15 +65,16 @@ public class LightControllerApplication extends Application {
         Restlet underwaterLights = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
     			boolean state = Boolean.parseBoolean(request.getAttributes().get("state").toString());
     			try {
 					underwaterLightsController.setUnderwaterLightState(new MBoolean(state));
+					response.setEntity("Setting navigation lights state to " + (state ? "on" : "off"), MediaType.TEXT_PLAIN);
 				} catch (NoConnection e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
 					e.printStackTrace();
 				}
-    			response.setEntity("Setting navigation lights state to " + (state ? "on" : "off"), MediaType.TEXT_PLAIN);
             }
         };
         
@@ -75,6 +82,7 @@ public class LightControllerApplication extends Application {
         Restlet underwaterLightsState = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
     			response.setEntity(underwaterLightsController.getUnderwaterLightState().toString(), MediaType.TEXT_PLAIN);
             }

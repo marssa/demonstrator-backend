@@ -1,27 +1,26 @@
 package mise.demonstrator.web_service.GPS_Receiver;
 
-import mise.demonstrator.control.lighting.NavigationLightsController;
-import mise.demonstrator.control.lighting.UnderwaterLightsController;
+import java.util.ArrayList;
 import mise.demonstrator.navigation_equipment.GpsReceiver;
-import mise.marssa.data_types.MBoolean;
-import mise.marssa.data_types.float_datatypes.MFloat;
 import mise.marssa.exceptions.NoConnection;
 import mise.marssa.exceptions.NoValue;
 import mise.marssa.exceptions.OutOfRange;
-
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
 public class GPSReceiverApplication extends Application {
 	
-	GpsReceiver gpsReceiver = null;
+	private ArrayList<CacheDirective> cacheDirectives;
+	private GpsReceiver gpsReceiver;
 	
-	public GPSReceiverApplication(GpsReceiver gpsReceiver) {
+	public GPSReceiverApplication(ArrayList<CacheDirective> cacheDirectives, GpsReceiver gpsReceiver) {
+		this.cacheDirectives = cacheDirectives;
 		this.gpsReceiver = gpsReceiver;
 	}
 
@@ -36,6 +35,7 @@ public class GPSReceiverApplication extends Application {
         Restlet coordinates = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         		try {
 					response.setEntity( gpsReceiver.getCoordinate().toJSON().getContents() , MediaType.APPLICATION_JSON);
@@ -53,7 +53,7 @@ public class GPSReceiverApplication extends Application {
         };
         
        
-        router.attach("/coordinates",coordinates);
+        router.attach("/coordinates", coordinates);
         
         return router;
     }

@@ -1,5 +1,6 @@
 package mise.demonstrator.web_service.motionControlPage;
 
+import java.util.ArrayList;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.marssa.data_types.float_datatypes.MFloat;
@@ -9,16 +10,19 @@ import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
 public class MotionControlPageApplication extends Application {
 	
-	MotorController motorController = null;
-	RudderController rudderController = null;
+	private ArrayList<CacheDirective> cacheDirectives;
+	private MotorController motorController = null;
+	private RudderController rudderController = null;
 	
-	public MotionControlPageApplication(MotorController motorController, RudderController rudderController) {
+	public MotionControlPageApplication(ArrayList<CacheDirective> cacheDirectives, MotorController motorController, RudderController rudderController) {
+		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 		this.rudderController = rudderController;
 	}
@@ -34,6 +38,7 @@ public class MotionControlPageApplication extends Application {
         Restlet rudderAndSpeedState = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
 				try {
 					MFloat motorSpeed = motorController.getValue();
 					MFloat rudderAngle = rudderController.getAngle();

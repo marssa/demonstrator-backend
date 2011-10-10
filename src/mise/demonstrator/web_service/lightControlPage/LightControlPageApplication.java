@@ -1,5 +1,6 @@
 package mise.demonstrator.web_service.lightControlPage;
 
+import java.util.ArrayList;
 import mise.demonstrator.control.lighting.NavigationLightsController;
 import mise.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.marssa.data_types.MBoolean;
@@ -7,15 +8,18 @@ import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.routing.Router;
 
 public class LightControlPageApplication extends Application {
 	
-	NavigationLightsController navLightsController = null;
-	UnderwaterLightsController underwaterLightsController = null;
+	private ArrayList<CacheDirective> cacheDirectives;
+	private NavigationLightsController navLightsController;
+	private UnderwaterLightsController underwaterLightsController;
 	
-	public LightControlPageApplication(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
+	public LightControlPageApplication(ArrayList<CacheDirective> cacheDirectives, NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController) {
+		this.cacheDirectives = cacheDirectives;
 		this.navLightsController = navLightsController;
 		this.underwaterLightsController = underwaterLightsController;
 	}
@@ -31,6 +35,7 @@ public class LightControlPageApplication extends Application {
         Restlet lightState = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
 				MBoolean navLightsState = navLightsController.getNavigationLightState();
 				MBoolean underWaterLightsState = underwaterLightsController.getUnderwaterLightState();
 				response.setEntity("{\"navLights\":" + navLightsState.toJSON().getContents() + ",\"underwaterLights\":" + underWaterLightsState.toJSON().getContents() + "}", MediaType.APPLICATION_JSON);

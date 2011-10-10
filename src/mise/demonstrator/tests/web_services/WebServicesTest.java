@@ -30,7 +30,7 @@ import mise.marssa.interfaces.control.IController;
 
 public class WebServicesTest {
 	
-	static ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
+	private static final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
 	
 	static class LightState {
 		public MBoolean navLightState = new MBoolean(false);

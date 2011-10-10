@@ -1,5 +1,6 @@
 package mise.demonstrator.web_service.rudder;
 
+import java.util.ArrayList;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.rudder.RudderController;
 import mise.marssa.data_types.MBoolean;
@@ -9,15 +10,18 @@ import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
 public class RudderControllerApplication extends Application {
 	
-	RudderController rudderController = null;
+	private ArrayList<CacheDirective> cacheDirectives;
+	private RudderController rudderController = null;
 	
-	public RudderControllerApplication(RudderController rudderController) {
+	public RudderControllerApplication(ArrayList<CacheDirective> cacheDirectives, RudderController rudderController) {
+		this.cacheDirectives = cacheDirectives;
 		this.rudderController = rudderController;
 	}
 
@@ -32,13 +36,14 @@ public class RudderControllerApplication extends Application {
         Restlet rotate = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		try {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
         			rudderController.rotate(new MBoolean(direction));
         			response.setEntity("Rotating the rudder in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
         		} catch (InterruptedException e) {
-        			// TODO Auto-generated catch block
+        			response.setStatus(Status.SERVER_ERROR_INTERNAL, "This request has been interrupted by a more recent request");
         			e.printStackTrace();
 				} catch (NoConnection e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The transaction has failed");
@@ -51,6 +56,7 @@ public class RudderControllerApplication extends Application {
         Restlet rotateMore = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		try {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
@@ -72,6 +78,7 @@ public class RudderControllerApplication extends Application {
         Restlet angle = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		try {
         			MFloat direction = rudderController.getAngle();
         			response.setEntity(direction.toString(), MediaType.TEXT_PLAIN);
@@ -86,6 +93,7 @@ public class RudderControllerApplication extends Application {
         Restlet rotateFull = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		try {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());

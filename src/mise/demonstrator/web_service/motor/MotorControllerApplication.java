@@ -1,5 +1,7 @@
 package mise.demonstrator.web_service.motor;
 
+import java.util.ArrayList;
+
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.data_types.float_datatypes.MFloat;
@@ -11,15 +13,18 @@ import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.CacheDirective;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
 public class MotorControllerApplication extends Application {
 	
-	MotorController motorController;
+	private ArrayList<CacheDirective> cacheDirectives;
+	private MotorController motorController;
 	
-	public MotorControllerApplication(MotorController motorController) {
+	public MotorControllerApplication(ArrayList<CacheDirective> cacheDirectives, MotorController motorController) {
+		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 	}
 
@@ -34,6 +39,7 @@ public class MotorControllerApplication extends Application {
         Restlet speedControl = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		try {
         			float value = Float.parseFloat(request.getAttributes().get("speed").toString());
         			motorController.rampTo(new MFloat(value));
@@ -50,15 +56,6 @@ public class MotorControllerApplication extends Application {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The specified value is out of range");
 					e.printStackTrace();
 				}
-        		/*
-        		String message = "Resource URI  : "
-                        + request.getResourceRef() + '\n'
-                        + "Root URI      : " + request.getRootRef()
-                        + '\n' + "Routed part   : "
-                        + request.getResourceRef().getBaseRef() + '\n'
-                        + "Remaining part: "
-                        + request.getResourceRef().getRemainingPart();
-        		*/
             }
         };
         
@@ -66,6 +63,7 @@ public class MotorControllerApplication extends Application {
         Restlet increaseSpeed = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		try {
         			motorController.increase(Constants.MOTOR.STEP_SIZE);
     				response.setEntity("Increasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
@@ -91,6 +89,7 @@ public class MotorControllerApplication extends Application {
         Restlet decreaseSpeed = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
         		try {
 					motorController.decrease(Constants.MOTOR.STEP_SIZE);
     				response.setEntity("Decreasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
@@ -116,6 +115,7 @@ public class MotorControllerApplication extends Application {
         Restlet speedMonitor = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
     			response.setEntity(motorController.getValue().toString(), MediaType.TEXT_PLAIN);
             }
         };
