@@ -38,7 +38,8 @@ public class GpsReceiver implements IGpsReceiver {
 		ep = new GPSdEndpoint(host.getContents(), port.getValue());
 		ep.start();
 		try {
-			System.out.println("gpsd4java started " + ep.version());
+			System.out.println("gpsd started " + ep.version());
+			System.out.println("Enable watch mode for gpsd " + ep.watch(true, true));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
