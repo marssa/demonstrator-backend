@@ -30,7 +30,7 @@ public class MotorController implements IMotorController {
 	private final MFloat STEP_SIZE = new MFloat(1.0f);
 	private LabJack lj;
 	private Ramping ramping;
-	
+
 	/**
 	 * @throws ConfigurationError 
 	 * @throws OutOfRange 
@@ -62,7 +62,7 @@ public class MotorController implements IMotorController {
 		lj.setTimerValue(LabJack.Timers.TIMER_0, new MLong((long) (actualValue.getValue() * 0.9)));
 		lj.setTimerValue(LabJack.Timers.TIMER_1, actualValue);
 	}
-	
+
 	@Override
 	public void setPolaritySignal(Polarity polarity) throws NoConnection {
 		switch (polarity) {
@@ -79,12 +79,12 @@ public class MotorController implements IMotorController {
 			break;
 		}
 	}
-	
+
 	@Override
 	public MFloat getValue() {
 		return ramping.getCurrentValue();
 	}
-	
+
 	public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
 		ramping.rampTo(desiredValue);
 	}
@@ -96,7 +96,7 @@ public class MotorController implements IMotorController {
 		else
 			this.ramping.increase(incrementValue);
 	}
-	
+
 	public void decrease(MFloat decrementValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
 		float currentValue = this.ramping.getCurrentValue().getValue();
 		if((currentValue - Constants.MOTOR.STEP_SIZE.getValue()) < Constants.MOTOR.MIN_VALUE.getValue())

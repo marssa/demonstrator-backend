@@ -36,7 +36,9 @@ public class RudderController implements IRudderController {
 		rotate(new MBoolean (false));
 		rotate(new MBoolean (true));
 	}
-	
+	/**
+	 * The rotateMultiple is used to use the rotate method multiple times
+	 */
 	public synchronized void rotateMultiple(MInteger multiple,MBoolean direction) throws InterruptedException, NoConnection{
 		for (int x = 0;x<multiple.getValue(); x++){
 			
@@ -50,9 +52,12 @@ public class RudderController implements IRudderController {
 		}
 				
 	}
+	/**
+	 * The rotateExtreme is used to rotate to the extreme possible angles 
+	 */
 	public synchronized void rotateExtreme(MBoolean direction) throws InterruptedException, NoConnection{
 		
-		while(angle.getValue()<30 && direction.getValue()== true){
+		while(angle.getValue()<32 && direction.getValue()== true){
 		rotate(direction);
 		}
 		
@@ -61,8 +66,24 @@ public class RudderController implements IRudderController {
 		}
 						
 	}
+	/**
+	 * The rotateToCentre is used to rotate the rudder to approximate its centre position 
+	 */
+	public void rotateToCentre() throws NoConnection, InterruptedException{
+		while (angle.getValue()>5){
+		rotate(new MBoolean (false));	
+		}
+		while (angle.getValue()<-5){
+		rotate(new MBoolean (true));	
+		}
+	}
 	
 	@Override
+	/**
+	 * The rotate is used to rotate the stepper motor by one step in either left or right direction
+	 * The MBoolean direction false means that the rudder has negative angle (turns the boat to the left direction)
+	 * The MBoolean direction true means that the rudder has positive angle (turns the boat to the right direction)
+	 */
 	public void rotate(MBoolean direction) throws NoConnection, InterruptedException  {
 		if ((stepLeft == 0 && direction.getValue()) || (stepRight==3  && direction.getValue()== false)) {
 			lj.write(STEPPER1, HIGH);
@@ -106,7 +127,9 @@ public class RudderController implements IRudderController {
 			return;
 		}
 	}
-
+	/**
+	 * The getAngle returns the actual angle of the rudder 
+	 */
 	@Override
 	public MFloat getAngle() throws NoConnection {
 		try {

@@ -25,23 +25,23 @@ public class Ramping implements IRamping {
 	private IController.Polarity polarity;
 	private Thread rampingThread;
 	private RampingTask rampingTask = null;
-	
+
 	private class RampingTask implements Runnable {
 		MFloat desiredValue;
-		
+
 		public RampingTask(MFloat desiredValue) {
 			this.desiredValue = desiredValue;
 		}
-		
+
 		// TODO These exceptions have to be properly handled
 		@Override
 		public void run() {
 			try {
 				float difference = desiredValue.getValue() - currentValue;
-				
+
 				direction = (difference > 0);
 				while(true) {
-					
+
 					if(difference == 0) {
 						// Do nothing. The desired value is the same as the current value.
 					} else if(direction) {
@@ -57,9 +57,12 @@ public class Ramping implements IRamping {
 						 }
 						currentValue -= stepSize;
 					}
-					
+					/**
+					 * @author the ramping type Accelerated accelerates the ramping when decreasing the speed in both directions
+					 *
+					 */
 					if (rampType == RampingType.ACCELERATED) {
-						
+
 						if(polarity  == IController.Polarity.POSITIVE && !direction) {
 							if (desiredValue.getValue() > 0)
 								currentValue = desiredValue.getValue();
@@ -98,14 +101,17 @@ public class Ramping implements IRamping {
 			}
 		}
 	}
-	
+	/**
+	 * The rampingType Enum is used to select the type of ramping
+	 *
+	 */
 	public enum RampingType{
 		DEFAULT(0),
 		ACCELERATED(1);
-		
+
 		private RampingType(int rampingType) { }
 	};
-	
+
 	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, RampingType rampType) throws ConfigurationError, OutOfRange, NoConnection {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
@@ -114,7 +120,7 @@ public class Ramping implements IRamping {
 		this.rampType  = rampType;
 		controller.outputValue(new MFloat(this.currentValue));
 	}
-	
+
 	public Ramping(MInteger stepDelay, MFloat stepSize, IController controller, MFloat initialValue, RampingType rampType) throws ConfigurationError, OutOfRange, NoConnection {
 		this.stepDelay = stepDelay.getValue();
 		this.stepSize = stepSize.getValue();
@@ -123,7 +129,7 @@ public class Ramping implements IRamping {
 		this.rampType  = rampType;
 		controller.outputValue(new MFloat(this.currentValue));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#rampTo(mise.marssa.data_types.float_datatypes.MFloat)
 	 */
@@ -145,7 +151,7 @@ public class Ramping implements IRamping {
 			rampingThread.start();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#increase(mise.marssa.data_types.float_datatypes.MFloat)
 	 */
@@ -153,7 +159,7 @@ public class Ramping implements IRamping {
 	public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange, NoConnection {
 		rampTo(new MFloat(currentValue + incrementValue.getValue()));
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see mise.marssa.interfaces.electrical_motor_control.IRamping#decrease(mise.marssa.data_types.float_datatypes.MFloat)
 	 */

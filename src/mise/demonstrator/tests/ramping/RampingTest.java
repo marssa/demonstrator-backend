@@ -20,10 +20,10 @@ import mise.marssa.exceptions.OutOfRange;
 import mise.marssa.interfaces.control.IController;
 
 public class RampingTest {
-	
+
 	static private class TestController implements IController {
 		private Ramping ramping;
-		
+
 		public TestController() {
 			try {
 				ramping = new Ramping(new MInteger(50), new MFloat(1.0f), this, RampingType.ACCELERATED);
@@ -38,11 +38,11 @@ public class RampingTest {
 				e.printStackTrace();
 			}
 		}
-		
+
 		public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
 			ramping.rampTo(desiredValue);
 		}
-		
+
 		@Override
 		public void outputValue(MFloat value) throws ConfigurationError,
 				OutOfRange, NoConnection {
@@ -54,7 +54,7 @@ public class RampingTest {
 		public void setPolaritySignal(Polarity polarity)
 				throws NoConnection {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
@@ -72,12 +72,12 @@ public class RampingTest {
 	    @Override
 	    public synchronized Restlet createInboundRoot() {
 	        Router router = new Router(getContext());
-	        
+
 	        // Create the navigation lights state handler
 	        Restlet lightState = new Restlet() {
 	        	@Override
 	            public void handle(Request request, Response response) {
-	        		
+
 					try {
 	        			float value = Float.parseFloat(request.getAttributes().get("desiredValue").toString());
 	        			controller.rampTo(new MFloat(value));
@@ -96,26 +96,26 @@ public class RampingTest {
 					}
 	            }
 	        };
-	        
+
 	        router.attach("/ramping/{desiredValue}", lightState);
-	        
+
 	        return router;
 	    }
 	}
-	
+
 	/**
 	 * @param args the args 
 	 */
 	public static void main(java.lang.String[] args) {
 		// Create a new Component
 		Component component = new Component();
-		
+
 	    // Add a new HTTP server listening on the given port
 	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.HOST.getContents(), Constants.WEB_SERVICES.PORT.getValue());
 
 		// Attach the motion control feedback application
 	    component.getDefaultHost().attach("/testing", new RampingTestApplication());
-	    
+
 	    // Start the component
 	    try {
 			component.start();

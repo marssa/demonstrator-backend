@@ -16,4 +16,6 @@ Java Modbus Library (jamod)
 jamod is a Java implementation of Modbus. It provides native Java bindings for the Modbus protocol which is being used to communicate with the LabJack. The project page can be found at http://jamod.sourceforge.net/
 
 Restlet
-Restlet is being used for web services. It can run inside a servlet container or as a standalone. The current web services implementation is using a standalone web server which is also part of this same library. Ther project page is available at http://www.restlet.org/
+Restlet is being used for web services. It can run inside a servlet container or as a standalone. The current web services implementation is using a standalone web server which is also part of this same library. Ther project page is available at http://www.restlet.org/. 
+FlexJSON
+Flexjson is a lightweight library for serializing and deserializing Java objects into and from JSON. What's different about Flexjson is it's control over what gets serialized allowing both deep and shallow copies of objects. The project page can be found at http://sourceforge.net/projects/flexjson/files/
