@@ -32,8 +32,11 @@ public class Main extends ServerResource {
 		
 		// Initialise LabJack
 		try {
+			System.out.print("Initialising LabJack ... ");
 			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT, TimersEnabled.TWO);
+			System.out.println("success!");
 		} catch (Exception e) {
+			System.out.println("failure!");
 			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
 			e.printStackTrace();
 			System.exit(1);
@@ -41,17 +44,33 @@ public class Main extends ServerResource {
 		
 		// Initialise Controllers and Receivers
 		try {
+			System.out.print("Initialising LabJack ... ");
 			navLightsController = new NavigationLightsController(labJack);
-			underwaterLightsController = new UnderwaterLightsController(labJack);
-			motorController = new MotorController(labJack);
-			rudderController = new RudderController(labJack);
-			// TODO attach physical GPSReceiver
-			//GpsReceiver gpsReceiver = null;
-			gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
-			//System.out.println(gpsReceiver.getCoordinate());
-			webServices = new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
-			webServices.start();
+			System.out.println("success!");
 			
+			System.out.print("Initialising lights controller ... ");
+			underwaterLightsController = new UnderwaterLightsController(labJack);
+			System.out.println("success!");
+			
+			System.out.print("Initialising motor controller ... ");
+			motorController = new MotorController(labJack);
+			System.out.println("success!");
+			
+			System.out.print("Initialising rudder controller ... ");
+			rudderController = new RudderController(labJack);
+			System.out.println("success!");
+			
+			System.out.print("Initialising GPS receiver ... ");
+			gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
+			System.out.println("success!");
+			
+			System.out.print("Initialising web services ... ");
+			webServices = new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
+			System.out.println("success!");
+			
+			System.out.print("Starting restlet web servicves ... ");
+			webServices.start();
+			System.out.println("success!");
 		} catch (ConfigurationError e) {
 			e.printStackTrace();
 			System.exit(1);

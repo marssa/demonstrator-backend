@@ -3,6 +3,7 @@
  */
 package mise.demonstrator;
 
+import org.restlet.Component;
 import mise.demonstrator.constants.Constants;
 import mise.demonstrator.control.LabJack;
 import mise.demonstrator.control.LabJack.TimersEnabled;
@@ -14,12 +15,13 @@ import mise.demonstrator.navigation_equipment.GpsReceiver;
 import mise.demonstrator.web_service.WebServices;
 import mise.marssa.exceptions.ConfigurationError;
 import mise.marssa.exceptions.OutOfRange;
+import org.apache.commons.daemon.*;
 
 /**
  * @author Clayton Tabone
  *
  */
-public class JSVC {
+public class JSVC implements Daemon {
 	LabJack labJack;
 	NavigationLightsController navLightsController;
 	UnderwaterLightsController underwaterLightsController;
@@ -28,15 +30,21 @@ public class JSVC {
 	GpsReceiver gpsReceiver;
 	WebServices webServices;
 	
+	Component component = new Component();
+	
 	/**
 	 * Open configuration files, create a trace file, create ServerSockets, Threads
-	 * @param arguments
+	 * @param context
 	 */
-	public void init(String[] arguments) {
+	@Override
+	public void init(DaemonContext context) throws DaemonInitException, Exception {
 		// Initialise LabJack
 		try {
+			System.out.print("Initialising LabJack ... ");
 			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT, TimersEnabled.TWO);
+			System.out.println("success!");
 		} catch (Exception e) {
+			System.out.println("failure!");
 			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
 			e.printStackTrace();
 			stop();
@@ -44,42 +52,61 @@ public class JSVC {
 		
 		// Initialise Controllers and Receivers
 		try {
+			System.out.print("Initialising LabJack ... ");
 			navLightsController = new NavigationLightsController(labJack);
+			System.out.println("success!");
+			
+			System.out.print("Initialising lights controller ... ");
 			underwaterLightsController = new UnderwaterLightsController(labJack);
+			System.out.println("success!");
+			
+			System.out.print("Initialising motor controller ... ");
 			motorController = new MotorController(labJack);
+			System.out.println("success!");
+			
+			System.out.print("Initialising rudder controller ... ");
 			rudderController = new RudderController(labJack);
+			System.out.println("success!");
+			
+			System.out.print("Initialising GPS receiver ... ");
 			gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
+			System.out.println("success!");
+			
+			System.out.print("Initialising web services ... ");
 			webServices = new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
+			System.out.println("success!");
+			
+			System.out.print("Starting restlet web servicves ... ");
+			webServices.start();
+			System.out.println("success!");
 		} catch (ConfigurationError e) {
 			e.printStackTrace();
 			stop();
 		} catch (OutOfRange e) {
 			e.printStackTrace();
 			stop();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			stop();
 		}
 	}
-
+	
 	/**
 	 * Start the Thread, accept incoming connections
 	 */
-	void start() {
-		try {
-			webServices.start();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	@Override
+	public void start() throws Exception {
+		System.out.print("Starting web services ... ");
+		webServices.start();
+		System.out.println("success!");
 	}
 	
 	/**
 	 * Inform the Thread to terminate the run(), close the ServerSockets
 	 */
-	void stop() {
+	@Override
+	public void stop() throws Exception {
 		try {
+			System.out.print("Stopping web services ... ");
 			webServices.stop();
+			System.out.println("success!");
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,7 +116,8 @@ public class JSVC {
 	/**
 	 * Destroy any object created in init()
 	 */
-	void destroy() {
+	@Override
+	public void destroy() {
 		labJack = null;
 		navLightsController = null;
 		underwaterLightsController = null;

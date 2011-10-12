@@ -325,7 +325,9 @@ public class LabJack {
 	protected void finalize() throws Throwable {
     	readConnection.close();
     	writeConnection.close();
-    	connectionPairs.remove();
+    	// TODO Implement Mutex lock on the connection pair. The connectionPair should only be removed if no other instance is using this connection
+    	// TODO Make sure that there are no leaked references to the singleton instance for the connection pair which is being removed
+    	//connectionPairs.remove();
     	super.finalize(); //not necessary if extending Object.
     }
 	
