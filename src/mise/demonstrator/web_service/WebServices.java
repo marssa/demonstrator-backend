@@ -5,6 +5,7 @@ package mise.demonstrator.web_service;
 
 import java.util.ArrayList;
 import org.restlet.Component;
+import org.restlet.Server;
 import org.restlet.data.CacheDirective;
 import org.restlet.data.Protocol;
 import org.restlet.resource.ServerResource;
@@ -42,7 +43,8 @@ public class WebServices extends ServerResource {
 		cacheDirectives.add(CacheDirective.noStore());
 		
 	    // Add a new HTTP server listening on the given port
-	    component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.HOST.getContents(), Constants.WEB_SERVICES.PORT.getValue());
+		Server server = component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.HOST.getContents(), Constants.WEB_SERVICES.PORT.getValue());
+		server.getContext().getParameters().add("maxTotalConnections", Constants.WEB_SERVICES.MAX_TOTAL_CONNECTIONS.toString());
 	    
 	    // Add new client connector for the FILE protocol
 	    component.getClients().add(Protocol.FILE);

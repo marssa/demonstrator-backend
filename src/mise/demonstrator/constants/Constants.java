@@ -47,6 +47,7 @@ public class Constants {
 	public final static class WEB_SERVICES {
 		public final static MString HOST = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "192.168.1.1" : "localhost");
 		public final static MInteger PORT = new MInteger(8182);
+		public final static MInteger MAX_TOTAL_CONNECTIONS = new MInteger(50);
 	}
 	
 	/**
