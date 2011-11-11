@@ -1,9 +1,9 @@
 /**
  * 
  */
-package mise.marssa.apps.demonstrator.web_services;
+package mise.marssa.demonstrator.web_services;
 
-import mise.marssa.apss.demonstrator.constants.Constants;
+import mise.marssa.demonstrator.constants.Constants;
 
 import org.restlet.Application;
 import org.restlet.Restlet;

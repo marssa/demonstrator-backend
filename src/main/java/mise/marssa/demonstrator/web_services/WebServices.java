@@ -1,7 +1,7 @@
 /**
  * 
  */
-package mise.marssa.apps.demonstrator.web_services;
+package mise.marssa.demonstrator.web_services;
 
 import java.util.ArrayList;
 import org.restlet.Component;
@@ -9,18 +9,18 @@ import org.restlet.Server;
 import org.restlet.data.CacheDirective;
 import org.restlet.data.Protocol;
 import org.restlet.resource.ServerResource;
-import mise.marssa.apps.demonstrator.control.lighting.NavigationLightsController;
-import mise.marssa.apps.demonstrator.control.lighting.UnderwaterLightsController;
-import mise.marssa.apps.demonstrator.control.rudder.RudderController;
-import mise.marssa.apps.demonstrator.navigation_equipment.GpsReceiver;
-import mise.marssa.apps.demonstrator.web_service.rudder.RudderControllerApplication;
-import mise.marssa.apps.demonstrator.web_services.GPS_Receiver.GPSReceiverApplication;
-import mise.marssa.apps.demonstrator.web_services.lightControlPage.LightControlPageApplication;
-import mise.marssa.apps.demonstrator.web_services.lighting.LightControllerApplication;
-import mise.marssa.apps.demonstrator.web_services.motionControlPage.MotionControlPageApplication;
-import mise.marssa.apps.demonstrator.web_services.motor.MotorControllerApplication;
-import mise.marssa.apss.demonstrator.constants.Constants;
-import mise.marssa.apss.demonstrator.control.electrical_motor.MotorController;
+import mise.marssa.services.navigation.GpsReceiver;
+import mise.marssa.demonstrator.constants.Constants;
+import mise.marssa.demonstrator.control.electrical_motor.MotorController;
+import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
+import mise.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import mise.marssa.demonstrator.control.rudder.RudderController;
+import mise.marssa.demonstrator.web_service.rudder.RudderControllerApplication;
+import mise.marssa.demonstrator.web_services.GPS_Receiver.GPSReceiverApplication;
+import mise.marssa.demonstrator.web_services.lightControlPage.LightControlPageApplication;
+import mise.marssa.demonstrator.web_services.lighting.LightControllerApplication;
+import mise.marssa.demonstrator.web_services.motionControlPage.MotionControlPageApplication;
+import mise.marssa.demonstrator.web_services.motor.MotorControllerApplication;
 
 /**
  * @author Clayton Tabone

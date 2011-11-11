@@ -1,22 +1,22 @@
 /**
  * 
  */
-package mise.marssa.apss.demonstrator.control.electrical_motor;
+package mise.marssa.demonstrator.control.electrical_motor;
 
-import mise.marssa.apss.demonstrator.constants.Constants;
-import mise.marssa.apss.demonstrator.control.LabJack;
-import mise.marssa.apss.demonstrator.control.Ramping;
-import mise.marssa.apss.demonstrator.control.LabJack.TimerConfigMode;
-import mise.marssa.apss.demonstrator.control.LabJack.Timers;
-import mise.marssa.apss.demonstrator.control.Ramping.RampingType;
-import mise.marssa.data_types.MBoolean;
-import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.data_types.integer_datatypes.MLong;
-import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.exceptions.ConfigurationError;
-import mise.marssa.exceptions.NoConnection;
-import mise.marssa.exceptions.OutOfRange;
-import mise.marssa.interfaces.control.electrical_motor.IMotorController;
+import mise.marssa.services.control.Ramping;
+import mise.marssa.services.control.Ramping.RampingType;
+import mise.marssa.services.diagnostics.daq.LabJack;
+import mise.marssa.services.diagnostics.daq.LabJack.TimerConfigMode;
+import mise.marssa.services.diagnostics.daq.LabJack.Timers;
+import mise.marssa.demonstrator.constants.Constants;
+import mise.marssa.footprint.data_types.MBoolean;
+import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.data_types.integer_datatypes.MLong;
+import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.exceptions.ConfigurationError;
+import mise.marssa.footprint.exceptions.NoConnection;
+import mise.marssa.footprint.exceptions.OutOfRange;
+import mise.marssa.footprint.interfaces.control.electrical_motor.IMotorController;
 
 /**
  * @author Clayton Tabone
@@ -51,7 +51,6 @@ public class MotorController implements IMotorController {
 	/* (non-Javadoc)
 	 * @see mise.marssa.interfaces.electrical_motor_control.IMotorController#outputMotorSpeed(mise.marssa.data_types.float_datatypes.speed.PercentSpeed)
 	 */
-	@Override
 	public void outputValue(MFloat motorSpeed) throws ConfigurationError, OutOfRange, NoConnection {
 		System.out.println(motorSpeed);
 		MLong actualValue = new MLong((long) ((Math.pow(2, 32) - 1) * Math.abs(motorSpeed.getValue()) / 100.0));
@@ -63,7 +62,6 @@ public class MotorController implements IMotorController {
 		lj.setTimerValue(LabJack.Timers.TIMER_1, actualValue);
 	}
 
-	@Override
 	public void setPolaritySignal(Polarity polarity) throws NoConnection {
 		switch (polarity) {
 		case POSITIVE:
@@ -80,7 +78,6 @@ public class MotorController implements IMotorController {
 		}
 	}
 
-	@Override
 	public MFloat getValue() {
 		return ramping.getCurrentValue();
 	}

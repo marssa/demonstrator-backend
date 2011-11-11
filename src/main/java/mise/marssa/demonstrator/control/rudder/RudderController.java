@@ -1,14 +1,14 @@
-package mise.marssa.apps.demonstrator.control.rudder;
+package mise.marssa.demonstrator.control.rudder;
 
 import java.io.IOException;
 
-import mise.marssa.apss.demonstrator.constants.Constants;
-import mise.marssa.apss.demonstrator.control.LabJack;
-import mise.marssa.data_types.MBoolean;
-import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.exceptions.NoConnection;
-import mise.marssa.interfaces.control.rudder.IRudderController;
+import mise.marssa.services.diagnostics.daq.LabJack;
+import mise.marssa.demonstrator.constants.Constants;
+import mise.marssa.footprint.data_types.MBoolean;
+import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.exceptions.NoConnection;
+import mise.marssa.footprint.interfaces.control.rudder.IRudderController;
 
 /**
  * @author Warren Zahra
@@ -78,7 +78,6 @@ public class RudderController implements IRudderController {
 		}
 	}
 	
-	@Override
 	/**
 	 * The rotate is used to rotate the stepper motor by one step in either left or right direction
 	 * The MBoolean direction false means that the rudder has negative angle (turns the boat to the left direction)
@@ -130,7 +129,6 @@ public class RudderController implements IRudderController {
 	/**
 	 * The getAngle returns the actual angle of the rudder 
 	 */
-	@Override
 	public MFloat getAngle() throws NoConnection {
 		try {
 			float voltageValue = lj.read(new MInteger (0),new MInteger (8),new MInteger (1)).getValue();       //value that needs to be read from the labjack

@@ -1,12 +1,12 @@
-package mise.marssa.apps.demonstrator.web_service.rudder;
+package mise.marssa.demonstrator.web_service.rudder;
 
 import java.util.ArrayList;
 
-import mise.marssa.apps.demonstrator.control.rudder.RudderController;
-import mise.marssa.apss.demonstrator.constants.Constants;
-import mise.marssa.data_types.MBoolean;
-import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.exceptions.NoConnection;
+import mise.marssa.demonstrator.constants.Constants;
+import mise.marssa.demonstrator.control.rudder.RudderController;
+import mise.marssa.footprint.data_types.MBoolean;
+import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.exceptions.NoConnection;
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;

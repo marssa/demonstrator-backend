@@ -1,11 +1,11 @@
-package mise.marssa.apps.demonstrator.web_services.GPS_Receiver;
+package mise.marssa.demonstrator.web_services.GPS_Receiver;
 
 import java.util.ArrayList;
 
-import mise.marssa.apps.demonstrator.navigation_equipment.GpsReceiver;
-import mise.marssa.exceptions.NoConnection;
-import mise.marssa.exceptions.NoValue;
-import mise.marssa.exceptions.OutOfRange;
+import mise.marssa.services.navigation.GpsReceiver;
+import mise.marssa.footprint.exceptions.NoConnection;
+import mise.marssa.footprint.exceptions.NoValue;
+import mise.marssa.footprint.exceptions.OutOfRange;
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;

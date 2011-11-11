@@ -1,12 +1,11 @@
-package mise.marssa.apps.demonstrator.web_services.motionControlPage;
+package mise.marssa.demonstrator.web_services.motionControlPage;
 
 import java.util.ArrayList;
 
-import mise.marssa.apps.demonstrator.control.rudder.RudderController;
-import mise.marssa.apss.demonstrator.control.electrical_motor.MotorController;
-import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.exceptions.NoConnection;
-
+import mise.marssa.demonstrator.control.electrical_motor.MotorController;
+import mise.marssa.demonstrator.control.rudder.RudderController;
+import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.exceptions.NoConnection;
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;

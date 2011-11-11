@@ -1,10 +1,10 @@
-package mise.marssa.apps.demonstrator.web_services.lightControlPage;
+package mise.marssa.demonstrator.web_services.lightControlPage;
 
 import java.util.ArrayList;
 
-import mise.marssa.apps.demonstrator.control.lighting.NavigationLightsController;
-import mise.marssa.apps.demonstrator.control.lighting.UnderwaterLightsController;
-import mise.marssa.data_types.MBoolean;
+import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
+import mise.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import mise.marssa.footprint.data_types.MBoolean;
 import org.restlet.Application;
 import org.restlet.Request;
 import org.restlet.Response;

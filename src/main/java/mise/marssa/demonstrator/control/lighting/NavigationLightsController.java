@@ -1,10 +1,10 @@
-package mise.marssa.apps.demonstrator.control.lighting;
+package mise.marssa.demonstrator.control.lighting;
 
-import mise.marssa.apss.demonstrator.control.LabJack;
-import mise.marssa.data_types.MBoolean;
-import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.exceptions.NoConnection;
-import mise.marssa.interfaces.control.lighting.ILightToggle;
+import mise.marssa.services.diagnostics.daq.LabJack;
+import mise.marssa.footprint.data_types.MBoolean;
+import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.exceptions.NoConnection;
+import mise.marssa.footprint.interfaces.control.lighting.ILightToggle;
 
 public class NavigationLightsController implements ILightToggle{
 

@@ -1,12 +1,12 @@
 /**
  * 
  */
-package mise.marssa.apss.demonstrator.constants;
+package mise.marssa.demonstrator.constants;
 
 import java.io.File;
-import mise.marssa.data_types.MString;
-import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.data_types.MString;
+import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
 
 /**
  * @author Clayton Tabone
@@ -21,14 +21,6 @@ public class Constants {
 		public final static MString ENVIRONMENT = new MString(System.getProperty("mise.demonstrator.constants.environment", "production"));
 		public final static MString MODBUS_DEBUG = new MString(System.getProperty("net.wimpi.modbus.debug", (ENVIRONMENT.getContents() == "development") ? "true" : "false"));
 		public final static MString ROOT_URI = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "/root/demonstrator/theDemonStrator-Front-End" : new File(System.getProperty("mise.demonstrator.constants.workspace"), "theDemonStrator-Front-End").toString());
-	}
-	
-	/**
-	 * General Constants
-	 * @author Clayton Tabone
-	 */
-	public final static class GENERAL {
-		public final static MInteger RETRY_AMOUNT = new MInteger(5);
 	}
 	
 	/**
