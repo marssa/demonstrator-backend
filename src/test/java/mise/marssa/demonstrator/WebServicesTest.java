@@ -13,22 +13,21 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Protocol;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
-
-import mise.marssa.apps.demonstrator.web_services.StaticFileServerApplication;
-import mise.marssa.apss.demonstrator.constants.Constants;
-import mise.marssa.apss.demonstrator.control.Ramping;
-import mise.marssa.apss.demonstrator.control.Ramping.RampingType;
-import mise.marssa.data_types.MBoolean;
-import mise.marssa.data_types.composite_datatypes.Coordinate;
-import mise.marssa.data_types.composite_datatypes.Latitude;
-import mise.marssa.data_types.composite_datatypes.Longitude;
-import mise.marssa.data_types.float_datatypes.DegreesFloat;
-import mise.marssa.data_types.float_datatypes.MFloat;
-import mise.marssa.data_types.integer_datatypes.MInteger;
-import mise.marssa.exceptions.ConfigurationError;
-import mise.marssa.exceptions.NoConnection;
-import mise.marssa.exceptions.OutOfRange;
-import mise.marssa.interfaces.control.IController;
+import mise.marssa.footprint.data_types.MBoolean;
+import mise.marssa.footprint.data_types.composite_datatypes.Coordinate;
+import mise.marssa.footprint.data_types.composite_datatypes.Latitude;
+import mise.marssa.footprint.data_types.composite_datatypes.Longitude;
+import mise.marssa.footprint.data_types.float_datatypes.DegreesFloat;
+import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.exceptions.ConfigurationError;
+import mise.marssa.footprint.exceptions.NoConnection;
+import mise.marssa.footprint.exceptions.OutOfRange;
+import mise.marssa.footprint.interfaces.control.IController;
+import mise.marssa.services.control.Ramping;
+import mise.marssa.services.control.Ramping.RampingType;
+import mise.marssa.demonstrator.web_services.StaticFileServerApplication;
+import mise.marssa.demonstrator.constants.Constants;
 
 public class WebServicesTest {
 	
@@ -79,21 +78,18 @@ public class WebServicesTest {
 			}
 		}
 		
-		@Override
 		public void outputValue(MFloat value) throws ConfigurationError,
 				OutOfRange, NoConnection {
 			// TODO Auto-generated method stub
 			System.out.println(value);
 		}
 
-		@Override
 		public void setPolaritySignal(Polarity polarity)
 				throws NoConnection {
 			// TODO Auto-generated method stub
 			
 		}
 
-		@Override
 		public MFloat getValue() {
 			// TODO Auto-generated method stub
 			return ramping.getCurrentValue();

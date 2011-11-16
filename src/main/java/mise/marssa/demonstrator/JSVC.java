@@ -3,19 +3,19 @@
  */
 package mise.marssa.demonstrator;
 
+import org.apache.commons.daemon.*;
 import org.restlet.Component;
 import mise.marssa.footprint.exceptions.ConfigurationError;
 import mise.marssa.footprint.exceptions.OutOfRange;
 import mise.marssa.services.navigation.GpsReceiver;
 import mise.marssa.services.diagnostics.daq.LabJack;
 import mise.marssa.services.diagnostics.daq.LabJack.TimersEnabled;
-import mise.marssa.apps.demonstrator.control.lighting.NavigationLightsController;
-import mise.marssa.apps.demonstrator.control.lighting.UnderwaterLightsController;
-import mise.marssa.apps.demonstrator.control.rudder.RudderController;
-import mise.marssa.apps.demonstrator.web_services.WebServices;
-import mise.marssa.apss.demonstrator.constants.Constants;
-import mise.marssa.apss.demonstrator.control.electrical_motor.MotorController;
-import org.apache.commons.daemon.*;
+import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
+import mise.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import mise.marssa.demonstrator.control.rudder.RudderController;
+import mise.marssa.demonstrator.web_services.WebServices;
+import mise.marssa.demonstrator.constants.Constants;
+import mise.marssa.demonstrator.control.electrical_motor.MotorController;
 
 /**
  * @author Clayton Tabone
