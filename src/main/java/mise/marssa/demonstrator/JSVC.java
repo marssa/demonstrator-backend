@@ -36,7 +36,6 @@ public class JSVC implements Daemon {
 	 * Open configuration files, create a trace file, create ServerSockets, Threads
 	 * @param context
 	 */
-	@Override
 	public void init(DaemonContext context) throws DaemonInitException, Exception {
 		// Initialise LabJack
 		try {
@@ -91,7 +90,6 @@ public class JSVC implements Daemon {
 	/**
 	 * Start the Thread, accept incoming connections
 	 */
-	@Override
 	public void start() throws Exception {
 		System.out.print("Starting web services ... ");
 		webServices.start();
@@ -101,7 +99,6 @@ public class JSVC implements Daemon {
 	/**
 	 * Inform the Thread to terminate the run(), close the ServerSockets
 	 */
-	@Override
 	public void stop() throws Exception {
 		try {
 			System.out.print("Stopping web services ... ");
@@ -116,7 +113,6 @@ public class JSVC implements Daemon {
 	/**
 	 * Destroy any object created in init()
 	 */
-	@Override
 	public void destroy() {
 		labJack = null;
 		navLightsController = null;
