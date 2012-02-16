@@ -4,9 +4,9 @@ import java.io.IOException;
 
 import mise.marssa.services.diagnostics.daq.LabJack;
 import mise.marssa.demonstrator.constants.Constants;
-import mise.marssa.footprint.data_types.MBoolean;
-import mise.marssa.footprint.data_types.float_datatypes.MFloat;
-import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.datatypes.MBoolean;
+import mise.marssa.footprint.datatypes.decimal.MFloat;
+import mise.marssa.footprint.datatypes.integer.MInteger;
 import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.interfaces.control.rudder.IRudderController;
 

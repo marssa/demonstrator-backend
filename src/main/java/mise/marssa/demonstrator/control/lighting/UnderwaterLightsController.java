@@ -4,8 +4,8 @@
 package mise.marssa.demonstrator.control.lighting;
 
 import mise.marssa.services.diagnostics.daq.LabJack;
-import mise.marssa.footprint.data_types.MBoolean;
-import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.datatypes.MBoolean;
+import mise.marssa.footprint.datatypes.integer.MInteger;
 import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.interfaces.control.lighting.ILightToggle;
 
