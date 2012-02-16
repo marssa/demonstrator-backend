@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.demonstrator.control.electrical_motor.MotorController;
-import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.datatypes.decimal.MFloat;
 import mise.marssa.footprint.exceptions.ConfigurationError;
 import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.exceptions.OutOfRange;

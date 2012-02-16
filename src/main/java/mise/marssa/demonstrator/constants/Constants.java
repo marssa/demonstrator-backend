@@ -4,9 +4,9 @@
 package mise.marssa.demonstrator.constants;
 
 import java.io.File;
-import mise.marssa.footprint.data_types.MString;
-import mise.marssa.footprint.data_types.float_datatypes.MFloat;
-import mise.marssa.footprint.data_types.integer_datatypes.MInteger;
+import mise.marssa.footprint.datatypes.MString;
+import mise.marssa.footprint.datatypes.decimal.MFloat;
+import mise.marssa.footprint.datatypes.integer.MInteger;
 
 /**
  * @author Clayton Tabone

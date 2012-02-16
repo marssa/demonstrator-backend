@@ -7,11 +7,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 
-	<name>MARSSA demonstrator backend OSGi Bundle</name>
+	<name>MARSSA Demonstrator Backend OSGi Bundle</name>
 	<url>http://www.marsec-xl-projects.org/projects/demonstrator-backend</url>
 	<description>This project provides a reference implementation of a typical application running on the MARSSA backend. Applications are the uppermost layer in the Java instance of the MARSSA Reference Architecture. The demonstrator-backend application was developed on top of MARSSA to showcase the demonstrator boat.</description>
 
 	<properties>
+		<javaVersion>1.6</javaVersion>
+		<marssaVersion>0.0.1-SNAPSHOT</marssaVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -21,10 +23,37 @@
 	</organization>
 
 	<scm>
-		<url>git@github.com:marssa/services.git</url>
-		<connection>ssh</connection>
-		<developerConnection>Clayton Tabone, Warren Zahra, Amanda Fenech, Alan Grech</developerConnection>
+		<url>https://github.com/marssa/demonstrator-backend</url>
+		<connection>git://github.com/marssa/demonstrator-backend.git</connection>
+		<developerConnection>scm:git:git@github.com:marssa/demonstrator-backend.git</developerConnection>
 	</scm>
+
+	<developers>
+		<developer>
+			<email>taboneclayton@gmail.com</email>
+			<name>Clayton Tabone</name>
+			<url>https://github.com/taboneclayton</url>
+			<id>taboneclayton</id>
+		</developer>
+		<developer>
+			<email>warren.zahra@marsec-xl.org</email>
+			<name>Warren Zahra</name>
+			<url>https://github.com/warrenzahra</url>
+			<id>warrenzahra</id>
+		</developer>
+		<developer>
+			<email>amanda.fenech@marsec-xl.org</email>
+			<name>Amanda Fenech</name>
+			<url>https://github.com/Adnama</url>
+			<id>Adnama</id>
+		</developer>
+		<developer>
+			<email>alangrech@gmail.com</email>
+			<name>Alan Grech</name>
+			<url>https://github.com/alangrech</url>
+			<id>alangrech</id>
+		</developer>
+	</developers>
 
 	<issueManagement>
 		<system>Redmine</system>
@@ -61,7 +90,7 @@
 		<dependency>
 			<groupId>mise.marssa</groupId>
 			<artifactId>services</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${marssaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-daemon</groupId>
@@ -72,17 +101,125 @@
 
 	<build>
 		<plugins>
+			<!-- Specify Java compiler version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>${javaVersion}</source>
+					<target>${javaVersion}</target>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-simple</artifactId>
+						<version>1.6.4</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<!-- Bundle artifact as OSGi bundle -->
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.2.0</version>
+				<version>2.3.6</version>
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
 						<Bundle-Activator>mise.marssa.demonstrator.Activator</Bundle-Activator>
+						<Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!footprint|libraries|services</Embed-Dependency>
 					</instructions>
 				</configuration>
+				<executions>
+					<execution>
+						<id>install-bundle</id>
+						<phase>install</phase>
+						<goals>
+							<goal>install</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+
+			<!-- Add target/generated-sources/src/main/java to the build path -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${basedir}/target/generated-sources/src/main/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Process external resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-remote-resources-plugin</artifactId>
+				<version>1.2.1</version>
+				<executions>
+					<execution>
+						<id>process-remote-resources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<resourceBundles>
+								<resourceBundle>mise.marssa:footprint:${marssaVersion}</resourceBundle>
+							</resourceBundles>
+							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
+							<skip>false</skip>
+							<includeProjectProperties>true</includeProjectProperties>
+							<attached>true</attached>
+							<detail>true</detail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Generate Java classes from xsd file during generate-sources phase -->
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-xjc-plugin</artifactId>
+				<version>2.4.0</version>
+				<configuration>
+					<extensions>
+						<extension>org.apache.cxf.xjcplugins:cxf-xjc-dv:2.4.0</extension>
+					</extensions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>xsdtojava</goal>
+						</goals>
+						<configuration>
+							<sourceRoot>${basedir}/target/generated-sources/src/main/java</sourceRoot>
+							<xsdOptions>
+								<xsdOption>
+									<xsd>${basedir}/src/main/resources/schemas/Settings.xsd</xsd>
+									<packagename>projects.ri.realpromise.settings.types</packagename>
+								</xsdOption>
+							</xsdOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Deploy to alternate repository for github -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -92,6 +229,41 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.cxf
+										</groupId>
+										<artifactId>
+											cxf-xjc-plugin
+										</artifactId>
+										<versionRange>
+											[2.4.0,)
+										</versionRange>
+										<goals>
+											<goal>xsdtojava</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<profiles>

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
 import mise.marssa.demonstrator.control.lighting.UnderwaterLightsController;
-import mise.marssa.footprint.data_types.MBoolean;
+import mise.marssa.footprint.datatypes.MBoolean;
 import mise.marssa.footprint.exceptions.NoConnection;
 
 import org.restlet.Application;

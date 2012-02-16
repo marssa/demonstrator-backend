@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.demonstrator.control.rudder.RudderController;
-import mise.marssa.footprint.data_types.MBoolean;
-import mise.marssa.footprint.data_types.float_datatypes.MFloat;
+import mise.marssa.footprint.datatypes.MBoolean;
+import mise.marssa.footprint.datatypes.decimal.MFloat;
 import mise.marssa.footprint.exceptions.NoConnection;
 import org.restlet.Application;
 import org.restlet.Request;
