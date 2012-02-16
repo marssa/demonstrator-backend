@@ -3,6 +3,12 @@
  */
 package mise.marssa.demonstrator.control.electrical_motor;
 
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
+
+import com.vaannila.report.SampleReport;
+
 import mise.marssa.services.control.Ramping;
 import mise.marssa.services.control.Ramping.RampingType;
 import mise.marssa.services.diagnostics.daq.LabJack;
@@ -23,7 +29,6 @@ import mise.marssa.footprint.interfaces.control.electrical_motor.IMotorControlle
  *
  */
 public class MotorController implements IMotorController {
-
 	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
 	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
 	private final MInteger STEP_DELAY = new MInteger(20);
