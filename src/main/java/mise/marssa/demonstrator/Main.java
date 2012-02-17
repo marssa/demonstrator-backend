@@ -1,7 +1,5 @@
 package mise.marssa.demonstrator;
 
-import org.restlet.resource.ServerResource;
-
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
@@ -13,6 +11,8 @@ import mise.marssa.footprint.exceptions.OutOfRange;
 import mise.marssa.services.diagnostics.daq.LabJack;
 import mise.marssa.services.diagnostics.daq.LabJack.TimersEnabled;
 import mise.marssa.services.navigation.GpsReceiver;
+
+import org.restlet.resource.ServerResource;
 
 
 /** @author Clayton Tabone
@@ -35,7 +35,7 @@ public class Main extends ServerResource {
 		// Initialise LabJack
 		try {
 			System.out.print("Initialising LabJack ... ");
-			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT, TimersEnabled.TWO);
+			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT);
 			System.out.println("success!");
 		} catch (Exception e) {
 			System.out.println("failure!");
@@ -47,11 +47,11 @@ public class Main extends ServerResource {
 		// Initialise Controllers and Receivers
 		try {
 			System.out.print("Initialising LabJack ... ");
-			navLightsController = new NavigationLightsController(labJack);
+			navLightsController = new NavigationLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO4_DIR_ADDR);
 			System.out.println("success!");
 			
 			System.out.print("Initialising lights controller ... ");
-			underwaterLightsController = new UnderwaterLightsController(labJack);
+			underwaterLightsController = new UnderwaterLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO13_DIR_ADDR);
 			System.out.println("success!");
 			
 			System.out.print("Initialising motor controller ... ");

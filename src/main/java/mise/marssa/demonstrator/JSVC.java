@@ -3,19 +3,24 @@
  */
 package mise.marssa.demonstrator;
 
-import org.apache.commons.daemon.*;
-import org.restlet.Component;
-import mise.marssa.footprint.exceptions.ConfigurationError;
-import mise.marssa.footprint.exceptions.OutOfRange;
-import mise.marssa.services.navigation.GpsReceiver;
-import mise.marssa.services.diagnostics.daq.LabJack;
-import mise.marssa.services.diagnostics.daq.LabJack.TimersEnabled;
+import mise.marssa.demonstrator.constants.Constants;
+import mise.marssa.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
 import mise.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.marssa.demonstrator.control.rudder.RudderController;
 import mise.marssa.demonstrator.web_services.WebServices;
-import mise.marssa.demonstrator.constants.Constants;
-import mise.marssa.demonstrator.control.electrical_motor.MotorController;
+import mise.marssa.footprint.datatypes.MString;
+import mise.marssa.footprint.datatypes.integer.MInteger;
+import mise.marssa.footprint.exceptions.ConfigurationError;
+import mise.marssa.footprint.exceptions.OutOfRange;
+import mise.marssa.services.diagnostics.daq.LabJack;
+import mise.marssa.services.diagnostics.daq.LabJack.TimersEnabled;
+import mise.marssa.services.navigation.GpsReceiver;
+
+import org.apache.commons.daemon.Daemon;
+import org.apache.commons.daemon.DaemonContext;
+import org.apache.commons.daemon.DaemonInitException;
+import org.restlet.Component;
 
 /**
  * @author Clayton Tabone
@@ -40,7 +45,7 @@ public class JSVC implements Daemon {
 		// Initialise LabJack
 		try {
 			System.out.print("Initialising LabJack ... ");
-			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT, TimersEnabled.TWO);
+			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT);
 			System.out.println("success!");
 		} catch (Exception e) {
 			System.out.println("failure!");
@@ -52,11 +57,11 @@ public class JSVC implements Daemon {
 		// Initialise Controllers and Receivers
 		try {
 			System.out.print("Initialising LabJack ... ");
-			navLightsController = new NavigationLightsController(labJack);
+			navLightsController = new NavigationLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO4_DIR_ADDR);
 			System.out.println("success!");
 			
 			System.out.print("Initialising lights controller ... ");
-			underwaterLightsController = new UnderwaterLightsController(labJack);
+			underwaterLightsController = new UnderwaterLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO13_DIR_ADDR);
 			System.out.println("success!");
 			
 			System.out.print("Initialising motor controller ... ");

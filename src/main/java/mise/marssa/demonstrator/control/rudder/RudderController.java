@@ -2,13 +2,13 @@ package mise.marssa.demonstrator.control.rudder;
 
 import java.io.IOException;
 
-import mise.marssa.services.diagnostics.daq.LabJack;
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.footprint.datatypes.MBoolean;
 import mise.marssa.footprint.datatypes.decimal.MFloat;
 import mise.marssa.footprint.datatypes.integer.MInteger;
 import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.interfaces.control.rudder.IRudderController;
+import mise.marssa.services.diagnostics.daq.LabJack;
 
 /**
  * @author Warren Zahra

@@ -3,17 +3,6 @@
  */
 package mise.marssa.demonstrator.control.electrical_motor;
 
-import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Logger;
-
-import com.vaannila.report.SampleReport;
-
-import mise.marssa.services.control.Ramping;
-import mise.marssa.services.control.Ramping.RampingType;
-import mise.marssa.services.diagnostics.daq.LabJack;
-import mise.marssa.services.diagnostics.daq.LabJack.TimerConfigMode;
-import mise.marssa.services.diagnostics.daq.LabJack.Timers;
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.footprint.datatypes.MBoolean;
 import mise.marssa.footprint.datatypes.decimal.MFloat;
@@ -23,6 +12,11 @@ import mise.marssa.footprint.exceptions.ConfigurationError;
 import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.exceptions.OutOfRange;
 import mise.marssa.footprint.interfaces.control.motor.IMotorController;
+import mise.marssa.services.control.Ramping;
+import mise.marssa.services.control.Ramping.RampingType;
+import mise.marssa.services.diagnostics.daq.LabJack;
+import mise.marssa.services.diagnostics.daq.LabJack.TimerConfigMode;
+import mise.marssa.services.diagnostics.daq.LabJack.Timers;
 
 /**
  * @author Clayton Tabone

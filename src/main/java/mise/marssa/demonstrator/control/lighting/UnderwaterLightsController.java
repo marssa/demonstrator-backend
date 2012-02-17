@@ -1,9 +1,9 @@
-/**
- * 
- */
 package mise.marssa.demonstrator.control.lighting;
 
+import java.net.UnknownHostException;
+
 import mise.marssa.footprint.datatypes.MBoolean;
+import mise.marssa.footprint.datatypes.MString;
 import mise.marssa.footprint.datatypes.integer.MInteger;
 import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.interfaces.control.lighting.ILightToggle;
@@ -22,23 +22,25 @@ public class UnderwaterLightsController implements ILightToggle {
 
 	static Logger underwaterLightLogger = (Logger) LoggerFactory.getLogger("UnderwaterLightsController");
 	
-	private boolean lightState = false;
-	private LabJack lj = null;
+	private boolean lightState ;
+	private LabJack lj ;
 	private String switched;
-	private final MInteger UnLights = LabJack.FIO13_ADDR;
-
+	private MInteger underLights;
+	private Object[] poho= {lj.getHost().getContents(),lj.getPort().getValue()};
 	
-	public UnderwaterLightsController (LabJack lb) {
-		underwaterLightLogger.info("An instance of Navigation light controller was instantiated with labjack {} .",lj.getProperties);
+	
+	public UnderwaterLightsController (MString host, MInteger port, MInteger underLights) throws UnknownHostException, NoConnection {
+		underwaterLightLogger.info("An instance of Navigation light controller was instantiated with labjack host {}, and port {}.",host.getContents(),port.getValue());
 		this.lightState = false;
-		this.lj =lb;
+		this.underLights = underLights;
+		this.lj = LabJack.getInstance(host, port);
 	}
 	
-	public UnderwaterLightsController (MBoolean newState) throws NoConnection {
+	public UnderwaterLightsController (MString host, MInteger port, MInteger navLights, MBoolean newState) throws NoConnection, UnknownHostException {
+		this.lj = LabJack.getInstance(host, port);
+		underwaterLightLogger.info("An instance of UnderWater light controller was instantiated with labjack host: {}, and port: {}, with state set to: {}",poho,newState.getValue());
 		lightState = newState.getValue();
-		lj.write(UnLights,new MBoolean (lightState));
-		Object[] underlight = {lj.getProperties,LabJack.FIO13_ADDR,newState.getValue()};
-		underwaterLightLogger.info("An instance of Navigation light controller was instantiated with labjack {} while pin {} was set to.",underLight);
+		lj.write(navLights, newState);
 	}
 	
 
@@ -48,12 +50,12 @@ public class UnderwaterLightsController implements ILightToggle {
 			switched = "ON";
 		else 
 			switched = "OFF";
-		underwaterLightLogger.debug("Lights have been switched {} .",switched);
-		lj.write(UnLights,new MBoolean (lightState));
+		underwaterLightLogger.trace("UnderwaterLights from labjack with host: {} and port: {} have been switched {} .",poho,switched);
+		lj.write(underLights,new MBoolean (lightState));
 	}
 	
 	public MBoolean getUnderwaterLightState() {
-		underwaterLightLogger.debug(MMarker.GETTER,"Returning LightState {} .",new MBoolean(lightState));
+		underwaterLightLogger.trace(MMarker.GETTER,"Returning LightState {}, from labjack with host: {} and port: {} .",new MBoolean(lightState),poho);
 		return new MBoolean (lightState);
 	}
 	
@@ -63,7 +65,7 @@ public class UnderwaterLightsController implements ILightToggle {
 			switched = "ON";
 		else 
 			switched = "OFF";
-		underwaterLightLogger.debug(MMarker.SETTER,"Switching light",switched);
-		lj.write(UnLights,newState);
+		underwaterLightLogger.trace(MMarker.SETTER,"Switching UnderWaterlight: {} ,from labjack with host: {} and port: {}",switched,poho);
+		lj.write(underLights,newState);
 	}
 }
