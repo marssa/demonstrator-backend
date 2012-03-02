@@ -210,8 +210,8 @@
 							<sourceRoot>${basedir}/target/generated-sources/src/main/java</sourceRoot>
 							<xsdOptions>
 								<xsdOption>
-									<xsd>${basedir}/src/main/resources/schemas/Settings.xsd</xsd>
-									<packagename>projects.ri.realpromise.settings.types</packagename>
+									<xsd>${basedir}/src/main/resources/schemas/settings.xsd</xsd>
+									<packagename>mise.marssa.demonstrator.settings.types</packagename>
 								</xsdOption>
 							</xsdOptions>
 						</configuration>
