@@ -18,7 +18,7 @@ import mise.marssa.footprint.datatypes.composite.Coordinate;
 import mise.marssa.footprint.datatypes.composite.Latitude;
 import mise.marssa.footprint.datatypes.composite.Longitude;
 import mise.marssa.footprint.datatypes.decimal.DegreesFloat;
-import mise.marssa.footprint.datatypes.decimal.MFloat;
+import mise.marssa.footprint.datatypes.decimal.MDecimal;
 import mise.marssa.footprint.datatypes.integer.MInteger;
 import mise.marssa.footprint.exceptions.ConfigurationError;
 import mise.marssa.footprint.exceptions.NoConnection;
@@ -43,7 +43,7 @@ public class WebServicesTest {
 		
 		public TestController() {
 			try {
-				ramping = new Ramping(new MInteger(50), new MFloat(1.0f), this, RampingType.ACCELERATED);
+				ramping = new Ramping(new MInteger(50), new MDecimal(1.0f), this, RampingType.ACCELERATED);
 			} catch (ConfigurationError e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -56,11 +56,11 @@ public class WebServicesTest {
 			}
 		}
 		
-		public void rampTo(MFloat desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
+		public void rampTo(MDecimal desiredValue) throws InterruptedException, ConfigurationError, OutOfRange {
 			ramping.rampTo(desiredValue);
 		}
 		
-		public void increase(MFloat incrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+		public void increase(MDecimal incrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
 			try {
 				ramping.increase(incrementValue);
 			} catch (NoConnection e) {
@@ -69,7 +69,7 @@ public class WebServicesTest {
 			}
 		}
 		
-		public void decrease(MFloat decrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
+		public void decrease(MDecimal decrementValue) throws InterruptedException, ConfigurationError, OutOfRange {
 			try {
 				ramping.decrease(decrementValue);
 			} catch (NoConnection e) {
@@ -78,7 +78,7 @@ public class WebServicesTest {
 			}
 		}
 		
-		public void outputValue(MFloat value) throws ConfigurationError,
+		public void outputValue(MDecimal value) throws ConfigurationError,
 				OutOfRange, NoConnection {
 			// TODO Auto-generated method stub
 			System.out.println(value);
@@ -90,14 +90,14 @@ public class WebServicesTest {
 			
 		}
 
-		public MFloat getValue() {
+		public MDecimal getValue() {
 			// TODO Auto-generated method stub
 			return ramping.getCurrentValue();
 		}
 	}
 	
 	private static LightState currentLightState = new LightState();
-	private static MFloat rudderAngle = new MFloat(0.0f);
+	private static MDecimal rudderAngle = new MDecimal(0.0f);
 	private static TestController motorController = new TestController();
 	
 	private static class LightControllerTestApplication extends Application {
@@ -170,9 +170,9 @@ public class WebServicesTest {
 	        	@Override
 	            public void handle(Request request, Response response) {
 	        		try {
-	        			float value = Float.parseFloat(request.getAttributes().get("speed").toString());
+	        			double value = Double.parseDouble(request.getAttributes().get("speed").toString());
 	        			try {
-							motorController.rampTo(new MFloat(value));
+							motorController.rampTo(new MDecimal(value));
 						} catch (ConfigurationError e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -280,9 +280,9 @@ public class WebServicesTest {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
         			if(direction)
-        				rudderAngle = new MFloat(rudderAngle.getValue() + 1);
+        				rudderAngle = new MDecimal(rudderAngle.doubleValue() + 1);
     				else
-    					rudderAngle = new MFloat(rudderAngle.getValue() - 1);
+    					rudderAngle = new MDecimal(rudderAngle.doubleValue() - 1);
 					response.setCacheDirectives(cacheDirectives);
         			response.setEntity("Rotating the rudder in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
 	            }
@@ -295,9 +295,9 @@ public class WebServicesTest {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
         			if(direction)
-        				rudderAngle = new MFloat(rudderAngle.getValue() + 5);
+        				rudderAngle = new MDecimal(rudderAngle.doubleValue() + 5);
     				else
-    					rudderAngle = new MFloat(rudderAngle.getValue() - 5);
+    					rudderAngle = new MDecimal(rudderAngle.doubleValue() - 5);
         			response.setCacheDirectives(cacheDirectives);
         			response.setEntity("Rotating the rudder MORE in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
 	            }
@@ -320,9 +320,9 @@ public class WebServicesTest {
         			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
         			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
         			if(direction)
-        				rudderAngle = new MFloat(30.0f);
+        				rudderAngle = new MDecimal(30.0f);
     				else
-    					rudderAngle = new MFloat(-30.0f);
+    					rudderAngle = new MDecimal(-30.0f);
         			response.setCacheDirectives(cacheDirectives);
         			response.setEntity("Rotating the rudder to the extreme = " + direction, MediaType.TEXT_PLAIN);
 	            }
@@ -381,7 +381,7 @@ public class WebServicesTest {
 	        Restlet rudderAndSpeedState = new Restlet() {
 	        	@Override
 	            public void handle(Request request, Response response) {
-					MFloat motorSpeed = motorController.getValue();
+					MDecimal motorSpeed = motorController.getValue();
 					response.setCacheDirectives(cacheDirectives);
 					response.setEntity("{\"motor\":" + motorSpeed.toJSON().getContents() + ",\"rudder\":" + rudderAngle.toJSON().getContents() + "}", MediaType.APPLICATION_JSON);
 	            }

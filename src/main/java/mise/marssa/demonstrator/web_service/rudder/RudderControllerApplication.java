@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.demonstrator.control.rudder.RudderController;
 import mise.marssa.footprint.datatypes.MBoolean;
-import mise.marssa.footprint.datatypes.decimal.MFloat;
+import mise.marssa.footprint.datatypes.decimal.MDecimal;
 import mise.marssa.footprint.exceptions.NoConnection;
 import org.restlet.Application;
 import org.restlet.Request;
@@ -81,7 +81,7 @@ public class RudderControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		response.setCacheDirectives(cacheDirectives);
         		try {
-        			MFloat direction = rudderController.getAngle();
+        			MDecimal direction = rudderController.getAngle();
         			response.setEntity(direction.toString(), MediaType.TEXT_PLAIN);
         		} catch (NoConnection e) {
         			response.setStatus(Status.INFO_CONTINUE, "Cannot set the rudder angle. NoConnection error returned.");

@@ -73,10 +73,18 @@
 	</distributionManagement>
 
 	<repositories>
+		<!-- Temporary repository containing MARSSA artifacts -->
 		<repository>
 			<id>marssa-mvn-repo</id>
 			<name>MARSSA Repository on github.com</name>
 			<url>https://raw.github.com/marssa/marssa-mvn-repo/master/snapshots</url>
+		</repository>
+
+		<!-- Official Maven repository for Restlet -->
+		<repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
 		</repository>
 	</repositories>
 
@@ -96,6 +104,11 @@
 			<groupId>commons-daemon</groupId>
 			<artifactId>commons-daemon</artifactId>
 			<version>1.0.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet</artifactId>
+			<version>2.0.11</version>
 		</dependency>
 	</dependencies>
 
@@ -231,7 +244,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>

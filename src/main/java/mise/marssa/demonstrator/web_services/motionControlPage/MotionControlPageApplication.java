@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import mise.marssa.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.demonstrator.control.rudder.RudderController;
-import mise.marssa.footprint.datatypes.decimal.MFloat;
+import mise.marssa.footprint.datatypes.decimal.MDecimal;
 import mise.marssa.footprint.exceptions.NoConnection;
 import org.restlet.Application;
 import org.restlet.Request;
@@ -40,8 +40,8 @@ public class MotionControlPageApplication extends Application {
             public void handle(Request request, Response response) {
         		response.setCacheDirectives(cacheDirectives);
 				try {
-					MFloat motorSpeed = motorController.getValue();
-					MFloat rudderAngle = rudderController.getAngle();
+					MDecimal motorSpeed = motorController.getValue();
+					MDecimal rudderAngle = rudderController.getAngle();
 					response.setEntity("{\"motor\":" + motorSpeed.toJSON().getContents() + ",\"rudder\":" + rudderAngle.toJSON().getContents() + "}", MediaType.APPLICATION_JSON);
 				} catch (NoConnection e) {
 					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");

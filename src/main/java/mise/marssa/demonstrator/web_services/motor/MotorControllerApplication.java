@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.demonstrator.control.electrical_motor.MotorController;
-import mise.marssa.footprint.datatypes.decimal.MFloat;
+import mise.marssa.footprint.datatypes.decimal.MDecimal;
 import mise.marssa.footprint.exceptions.ConfigurationError;
 import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.exceptions.OutOfRange;
@@ -41,8 +41,8 @@ public class MotorControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		response.setCacheDirectives(cacheDirectives);
         		try {
-        			float value = Float.parseFloat(request.getAttributes().get("speed").toString());
-        			motorController.rampTo(new MFloat(value));
+        			double value = Float.parseFloat(request.getAttributes().get("speed").toString());
+        			motorController.rampTo(new MDecimal(value));
         			response.setEntity("Ramping motor speed to " + value + "%", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
