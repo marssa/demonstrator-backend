@@ -11,6 +11,15 @@
 	<url>http://www.marsec-xl-projects.org/projects/demonstrator-backend</url>
 	<description>This project provides a reference implementation of a typical application running on the MARSSA backend. Applications are the uppermost layer in the Java instance of the MARSSA Reference Architecture. The demonstrator-backend application was developed on top of MARSSA to showcase the demonstrator boat.</description>
 
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
 	<properties>
 		<javaVersion>1.6</javaVersion>
 		<marssaVersion>0.0.1-SNAPSHOT</marssaVersion>
@@ -18,7 +27,7 @@
 	</properties>
 
 	<organization>
-		<name>MI-SE@MALTA Foundation</name>
+		<name>MARSEC-XL International Limited</name>
 		<url>http://www.marsec-xl.org/</url>
 	</organization>
 
@@ -238,7 +247,7 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.5</version>
 				<configuration>
-					<altDeploymentRepository>footprint::default::file:../../git/marssa-mvn-repo/snapshots</altDeploymentRepository>
+					<altDeploymentRepository>footprint::default::file:../marssa-mvn-repo/snapshots</altDeploymentRepository>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -37,7 +37,7 @@ public class WebServices extends ServerResource {
 	 * @throws Exception 
 	 * 
 	 */
-	public WebServices(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController, MotorController motorController, RudderController rudderController, GpsReceiver gpsReceiver) throws Exception {
+	public WebServices(NavigationLightsController navLightsController, UnderwaterLightsController underwaterLightsController, MotorController motorController, RudderController rudderController, GpsReceiver gpsReceiver) {
 		// Set caching directives to noCache and noStore
 		cacheDirectives.add(CacheDirective.noCache());
 		cacheDirectives.add(CacheDirective.noStore());

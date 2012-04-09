@@ -21,68 +21,85 @@ import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
 import org.restlet.Component;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 /**
  * @author Clayton Tabone
- *
+ * 
  */
 public class JSVC implements Daemon {
-	LabJack labJack;
-	NavigationLightsController navLightsController;
-	UnderwaterLightsController underwaterLightsController;
-	MotorController motorController;
-	RudderController rudderController;
-	GpsReceiver gpsReceiver;
-	WebServices webServices;
-	
+	private static final Logger logger = (Logger) LoggerFactory
+			.getLogger(JSVC.class);
+
+	private LabJack labJack;
+	private NavigationLightsController navLightsController;
+	private UnderwaterLightsController underwaterLightsController;
+	private MotorController motorController;
+	private RudderController rudderController;
+	private GpsReceiver gpsReceiver;
+	private WebServices webServices;
+
 	Component component = new Component();
-	
+
 	/**
-	 * Open configuration files, create a trace file, create ServerSockets, Threads
+	 * Open configuration files, create a trace file, create ServerSockets,
+	 * Threads
+	 * 
 	 * @param context
 	 */
-	public void init(DaemonContext context) throws DaemonInitException, Exception {
+	public void init(DaemonContext context) throws DaemonInitException,
+			Exception {
 		// Initialise LabJack
 		try {
-			System.out.print("Initialising LabJack ... ");
-			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT);
-			System.out.println("success!");
+			logger.info("Initialising LabJack ...");
+			labJack = LabJack.getInstance(Constants.LABJACK.HOST,
+					Constants.LABJACK.PORT);
+			logger.info("LabJack initialized successfully on {}:{}",
+					Constants.LABJACK.HOST, Constants.LABJACK.PORT);
 		} catch (Exception e) {
-			System.out.println("failure!");
-			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
-			e.printStackTrace();
+			logger.error("Failed to initialize LabJack", e);
 			stop();
 		}
-		
+
 		// Initialise Controllers and Receivers
 		try {
-			System.out.print("Initialising LabJack ... ");
-			navLightsController = new NavigationLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO4_DIR_ADDR);
-			System.out.println("success!");
-			
-			System.out.print("Initialising lights controller ... ");
-			underwaterLightsController = new UnderwaterLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO13_DIR_ADDR);
-			System.out.println("success!");
-			
-			System.out.print("Initialising motor controller ... ");
+			logger.info("Initialising navigation lights controller ... ");
+			navLightsController = new NavigationLightsController(
+					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
+					LabJack.FIO4_DIR_ADDR);
+			logger.info("Navigation lights controller initialised successfully");
+
+			logger.info("Initialising underwater lights controller ... ");
+			underwaterLightsController = new UnderwaterLightsController(
+					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
+					LabJack.FIO13_DIR_ADDR);
+			logger.info("Underwater lights controller initialised successfully");
+
+			logger.info("Initialising motor controller ... ");
 			motorController = new MotorController(labJack);
-			System.out.println("success!");
-			
-			System.out.print("Initialising rudder controller ... ");
+			logger.info("Motor controller initialised successfully");
+
+			logger.info("Initialising rudder controller ... ");
 			rudderController = new RudderController(labJack);
-			System.out.println("success!");
-			
-			System.out.print("Initialising GPS receiver ... ");
-			gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
-			System.out.println("success!");
-			
-			System.out.print("Initialising web services ... ");
-			webServices = new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
-			System.out.println("success!");
-			
-			System.out.print("Starting restlet web servicves ... ");
+			logger.info("Rudder controller initialised successfully");
+
+			logger.info("Initialising GPS receiver ... ");
+			gpsReceiver = new GpsReceiver(Constants.GPS.HOST,
+					Constants.GPS.PORT);
+			logger.info("GPS receiver initialised successfully");
+
+			logger.info("Initialising web services ... ");
+			webServices = new WebServices(navLightsController,
+					underwaterLightsController, motorController,
+					rudderController, gpsReceiver);
+			logger.info("Web services initialised successfully");
+
+			logger.info("Starting restlet web servicves ... ");
 			webServices.start();
-			System.out.println("success!");
+			logger.info("Web servicves started. Listening on {}:{}",
+					Constants.GPS.HOST, Constants.GPS.PORT);
 		} catch (ConfigurationError e) {
 			e.printStackTrace();
 			stop();
@@ -91,7 +108,7 @@ public class JSVC implements Daemon {
 			stop();
 		}
 	}
-	
+
 	/**
 	 * Start the Thread, accept incoming connections
 	 */
@@ -100,7 +117,7 @@ public class JSVC implements Daemon {
 		webServices.start();
 		System.out.println("success!");
 	}
-	
+
 	/**
 	 * Inform the Thread to terminate the run(), close the ServerSockets
 	 */
@@ -114,7 +131,7 @@ public class JSVC implements Daemon {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Destroy any object created in init()
 	 */

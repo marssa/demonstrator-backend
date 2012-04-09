@@ -1,5 +1,7 @@
 package mise.marssa.demonstrator;
 
+import java.net.UnknownHostException;
+
 import mise.marssa.demonstrator.constants.Constants;
 import mise.marssa.demonstrator.control.electrical_motor.MotorController;
 import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
@@ -7,21 +9,28 @@ import mise.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.marssa.demonstrator.control.rudder.RudderController;
 import mise.marssa.demonstrator.web_services.WebServices;
 import mise.marssa.footprint.exceptions.ConfigurationError;
+import mise.marssa.footprint.exceptions.NoConnection;
+import mise.marssa.footprint.exceptions.NoValue;
 import mise.marssa.footprint.exceptions.OutOfRange;
 import mise.marssa.services.diagnostics.daq.LabJack;
-import mise.marssa.services.diagnostics.daq.LabJack.TimersEnabled;
 import mise.marssa.services.navigation.GpsReceiver;
 
 import org.restlet.resource.ServerResource;
+import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Logger;
 
-/** @author Clayton Tabone
- *
+/**
+ * @author Clayton Tabone
+ * 
  */
 public class Main extends ServerResource {
-		
+	private static final Logger logger = (Logger) LoggerFactory
+			.getLogger(Main.class);
+
 	/**
-	 * @param args the args 
+	 * @param args
+	 *            the args
 	 */
 	public static void main(java.lang.String[] args) {
 		LabJack labJack = null;
@@ -31,96 +40,104 @@ public class Main extends ServerResource {
 		RudderController rudderController;
 		GpsReceiver gpsReceiver;
 		WebServices webServices;
-		
+
 		// Initialise LabJack
 		try {
-			System.out.print("Initialising LabJack ... ");
-			labJack = LabJack.getInstance(Constants.LABJACK.HOST, Constants.LABJACK.PORT);
-			System.out.println("success!");
+			logger.info("Initialising LabJack ...");
+			labJack = LabJack.getInstance(Constants.LABJACK.HOST,
+					Constants.LABJACK.PORT);
+			logger.info("LabJack initialized successfully on {}:{}",
+					Constants.LABJACK.HOST, Constants.LABJACK.PORT);
 		} catch (Exception e) {
-			System.out.println("failure!");
-			System.err.println("Cannot connect to " + Constants.LABJACK.HOST + ":" + Constants.LABJACK.PORT);
-			e.printStackTrace();
+			logger.error("Failed to initialize LabJack", e);
 			System.exit(1);
 		}
-		
+
 		// Initialise Controllers and Receivers
 		try {
-			System.out.print("Initialising LabJack ... ");
-			navLightsController = new NavigationLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO4_DIR_ADDR);
-			System.out.println("success!");
-			
-			System.out.print("Initialising lights controller ... ");
-			underwaterLightsController = new UnderwaterLightsController(Constants.LABJACK.HOST, Constants.LABJACK.PORT,LabJack.FIO13_DIR_ADDR);
-			System.out.println("success!");
-			
-			System.out.print("Initialising motor controller ... ");
+			logger.info("Initialising navigation lights controller ... ");
+			navLightsController = new NavigationLightsController(
+					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
+					LabJack.FIO4_DIR_ADDR);
+			logger.info("Navigation lights controller initialised successfully");
+
+			logger.info("Initialising underwater lights controller ... ");
+			underwaterLightsController = new UnderwaterLightsController(
+					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
+					LabJack.FIO13_DIR_ADDR);
+			logger.info("Underwater lights controller initialised successfully");
+
+			logger.info("Initialising motor controller ... ");
 			motorController = new MotorController(labJack);
-			System.out.println("success!");
-			
-			System.out.print("Initialising rudder controller ... ");
+			logger.info("Motor controller initialised successfully");
+
+			logger.info("Initialising rudder controller ... ");
 			rudderController = new RudderController(labJack);
-			System.out.println("success!");
-			
-			System.out.print("Initialising GPS receiver ... ");
-			gpsReceiver = new GpsReceiver(Constants.GPS.HOST, Constants.GPS.PORT);
-			System.out.println("success!");
-			
-			System.out.print("Initialising web services ... ");
-			webServices = new WebServices(navLightsController, underwaterLightsController, motorController, rudderController, gpsReceiver);
-			System.out.println("success!");
-			
-			System.out.print("Starting restlet web servicves ... ");
+			logger.info("Rudder controller initialised successfully");
+
+			logger.info("Initialising GPS receiver ... ");
+			gpsReceiver = new GpsReceiver(Constants.GPS.HOST,
+					Constants.GPS.PORT);
+			logger.info("GPS receiver initialised successfully");
+
+			logger.info("Initialising web services ... ");
+			webServices = new WebServices(navLightsController,
+					underwaterLightsController, motorController,
+					rudderController, gpsReceiver);
+			logger.info("Web services initialised successfully");
+
+			logger.info("Starting restlet web servicves ... ");
 			webServices.start();
-			System.out.println("success!");
+			logger.info("Web servicves started. Listening on {}:{}",
+					Constants.GPS.HOST, Constants.GPS.PORT);
 		} catch (ConfigurationError e) {
-			e.printStackTrace();
+			logger.error("ConfigurationError exception has been caught", e);
 			System.exit(1);
 		} catch (OutOfRange e) {
-			e.printStackTrace();
+			logger.error("OutOfRange exception has been caught", e);
 			System.exit(1);
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		} catch (UnknownHostException e) {
+			logger.error("UnknownHostException exception has been caught", e);
+			System.exit(1);
+		} catch (NoConnection e) {
+			logger.error("NoConnection exception has been caught", e);
+			System.exit(1);
+		} catch (InterruptedException e) {
+			logger.error("InterruptedException exception has been caught", e);
+			System.exit(1);
+		} catch (NoValue e) {
+			logger.error("NoValue exception has been caught", e);
+			System.exit(1);
+		} catch (Exception e) {
+			logger.error("General exception has been caught", e);
 			System.exit(1);
 		}
 		/*
-		// NavigationLights Tests
-		System.out.println(navigationLights.getNavigationLightState());
-		Percentage desiredValue = new Percentage(10f);
-		
-		// MotorControl Tests
-		try {
-			motorController.rampTo(desiredValue);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		// Rudder Tests
-		try {
-			rudderController.rotate(new MBoolean (true));
-			rudderController.rotate(new MBoolean (false));
-			rudderController.rotate(new MBoolean (true));
-			rudderController.rotate(new MBoolean (false));
-			rudderController.rotate(new MBoolean (false));
-			rudderController.rotate(new MBoolean (true));
-			rudderController.rotate(new MBoolean (true));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		// GPSReceiver Tests
-		try {
-			System.out.println("The GPS coordinates are " + gpsReceiver.getCoordinate());
-			System.out.println("Altitude is " + gpsReceiver.getElevation());
-			System.out.println("Course over ground " + gpsReceiver.getCOG());
-			System.out.println("Speed over ground " + gpsReceiver.getSOG());
-			//System.out.println("EPT " + gps.getEPT());      ///have to find the EPT
-			System.out.println("Time " + gpsReceiver.getDate());
-		} catch (NoConnection e) {
-			e.printStackTrace();
-		} catch (NoValue e) {
-			e.printStackTrace();
-		}
-		*/
+		 * // NavigationLights Tests
+		 * System.out.println(navigationLights.getNavigationLightState());
+		 * Percentage desiredValue = new Percentage(10f);
+		 * 
+		 * // MotorControl Tests try { motorController.rampTo(desiredValue); }
+		 * catch (InterruptedException e) { e.printStackTrace(); }
+		 * 
+		 * // Rudder Tests try { rudderController.rotate(new MBoolean (true));
+		 * rudderController.rotate(new MBoolean (false));
+		 * rudderController.rotate(new MBoolean (true));
+		 * rudderController.rotate(new MBoolean (false));
+		 * rudderController.rotate(new MBoolean (false));
+		 * rudderController.rotate(new MBoolean (true));
+		 * rudderController.rotate(new MBoolean (true)); } catch
+		 * (InterruptedException e) { e.printStackTrace(); }
+		 * 
+		 * // GPSReceiver Tests try {
+		 * System.out.println("The GPS coordinates are " +
+		 * gpsReceiver.getCoordinate()); System.out.println("Altitude is " +
+		 * gpsReceiver.getElevation()); System.out.println("Course over ground "
+		 * + gpsReceiver.getCOG()); System.out.println("Speed over ground " +
+		 * gpsReceiver.getSOG()); //System.out.println("EPT " + gps.getEPT());
+		 * ///have to find the EPT System.out.println("Time " +
+		 * gpsReceiver.getDate()); } catch (NoConnection e) {
+		 * e.printStackTrace(); } catch (NoValue e) { e.printStackTrace(); }
+		 */
 	}
 }
