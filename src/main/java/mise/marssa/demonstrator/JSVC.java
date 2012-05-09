@@ -1,5 +1,17 @@
 /**
- * 
+ * Copyright 2012 MARSEC-XL International Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package mise.marssa.demonstrator;
 
@@ -9,12 +21,9 @@ import mise.marssa.demonstrator.control.lighting.NavigationLightsController;
 import mise.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import mise.marssa.demonstrator.control.rudder.RudderController;
 import mise.marssa.demonstrator.web_services.WebServices;
-import mise.marssa.footprint.datatypes.MString;
-import mise.marssa.footprint.datatypes.integer.MInteger;
 import mise.marssa.footprint.exceptions.ConfigurationError;
 import mise.marssa.footprint.exceptions.OutOfRange;
-import mise.marssa.services.diagnostics.daq.LabJack;
-import mise.marssa.services.diagnostics.daq.LabJack.TimersEnabled;
+import mise.marssa.services.diagnostics.daq.LabJackU3;
 import mise.marssa.services.navigation.GpsReceiver;
 
 import org.apache.commons.daemon.Daemon;
@@ -33,7 +42,7 @@ public class JSVC implements Daemon {
 	private static final Logger logger = (Logger) LoggerFactory
 			.getLogger(JSVC.class);
 
-	private LabJack labJack;
+	private LabJackU3 labJack;
 	private NavigationLightsController navLightsController;
 	private UnderwaterLightsController underwaterLightsController;
 	private MotorController motorController;
@@ -54,7 +63,7 @@ public class JSVC implements Daemon {
 		// Initialise LabJack
 		try {
 			logger.info("Initialising LabJack ...");
-			labJack = LabJack.getInstance(Constants.LABJACK.HOST,
+			labJack = LabJackU3.getInstance(Constants.LABJACK.HOST,
 					Constants.LABJACK.PORT);
 			logger.info("LabJack initialized successfully on {}:{}",
 					Constants.LABJACK.HOST, Constants.LABJACK.PORT);
@@ -68,13 +77,13 @@ public class JSVC implements Daemon {
 			logger.info("Initialising navigation lights controller ... ");
 			navLightsController = new NavigationLightsController(
 					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
-					LabJack.FIO4_DIR_ADDR);
+					LabJackU3.FIO4_DIR_ADDR);
 			logger.info("Navigation lights controller initialised successfully");
 
 			logger.info("Initialising underwater lights controller ... ");
 			underwaterLightsController = new UnderwaterLightsController(
 					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
-					LabJack.FIO13_DIR_ADDR);
+					LabJackU3.FIO13_DIR_ADDR);
 			logger.info("Underwater lights controller initialised successfully");
 
 			logger.info("Initialising motor controller ... ");

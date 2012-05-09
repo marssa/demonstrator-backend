@@ -1,3 +1,18 @@
+/**
+ * Copyright 2012 MARSEC-XL International Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package mise.marssa.demonstrator.control.rudder;
 
 import java.io.IOException;
@@ -43,8 +58,7 @@ public class RudderController implements IRudderController {
 	 */
 	public synchronized void rotateMultiple(MInteger multiple,
 			MBoolean direction) throws InterruptedException, NoConnection {
-		for (int x = 0; x < multiple.getValue(); x++) {
-
+		for (int x = 0; x < multiple.intValue(); x++) {
 			if (angle.doubleValue() > 30 && direction.getValue() == true) {
 				break;
 			} else if (angle.doubleValue() < -30
@@ -102,9 +116,8 @@ public class RudderController implements IRudderController {
 			lj.write(STEPPER4, LOW);
 			stepLeft = 1;
 			stepRight = 0;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.getValue());
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
 			return;
-
 		}
 		if ((stepLeft == 1 && direction.getValue())
 				|| (stepRight == 2 && direction.getValue() == false)) {
@@ -114,7 +127,7 @@ public class RudderController implements IRudderController {
 			lj.write(STEPPER4, LOW);
 			stepLeft = 2;
 			stepRight = 3;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.getValue());
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
 			return;
 		}
 		if ((stepLeft == 2 && direction.getValue())
@@ -125,7 +138,7 @@ public class RudderController implements IRudderController {
 			lj.write(STEPPER4, HIGH);
 			stepLeft = 3;
 			stepRight = 2;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.getValue());
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
 			return;
 		}
 		if ((stepLeft == 3 && direction.getValue())
@@ -136,7 +149,7 @@ public class RudderController implements IRudderController {
 			lj.write(STEPPER4, HIGH);
 			stepLeft = 0;
 			stepRight = 1;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.getValue());
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
 			return;
 		}
 	}

@@ -1,3 +1,18 @@
+/**
+ * Copyright 2012 MARSEC-XL International Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package mise.marssa.demonstrator;
 
 import java.util.ArrayList;
@@ -17,7 +32,7 @@ import mise.marssa.footprint.datatypes.MBoolean;
 import mise.marssa.footprint.datatypes.composite.Coordinate;
 import mise.marssa.footprint.datatypes.composite.Latitude;
 import mise.marssa.footprint.datatypes.composite.Longitude;
-import mise.marssa.footprint.datatypes.decimal.DegreesFloat;
+import mise.marssa.footprint.datatypes.decimal.DegreesDecimal;
 import mise.marssa.footprint.datatypes.decimal.MDecimal;
 import mise.marssa.footprint.datatypes.integer.MInteger;
 import mise.marssa.footprint.exceptions.ConfigurationError;
@@ -351,7 +366,7 @@ public class WebServicesTest {
 	            public void handle(Request request, Response response) {
 	        		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
 	        		try {
-	        			Coordinate coordinate = new Coordinate(new Latitude(new DegreesFloat(20.5f)), new Longitude(new DegreesFloat(129.8f)));
+	        			Coordinate coordinate = new Coordinate(new Latitude(new DegreesDecimal(20.5)), new Longitude(new DegreesDecimal(129.8)));
 	        			response.setCacheDirectives(cacheDirectives);
 						response.setEntity( coordinate.toJSON().getContents() , MediaType.APPLICATION_JSON);
 					} catch (OutOfRange e) {
@@ -429,7 +444,7 @@ public class WebServicesTest {
 		cacheDirectives.add(CacheDirective.noStore());
 		
 	    // Add a new HTTP server listening on the given port
-	    Server server = component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.HOST.getContents(), Constants.WEB_SERVICES.PORT.getValue());
+	    Server server = component.getServers().add(Protocol.HTTP, Constants.WEB_SERVICES.HOST.getContents(), Constants.WEB_SERVICES.PORT.intValue());
 	    server.getContext().getParameters().add("maxTotalConnections", Constants.WEB_SERVICES.MAX_TOTAL_CONNECTIONS.toString());
 	    
 	    // Add new client connector for the FILE protocol

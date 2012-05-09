@@ -250,7 +250,26 @@
 					<altDeploymentRepository>footprint::default::file:../marssa-mvn-repo/snapshots</altDeploymentRepository>
 				</configuration>
 			</plugin>
+
+			<!-- Add license header to all files -->
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+				<configuration>
+					<header>HEADER</header>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
 		<pluginManagement>
 			<plugins>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 

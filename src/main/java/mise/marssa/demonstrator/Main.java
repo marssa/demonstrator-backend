@@ -1,3 +1,18 @@
+/**
+ * Copyright 2012 MARSEC-XL International Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package mise.marssa.demonstrator;
 
 import java.net.UnknownHostException;
@@ -13,6 +28,7 @@ import mise.marssa.footprint.exceptions.NoConnection;
 import mise.marssa.footprint.exceptions.NoValue;
 import mise.marssa.footprint.exceptions.OutOfRange;
 import mise.marssa.services.diagnostics.daq.LabJack;
+import mise.marssa.services.diagnostics.daq.LabJackU3;
 import mise.marssa.services.navigation.GpsReceiver;
 
 import org.restlet.resource.ServerResource;
@@ -33,7 +49,7 @@ public class Main extends ServerResource {
 	 *            the args
 	 */
 	public static void main(java.lang.String[] args) {
-		LabJack labJack = null;
+		LabJackU3 labJack = null;
 		NavigationLightsController navLightsController;
 		UnderwaterLightsController underwaterLightsController;
 		MotorController motorController;
@@ -44,7 +60,7 @@ public class Main extends ServerResource {
 		// Initialise LabJack
 		try {
 			logger.info("Initialising LabJack ...");
-			labJack = LabJack.getInstance(Constants.LABJACK.HOST,
+			labJack = LabJackU3.getInstance(Constants.LABJACK.HOST,
 					Constants.LABJACK.PORT);
 			logger.info("LabJack initialized successfully on {}:{}",
 					Constants.LABJACK.HOST, Constants.LABJACK.PORT);
