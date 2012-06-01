@@ -18,11 +18,11 @@
 -->
 <?xml-stylesheet type="text/xsl" href="xs3p_links.xsl"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="settings.demonstrator.marssa.mise" xmlns="settings.demonstrator.marssa.mise"
-	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:marssa="mise.marssa.footprint.datatypes"
+	targetNamespace="settings.demonstrator.marssa.org" xmlns="settings.demonstrator.marssa.org"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:marssa="org.marssa.footprint.datatypes"
 	jxb:version="2.0">
 
-	<xsd:import namespace="mise.marssa.footprint.datatypes"
+	<xsd:import namespace="org.marssa.footprint.datatypes"
 		schemaLocation="../generated/schemas/marssa.xsd" />
 
 	<xsd:element name="settings">

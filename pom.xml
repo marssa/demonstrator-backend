@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>mise.marssa</groupId>
+	<groupId>org.marssa</groupId>
 	<artifactId>demonstrator-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
@@ -105,7 +105,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>mise.marssa</groupId>
+			<groupId>org.marssa</groupId>
 			<artifactId>services</artifactId>
 			<version>${marssaVersion}</version>
 		</dependency>
@@ -149,8 +149,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-Activator>mise.marssa.demonstrator.Activator</Bundle-Activator>
-						<Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!footprint|libraries|services</Embed-Dependency>
+						<Bundle-Activator>org.marssa.demonstrator.Activator</Bundle-Activator>
+						<Embed-Dependency>*;scope=compile|runtime;inline=false;artifactId=!footprint|services</Embed-Dependency>
 					</instructions>
 				</configuration>
 				<executions>
@@ -199,7 +199,7 @@
 						</goals>
 						<configuration>
 							<resourceBundles>
-								<resourceBundle>mise.marssa:footprint:${marssaVersion}</resourceBundle>
+								<resourceBundle>org.marssa:footprint:${marssaVersion}</resourceBundle>
 							</resourceBundles>
 							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
 							<skip>false</skip>
@@ -233,7 +233,7 @@
 							<xsdOptions>
 								<xsdOption>
 									<xsd>${basedir}/src/main/resources/schemas/settings.xsd</xsd>
-									<packagename>mise.marssa.demonstrator.settings.types</packagename>
+									<packagename>org.marssa.demonstrator.settings.types</packagename>
 								</xsdOption>
 							</xsdOptions>
 						</configuration>
