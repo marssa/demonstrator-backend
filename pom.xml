@@ -22,7 +22,7 @@
 
 	<properties>
 		<javaVersion>1.6</javaVersion>
-		<marssaVersion>0.0.1-SNAPSHOT</marssaVersion>
+		<marssaVersion>0.1.0-beta-01</marssaVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -69,26 +69,7 @@
 		<url>http://www.marsec-xl-projects.org/projects/demonstrator-backend</url>
 	</issueManagement>
 
-	<!-- This stub section is only needed in older versions of Maven -->
-	<distributionManagement>
-		<repository>
-			<id>repo</id>
-			<url>https://raw.github.com/marssa/marssa-mvn-repo/master/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshot-repo</id>
-			<url>https://raw.github.com/marssa/marssa-mvn-repo/master/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 	<repositories>
-		<!-- Temporary repository containing MARSSA artifacts -->
-		<repository>
-			<id>marssa-mvn-repo</id>
-			<name>MARSSA Repository on github.com</name>
-			<url>https://raw.github.com/marssa/marssa-mvn-repo/master/snapshots</url>
-		</repository>
-
 		<!-- Official Maven repository for Restlet -->
 		<repository>
 			<id>maven-restlet</id>
@@ -233,22 +214,17 @@
 							<xsdOptions>
 								<xsdOption>
 									<xsd>${basedir}/src/main/resources/schemas/settings.xsd</xsd>
-									<packagename>org.marssa.demonstrator.settings.types</packagename>
+									
+									<bindingFile>${basedir}/src/main/resources/configuration/jaxb/settings.xjb</bindingFile>
+									
+									<deleteDirs>
+										<deleteDir>${basedir}/target/generated-sources/src/main/java/org/marssa/footprint</deleteDir>
+									</deleteDirs>
 								</xsdOption>
 							</xsdOptions>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-
-			<!-- Deploy to alternate repository for github -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.5</version>
-				<configuration>
-					<altDeploymentRepository>footprint::default::file:../marssa-mvn-repo/snapshots</altDeploymentRepository>
-				</configuration>
 			</plugin>
 
 			<!-- Add license header to all files -->

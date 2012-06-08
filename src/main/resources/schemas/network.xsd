@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2012 MARSEC-XL International Limited
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="org.marssa.demonstrator.network" xmlns="org.marssa.demonstrator.network"
+	xmlns:marssa="org.marssa.footprint.datatypes" xmlns:marssa-int="org.marssa.footprint.datatypes.integer"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="2.0">
+
+	<xsd:import namespace="org.marssa.footprint.datatypes"
+		schemaLocation="../generated/schemas/datatypes.xsd" />
+	<xsd:import namespace="org.marssa.footprint.datatypes.integer"
+		schemaLocation="../generated/schemas/datatypes.integer.xsd" />
+
+	<xsd:complexType name="AddressType">
+		<xsd:sequence>
+			<xsd:element name="host">
+				<xsd:complexType>
+					<xsd:choice>
+						<xsd:element name="ip">
+							<xsd:simpleType>
+								<xsd:restriction base="marssa:MString">
+									<xsd:pattern
+										value="(([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" />
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+						<xsd:element name="hostname">
+							<xsd:simpleType>
+								<xsd:restriction base="marssa:MString">
+									<xsd:pattern
+										value="(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])" />
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:element>
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="port" default="502">
+				<xsd:simpleType>
+					<xsd:restriction base="marssa-int:MInteger">
+						<xsd:minInclusive value="0" />
+						<xsd:maxInclusive value="65535" />
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

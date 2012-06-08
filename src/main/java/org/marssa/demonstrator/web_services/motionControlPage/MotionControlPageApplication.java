@@ -18,7 +18,7 @@ package org.marssa.demonstrator.web_services.motionControlPage;
 import java.util.ArrayList;
 
 
-import org.marssa.demonstrator.control.electrical_motor.MotorController;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.NoConnection;
@@ -34,10 +34,10 @@ import org.restlet.routing.Router;
 public class MotionControlPageApplication extends Application {
 	
 	private ArrayList<CacheDirective> cacheDirectives;
-	private MotorController motorController = null;
+	private AuxiliaryMotorsController motorController = null;
 	private RudderController rudderController = null;
 	
-	public MotionControlPageApplication(ArrayList<CacheDirective> cacheDirectives, MotorController motorController, RudderController rudderController) {
+	public MotionControlPageApplication(ArrayList<CacheDirective> cacheDirectives, AuxiliaryMotorsController motorController, RudderController rudderController) {
 		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 		this.rudderController = rudderController;

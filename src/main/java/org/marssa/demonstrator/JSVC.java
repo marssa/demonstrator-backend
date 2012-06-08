@@ -20,7 +20,7 @@ import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonContext;
 import org.apache.commons.daemon.DaemonInitException;
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.MotorController;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.control.rudder.RudderController;
@@ -45,7 +45,7 @@ public class JSVC implements Daemon {
 	private LabJackU3 labJack;
 	private NavigationLightsController navLightsController;
 	private UnderwaterLightsController underwaterLightsController;
-	private MotorController motorController;
+	private AuxiliaryMotorsController motorController;
 	private RudderController rudderController;
 	private GpsReceiver gpsReceiver;
 	private WebServices webServices;
@@ -87,7 +87,7 @@ public class JSVC implements Daemon {
 			logger.info("Underwater lights controller initialised successfully");
 
 			logger.info("Initialising motor controller ... ");
-			motorController = new MotorController(labJack);
+			motorController = new AuxiliaryMotorsController(labJack);
 			logger.info("Motor controller initialised successfully");
 
 			logger.info("Initialising rudder controller ... ");

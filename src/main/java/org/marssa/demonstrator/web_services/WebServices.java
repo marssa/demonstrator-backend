@@ -18,7 +18,7 @@ package org.marssa.demonstrator.web_services;
 import java.util.ArrayList;
 
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.MotorController;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.control.rudder.RudderController;
@@ -52,7 +52,7 @@ public class WebServices extends ServerResource {
 	 */
 	public WebServices(NavigationLightsController navLightsController,
 			UnderwaterLightsController underwaterLightsController,
-			MotorController motorController, RudderController rudderController,
+			AuxiliaryMotorsController motorController, RudderController rudderController,
 			GpsReceiver gpsReceiver) {
 		// Set caching directives to noCache and noStore
 		cacheDirectives.add(CacheDirective.noCache());

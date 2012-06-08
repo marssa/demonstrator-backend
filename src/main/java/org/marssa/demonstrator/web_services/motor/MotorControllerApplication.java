@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.MotorController;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
@@ -36,9 +36,9 @@ import org.restlet.routing.Router;
 public class MotorControllerApplication extends Application {
 	
 	private ArrayList<CacheDirective> cacheDirectives;
-	private MotorController motorController;
+	private AuxiliaryMotorsController motorController;
 	
-	public MotorControllerApplication(ArrayList<CacheDirective> cacheDirectives, MotorController motorController) {
+	public MotorControllerApplication(ArrayList<CacheDirective> cacheDirectives, AuxiliaryMotorsController motorController) {
 		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 	}

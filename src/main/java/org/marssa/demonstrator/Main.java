@@ -19,7 +19,7 @@ import java.net.UnknownHostException;
 
 
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.MotorController;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.control.rudder.RudderController;
@@ -52,7 +52,7 @@ public class Main extends ServerResource {
 		LabJackU3 labJack = null;
 		NavigationLightsController navLightsController;
 		UnderwaterLightsController underwaterLightsController;
-		MotorController motorController;
+		AuxiliaryMotorsController motorController;
 		RudderController rudderController;
 		GpsReceiver gpsReceiver;
 		WebServices webServices;
@@ -84,7 +84,7 @@ public class Main extends ServerResource {
 			logger.info("Underwater lights controller initialised successfully");
 
 			logger.info("Initialising motor controller ... ");
-			motorController = new MotorController(labJack);
+			motorController = new AuxiliaryMotorsController(labJack);
 			logger.info("Motor controller initialised successfully");
 
 			logger.info("Initialising rudder controller ... ");
