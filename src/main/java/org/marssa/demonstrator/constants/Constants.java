@@ -81,6 +81,13 @@ public class Constants {
 		// TODO What exactly should RUDDER_DELAY represent?
 		public final static MInteger RUDDER_DELAY = new MInteger(50);
 		public final static MInteger ROTATIONS = new MInteger(5);
+		public final static MInteger BIG_ROTATIONS = new MInteger(20);
+	}
+	
+	public final static class PATH {
+		public final static MDecimal  Path_Accuracy_Lower = new MDecimal(10);
+		public final static MDecimal  Path_Accuracy_Upper = new MDecimal(20);
+		
 	}
 	
 	/**

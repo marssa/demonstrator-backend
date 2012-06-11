@@ -18,8 +18,8 @@ package org.marssa.demonstrator.web_services.motor;
 import java.util.ArrayList;
 
 
-import org.marssa.demonstrator.constants.Constants;
 import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
@@ -36,9 +36,9 @@ import org.restlet.routing.Router;
 public class MotorControllerApplication extends Application {
 	
 	private ArrayList<CacheDirective> cacheDirectives;
-	private AuxiliaryMotorsController motorController;
+	private SternDriveMotorController motorController;
 	
-	public MotorControllerApplication(ArrayList<CacheDirective> cacheDirectives, AuxiliaryMotorsController motorController) {
+	public MotorControllerApplication(ArrayList<CacheDirective> cacheDirectives, SternDriveMotorController motorController) {
 		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 	}
@@ -49,7 +49,7 @@ public class MotorControllerApplication extends Application {
     @Override
     public synchronized Restlet createInboundRoot() {
         Router router = new Router(getContext());
-        
+       /* 
         // Create the motor speed control handler
         Restlet speedControl = new Restlet() {
         	@Override
@@ -138,7 +138,7 @@ public class MotorControllerApplication extends Application {
         router.attach("/speed/{speed}", speedControl);
         router.attach("/increaseSpeed", increaseSpeed);
         router.attach("/decreaseSpeed", decreaseSpeed);
-        router.attach("/speed", speedMonitor);
+        router.attach("/speed", speedMonitor);*/
         
         return router;
     }

@@ -18,9 +18,10 @@ package org.marssa.demonstrator.web_services;
 import java.util.ArrayList;
 
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.demonstrator.web_service.rudder.RudderControllerApplication;
 import org.marssa.demonstrator.web_services.GPS_Receiver.GPSReceiverApplication;
@@ -28,6 +29,7 @@ import org.marssa.demonstrator.web_services.lightControlPage.LightControlPageApp
 import org.marssa.demonstrator.web_services.lighting.LightControllerApplication;
 import org.marssa.demonstrator.web_services.motionControlPage.MotionControlPageApplication;
 import org.marssa.demonstrator.web_services.motor.MotorControllerApplication;
+import org.marssa.demonstrator.web_services.path_planning.PathControllerApplication;
 import org.marssa.services.navigation.GpsReceiver;
 import org.restlet.Component;
 import org.restlet.Server;
@@ -52,8 +54,8 @@ public class WebServices extends ServerResource {
 	 */
 	public WebServices(NavigationLightsController navLightsController,
 			UnderwaterLightsController underwaterLightsController,
-			AuxiliaryMotorsController motorController, RudderController rudderController,
-			GpsReceiver gpsReceiver) {
+			SternDriveMotorController motorController, RudderController rudderController,
+			GpsReceiver gpsReceiver, PathPlanningController pathPlanningController) {
 		// Set caching directives to noCache and noStore
 		cacheDirectives.add(CacheDirective.noCache());
 		cacheDirectives.add(CacheDirective.noStore());
@@ -107,6 +109,12 @@ public class WebServices extends ServerResource {
 				"/lightControlPage",
 				new LightControlPageApplication(cacheDirectives,
 						navLightsController, underwaterLightsController));
+		
+		// Attach the Path Planner (Autopilot) application
+				component.getDefaultHost().attach(
+						"/pathPlanner",
+						new PathControllerApplication(cacheDirectives,
+								motorController, rudderController,gpsReceiver,pathPlanningController));
 	}
 
 	public void start() throws Exception {

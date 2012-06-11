@@ -88,11 +88,11 @@ http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd"
 <!-- 			<package name="org.marssa.footprint.datatypes.decimal" /> -->
 <!-- 		</schemaBindings> -->
 <!-- 	</bindings> -->
-<!-- 	<bindings schemaLocation="../../generated/schemas/datatypes.integer.xsd"> -->
-<!-- 		<schemaBindings> -->
-<!-- 			<package name="org.marssa.footprint.datatypes.integer" /> -->
-<!-- 		</schemaBindings> -->
-<!-- 	</bindings> -->
+	<bindings schemaLocation="../../generated/schemas/datatypes.integer.xsd">
+		<schemaBindings>
+			<package name="org.marssa.footprint.datatypes.integer" />
+		</schemaBindings>
+	</bindings>
 <!-- 	<bindings schemaLocation="../../generated/schemas/datatypes.time.xsd"> -->
 <!-- 		<schemaBindings> -->
 <!-- 			<package name="org.marssa.footprint.datatypes.time" /> -->

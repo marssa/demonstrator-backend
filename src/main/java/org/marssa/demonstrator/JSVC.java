@@ -15,21 +15,24 @@
  */
 package org.marssa.demonstrator;
 
+import java.net.UnknownHostException;
 
-import org.apache.commons.daemon.Daemon;
-import org.apache.commons.daemon.DaemonContext;
-import org.apache.commons.daemon.DaemonInitException;
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.demonstrator.web_services.WebServices;
 import org.marssa.footprint.exceptions.ConfigurationError;
+import org.marssa.footprint.exceptions.NoConnection;
+import org.marssa.footprint.exceptions.NoValue;
 import org.marssa.footprint.exceptions.OutOfRange;
+import org.marssa.services.diagnostics.daq.LabJack;
 import org.marssa.services.diagnostics.daq.LabJackU3;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.marssa.services.navigation.GpsReceiver;
-import org.restlet.Component;
+import org.restlet.resource.ServerResource;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
@@ -38,28 +41,25 @@ import ch.qos.logback.classic.Logger;
  * @author Clayton Tabone
  * 
  */
-public class JSVC implements Daemon {
+public class JSVC extends ServerResource {
 	private static final Logger logger = (Logger) LoggerFactory
-			.getLogger(JSVC.class);
-
-	private LabJackU3 labJack;
-	private NavigationLightsController navLightsController;
-	private UnderwaterLightsController underwaterLightsController;
-	private AuxiliaryMotorsController motorController;
-	private RudderController rudderController;
-	private GpsReceiver gpsReceiver;
-	private WebServices webServices;
-
-	Component component = new Component();
+			.getLogger(Main.class);
 
 	/**
-	 * Open configuration files, create a trace file, create ServerSockets,
-	 * Threads
-	 * 
-	 * @param context
+	 * @param args
+	 *            the args
 	 */
-	public void init(DaemonContext context) throws DaemonInitException,
-			Exception {
+	public static void main(java.lang.String[] args) {
+		LabJackU3 labJack = null;
+		LabJackUE9 labJackue9 = null;
+		NavigationLightsController navLightsController;
+		UnderwaterLightsController underwaterLightsController;
+		SternDriveMotorController motorController;
+		RudderController rudderController;
+		GpsReceiver gpsReceiver;
+		WebServices webServices;
+		PathPlanningController pathPlanningController;
+
 		// Initialise LabJack
 		try {
 			logger.info("Initialising LabJack ...");
@@ -69,7 +69,7 @@ public class JSVC implements Daemon {
 					Constants.LABJACK.HOST, Constants.LABJACK.PORT);
 		} catch (Exception e) {
 			logger.error("Failed to initialize LabJack", e);
-			stop();
+			System.exit(1);
 		}
 
 		// Initialise Controllers and Receivers
@@ -77,17 +77,22 @@ public class JSVC implements Daemon {
 			logger.info("Initialising navigation lights controller ... ");
 			navLightsController = new NavigationLightsController(
 					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
-					LabJackU3.FIO4_DIR_ADDR);
+					LabJack.FIO4_DIR_ADDR);
 			logger.info("Navigation lights controller initialised successfully");
 
 			logger.info("Initialising underwater lights controller ... ");
 			underwaterLightsController = new UnderwaterLightsController(
 					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
-					LabJackU3.FIO13_DIR_ADDR);
+					LabJack.FIO13_DIR_ADDR);
 			logger.info("Underwater lights controller initialised successfully");
 
+			logger.info("Initialising Path Planning controller ... ");
+			//pathPlanningController = new PathPlanningController(motorController,rudderController,gpsReceiver);
+			pathPlanningController = new PathPlanningController(null, null,null);
+			logger.info("Path Planning controller initialised successfully");
+			
 			logger.info("Initialising motor controller ... ");
-			motorController = new AuxiliaryMotorsController(labJack);
+			motorController = new SternDriveMotorController(labJackue9);
 			logger.info("Motor controller initialised successfully");
 
 			logger.info("Initialising rudder controller ... ");
@@ -102,7 +107,7 @@ public class JSVC implements Daemon {
 			logger.info("Initialising web services ... ");
 			webServices = new WebServices(navLightsController,
 					underwaterLightsController, motorController,
-					rudderController, gpsReceiver);
+					rudderController, gpsReceiver,pathPlanningController);
 			logger.info("Web services initialised successfully");
 
 			logger.info("Starting restlet web servicves ... ");
@@ -110,47 +115,53 @@ public class JSVC implements Daemon {
 			logger.info("Web servicves started. Listening on {}:{}",
 					Constants.GPS.HOST, Constants.GPS.PORT);
 		} catch (ConfigurationError e) {
-			e.printStackTrace();
-			stop();
+			logger.error("ConfigurationError exception has been caught", e);
+			System.exit(1);
 		} catch (OutOfRange e) {
-			e.printStackTrace();
-			stop();
+			logger.error("OutOfRange exception has been caught", e);
+			System.exit(1);
+		} catch (UnknownHostException e) {
+			logger.error("UnknownHostException exception has been caught", e);
+			System.exit(1);
+		} catch (NoConnection e) {
+			logger.error("NoConnection exception has been caught", e);
+			System.exit(1);
+		} catch (InterruptedException e) {
+			logger.error("InterruptedException exception has been caught", e);
+			System.exit(1);
+		} catch (NoValue e) {
+			logger.error("NoValue exception has been caught", e);
+			System.exit(1);
+		} catch (Exception e) {
+			logger.error("General exception has been caught", e);
+			System.exit(1);
 		}
-	}
-
-	/**
-	 * Start the Thread, accept incoming connections
-	 */
-	public void start() throws Exception {
-		System.out.print("Starting web services ... ");
-		webServices.start();
-		System.out.println("success!");
-	}
-
-	/**
-	 * Inform the Thread to terminate the run(), close the ServerSockets
-	 */
-	public void stop() throws Exception {
-		try {
-			System.out.print("Stopping web services ... ");
-			webServices.stop();
-			System.out.println("success!");
-		} catch (Throwable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Destroy any object created in init()
-	 */
-	public void destroy() {
-		labJack = null;
-		navLightsController = null;
-		underwaterLightsController = null;
-		motorController = null;
-		rudderController = null;
-		gpsReceiver = null;
-		webServices = null;
+		/*
+		 * // NavigationLights Tests
+		 * System.out.println(navigationLights.getNavigationLightState());
+		 * Percentage desiredValue = new Percentage(10f);
+		 * 
+		 * // MotorControl Tests try { motorController.rampTo(desiredValue); }
+		 * catch (InterruptedException e) { e.printStackTrace(); }
+		 * 
+		 * // Rudder Tests try { rudderController.rotate(new MBoolean (true));
+		 * rudderController.rotate(new MBoolean (false));
+		 * rudderController.rotate(new MBoolean (true));
+		 * rudderController.rotate(new MBoolean (false));
+		 * rudderController.rotate(new MBoolean (false));
+		 * rudderController.rotate(new MBoolean (true));
+		 * rudderController.rotate(new MBoolean (true)); } catch
+		 * (InterruptedException e) { e.printStackTrace(); }
+		 * 
+		 * // GPSReceiver Tests try {
+		 * System.out.println("The GPS coordinates are " +
+		 * gpsReceiver.getCoordinate()); System.out.println("Altitude is " +
+		 * gpsReceiver.getElevation()); System.out.println("Course over ground "
+		 * + gpsReceiver.getCOG()); System.out.println("Speed over ground " +
+		 * gpsReceiver.getSOG()); //System.out.println("EPT " + gps.getEPT());
+		 * ///have to find the EPT System.out.println("Time " +
+		 * gpsReceiver.getDate()); } catch (NoConnection e) {
+		 * e.printStackTrace(); } catch (NoValue e) { e.printStackTrace(); }
+		 */
 	}
 }

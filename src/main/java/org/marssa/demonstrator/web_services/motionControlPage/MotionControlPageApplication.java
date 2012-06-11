@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 
 import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.NoConnection;
@@ -34,10 +35,10 @@ import org.restlet.routing.Router;
 public class MotionControlPageApplication extends Application {
 	
 	private ArrayList<CacheDirective> cacheDirectives;
-	private AuxiliaryMotorsController motorController = null;
+	private SternDriveMotorController motorController = null;
 	private RudderController rudderController = null;
 	
-	public MotionControlPageApplication(ArrayList<CacheDirective> cacheDirectives, AuxiliaryMotorsController motorController, RudderController rudderController) {
+	public MotionControlPageApplication(ArrayList<CacheDirective> cacheDirectives, SternDriveMotorController motorController, RudderController rudderController) {
 		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 		this.rudderController = rudderController;

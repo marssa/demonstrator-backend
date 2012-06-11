@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 
 import org.marssa.demonstrator.constants.Constants;
 import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.control.rudder.RudderController;
@@ -28,8 +29,10 @@ import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.NoValue;
 import org.marssa.footprint.exceptions.OutOfRange;
+import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.services.diagnostics.daq.LabJack;
 import org.marssa.services.diagnostics.daq.LabJackU3;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.marssa.services.navigation.GpsReceiver;
 import org.restlet.resource.ServerResource;
 import org.slf4j.LoggerFactory;
@@ -50,12 +53,14 @@ public class Main extends ServerResource {
 	 */
 	public static void main(java.lang.String[] args) {
 		LabJackU3 labJack = null;
+		LabJackUE9 labJackue9 = null;
 		NavigationLightsController navLightsController;
 		UnderwaterLightsController underwaterLightsController;
-		AuxiliaryMotorsController motorController;
+		SternDriveMotorController motorController;
 		RudderController rudderController;
 		GpsReceiver gpsReceiver;
 		WebServices webServices;
+		PathPlanningController pathPlanningController;
 
 		// Initialise LabJack
 		try {
@@ -83,8 +88,13 @@ public class Main extends ServerResource {
 					LabJack.FIO13_DIR_ADDR);
 			logger.info("Underwater lights controller initialised successfully");
 
+			logger.info("Initialising Path Planning controller ... ");
+			//pathPlanningController = new PathPlanningController(motorController,rudderController,gpsReceiver);
+			pathPlanningController = new PathPlanningController(null, null,null);
+			logger.info("Path Planning controller initialised successfully");
+			
 			logger.info("Initialising motor controller ... ");
-			motorController = new AuxiliaryMotorsController(labJack);
+			motorController = new SternDriveMotorController(labJackue9);
 			logger.info("Motor controller initialised successfully");
 
 			logger.info("Initialising rudder controller ... ");
@@ -99,7 +109,7 @@ public class Main extends ServerResource {
 			logger.info("Initialising web services ... ");
 			webServices = new WebServices(navLightsController,
 					underwaterLightsController, motorController,
-					rudderController, gpsReceiver);
+					rudderController, gpsReceiver,pathPlanningController);
 			logger.info("Web services initialised successfully");
 
 			logger.info("Starting restlet web servicves ... ");
