@@ -140,8 +140,8 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		lon2 = (lon2+ 3*Math.PI) % (2*Math.PI) - Math.PI;
         double lat2Degrees = Math.toDegrees(lat2);
         double lon2Degrees = Math.toDegrees(lon2);
-	    
-	    logger.info("Next Position:"+currentPositionTest.toString());
+        currentPositionTest =  new Coordinate(new Latitude(new DegreesDecimal(lat2Degrees)) , new Longitude(new DegreesDecimal(lon2Degrees)));
+	    logger.info(""+lat2Degrees+","+lon2Degrees);
 	}
 	// This method is called upon to drive the vessel in the right direction
 	public void drive() throws NoConnection, NoValue, OutOfRange, InterruptedException {
@@ -151,8 +151,8 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		double targetHeading = determineHeading();
 		double difference =  Math.abs(currentHeading - targetHeading);
 		
-		logger.info("Current Heading:"+currentHeading);
-		logger.info("Target Heading:"+targetHeading);
+		//logger.info("Current Heading:"+currentHeading);
+		//logger.info("Target Heading:"+targetHeading);
 		
 		//if the difference is minimal the system will enter this if statement and adjust the rudder slightly
 		if (difference < Constants.PATH.Path_Accuracy_Lower.doubleValue())
@@ -199,7 +199,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	{
 		Coordinate currentPosition = currentPositionTest;
 		
-		logger.info("Current Position:"+currentPosition);
+		//logger.info("Current Position:"+currentPosition);
 	
 		
 		  double longitude1 = currentPosition.getLongitude().getDMS().doubleValue();
@@ -229,7 +229,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	    double distance = (earthRadius * c);
 		
 		logger.info("Distance to Next Waypoint:"+distance);
-		if (distance < 0.00621371192) //10 meters in miles
+		if (distance < 0.0621371192) //10 meters in miles
 		{
 			return true;
 		}
@@ -242,7 +242,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	//This method is used in order to check if the end of the trip has been reached, i.e there are no more way points in the list.
 	public boolean endOfTrip()
 	{
-		if (count == wayPointList.size())
+		if (count == wayPointList.size()-1)
 		{
 			return true;
 		}
@@ -256,12 +256,13 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	public void run()
 	{
 		try {
-			if (arrived() && endOfTrip()) //If we have arrived and its the end of the trip (no more way points)
+			boolean arrive = arrived();
+			if (arrive && endOfTrip()) //If we have arrived and its the end of the trip (no more way points)
 			{
 				//motorController.rampTo(new MDecimal(0)); //we then kill the engines
 				logger.info("Kill Engines");
 			}
-			else if (arrived() && ! endOfTrip()) //if we have arrived at our next way point but its not the end of the trip
+			else if (arrive && ! endOfTrip()) //if we have arrived at our next way point but its not the end of the trip
 			{
 				logger.info("Arrived....next waypoint");
 				count++;

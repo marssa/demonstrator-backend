@@ -90,8 +90,8 @@ public class Constants {
 	}
 	
 	public final static class PATH {
-		public final static MDecimal  Path_Accuracy_Lower = new MDecimal(10);
-		public final static MDecimal  Path_Accuracy_Upper = new MDecimal(20);
+		public final static MDecimal  Path_Accuracy_Lower = new MDecimal(5);
+		public final static MDecimal  Path_Accuracy_Upper = new MDecimal(10);
 		
 	}
 	

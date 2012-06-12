@@ -88,9 +88,10 @@ public class Main extends ServerResource {
 			logger.info("Path Planning controller initialised successfully");
 			//---------------------------------CODE FOR TESTING PATH PLANNING----------------------------------
 			ArrayList<Waypoint> wayPointList =  new ArrayList<Waypoint>();
-			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(35.893813)) , new Longitude(new DegreesDecimal(14.516344)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(35.983267)) , new Longitude(new DegreesDecimal(14.387419)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.000184)) , new Longitude(new DegreesDecimal(14.376021)))));
 			pathPlanningController.setPathList(wayPointList);
-			pathPlanningController.setTestCurrent(new Coordinate(new Latitude(new DegreesDecimal(35.893034)) , new Longitude(new DegreesDecimal(14.520295))),45);
+			pathPlanningController.setTestCurrent(new Coordinate(new Latitude(new DegreesDecimal(35.971663)) , new Longitude(new DegreesDecimal(14.358312))),50);
 			pathPlanningController.startFollowingPath();
 			
 		}
