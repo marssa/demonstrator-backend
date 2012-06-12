@@ -45,6 +45,11 @@ public class Constants {
 		public final static MInteger PORT = new MInteger(5021);
 	}
 	
+	public final static class LABJACKUE9 {
+		public final static MString HOST = new MString("192.168.2.105");
+		public final static MInteger PORT = new MInteger(502);
+	}
+	
 	/**
 	 * Web Services Constants
 	 * @author Clayton Tabone
