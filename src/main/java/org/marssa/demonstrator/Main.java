@@ -17,19 +17,18 @@ package org.marssa.demonstrator;
 
 import java.net.UnknownHostException;
 
-
 import org.marssa.demonstrator.constants.Constants;
 import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.demonstrator.web_services.WebServices;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.NoValue;
 import org.marssa.footprint.exceptions.OutOfRange;
-import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.services.diagnostics.daq.LabJack;
 import org.marssa.services.diagnostics.daq.LabJackU3;
 import org.marssa.services.diagnostics.daq.LabJackUE9;
@@ -56,7 +55,8 @@ public class Main extends ServerResource {
 		LabJackUE9 labJackue9 = null;
 		NavigationLightsController navLightsController;
 		UnderwaterLightsController underwaterLightsController;
-		SternDriveMotorController motorController;
+		SternDriveMotorController sternMotorController;
+		AuxiliaryMotorsController auxiliaryMotorControl;
 		RudderController rudderController;
 		GpsReceiver gpsReceiver;
 		WebServices webServices;
@@ -94,9 +94,13 @@ public class Main extends ServerResource {
 			logger.info("Path Planning controller initialised successfully");
 			
 			logger.info("Initialising motor controller ... ");
-			motorController = new SternDriveMotorController(labJackue9);
+			sternMotorController = new SternDriveMotorController(labJackue9);
 			logger.info("Motor controller initialised successfully");
 
+			logger.info("Initialising motor controller ... ");
+			auxiliaryMotorControl = new AuxiliaryMotorsController(labJack);
+			logger.info("Motor controller initialised successfully");
+			
 			logger.info("Initialising rudder controller ... ");
 			rudderController = new RudderController(labJack);
 			logger.info("Rudder controller initialised successfully");
@@ -108,7 +112,7 @@ public class Main extends ServerResource {
 
 			logger.info("Initialising web services ... ");
 			webServices = new WebServices(navLightsController,
-					underwaterLightsController, motorController,
+					underwaterLightsController, sternMotorController,auxiliaryMotorControl,
 					rudderController, gpsReceiver,pathPlanningController);
 			logger.info("Web services initialised successfully");
 

@@ -31,26 +31,14 @@ import org.marssa.services.diagnostics.daq.LabJackUE9;
  * @author Clayton Tabone
  * 
  */
-public class SternDriveMotorController implements IMotorController {
-	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
-	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
-	private final MInteger STEP_DELAY = new MInteger(20);
-	private final MDecimal STEP_SIZE = new MDecimal(20.0f);
+public class SternDriveMotorController{
+	
 	private LabJackUE9 lj;
 	private Ramping ramping;
+	int ordinal;
+	int[] speed = {16,9,8,6,4,0,4,6,8,9,16};
+	int arrayValue;
 
-	public static enum MotorSpeed {
-		FORWARD_5(100), FORWARD_4(80), FORWARD_3(60), FORWARD_2(40), FORWARD_1(
-				20), OFF(0), REVERSE_1(-20), REVERSE_2(-40), REVERSE_3(-60), REVERSE_4(
-				-80), REVERSE_5(-100);
-
-		private MotorSpeed(int value) {
-		}
-		
-		public int getValue() {
-			return this.ordinal();
-		}
-	}
 
 	/**
 	 * @throws ConfigurationError
@@ -61,104 +49,71 @@ public class SternDriveMotorController implements IMotorController {
 	public SternDriveMotorController(LabJackUE9 lj) throws ConfigurationError,
 			OutOfRange, NoConnection {
 		this.lj = lj;
-		// TODO set MotorSpeed to OFF (0 0 0 0 0)
-		this.ramping = new Ramping(STEP_DELAY, STEP_SIZE, this,
-				RampingType.ACCELERATED);
+		arrayValue=5;
+		labJackOutput(speed[arrayValue]);
 	}
 
-	public void outputValue(MDecimal motorSpeed) throws ConfigurationError,
-			OutOfRange, NoConnection {
-		System.out.println(motorSpeed);
-		/*
-		// R Y W RY RW
-		switch (motorSpeed.intValue()) {
-		// 1 0 0 0 0
-		case FORWARD_5:
-			BitString switches = new BitString(5);
-			switches.clearAll();
-			switches.set(0); // Set the first bit
-			setSpeedCoil(switches);
-			break;
-		// 0 1 0 0 1
-		case FORWARD_4:
-
-			break;
-		// 0 1 0 0 0
-		case FORWARD_3:
-
-			break;
-		// 0 0 1 1 0
-		case FORWARD_2:
-
-			break;
-		// 0 0 1 0 0
-		case FORWARD_1:
-
-			break;
-		// 0 0 0 0 0
-		case OFF:
-
-			break;
-		case REVERSE_1:
-
-			break;
-		case REVERSE_2:
-
-			break;
-		case REVERSE_3:
-
-			break;
-		case REVERSE_4:
-
-			break;
-		case REVERSE_5:
-
-			break;
+	private void labJackOutput(int speed) throws NoConnection {
+		boolean m = false;
+		int p = 0;
+		for (int f = 1; f <= 16; f = (f << 1)) {
+			int r = speed&f;
+			if (r > 0) {
+				m = true;
+			}
+			System.out.print(6001 + p);
+			System.out.println(m ? true : false);
+			//lj.write(new MInteger(6000 + p), new MBoolean(m ? true : false));
+			m = false;
+			p++;
 		}
-		*/
-	}
-	
-	private void setSpeedCoil(/* net.sf.javabdd.BitString.BitString switches */) {
-		// TODO See http://javabdd.sourceforge.net/apidocs/net/sf/javabdd/BitString.html
-		// iterate over BitString and set registers
+
 	}
 
-	public void setPolaritySignal(Polarity polarity) throws NoConnection {
-		switch (polarity) {
-		case POSITIVE:
-			lj.write(MOTOR_0_DIRECTION, new MBoolean(true));
-			lj.write(MOTOR_1_DIRECTION, new MBoolean(true));
-			break;
-		case NEGATIVE:
-			lj.write(MOTOR_0_DIRECTION, new MBoolean(false));
-			lj.write(MOTOR_1_DIRECTION, new MBoolean(false));
-			break;
-		case OFF:
-			// TODO handle the case to switch off the motors
-			break;
-		}
-	}
 
 	public MDecimal getValue() {
 		return ramping.getCurrentValue();
 	}
 
-	public void rampTo(MotorSpeed desiredValue) throws InterruptedException,
-			ConfigurationError, OutOfRange {
-		ramping.rampTo(new MDecimal(desiredValue.getValue()));
+	public void stop() throws NoConnection{
+		labJackOutput(speed[5]);
 	}
 
-	public void increase() throws InterruptedException,
-			ConfigurationError, OutOfRange, NoConnection {
-		// Check if we are already at max forward speed
-		if (this.ramping.getCurrentValue().intValue() != MotorSpeed.FORWARD_5.getValue())
-			this.ramping.increase(STEP_SIZE);
+	public void increase() throws InterruptedException, ConfigurationError,
+			OutOfRange, NoConnection {
+		if (arrayValue == 5){
+			//lj.write(new MInteger(6006), new MBoolean (false));
+			System.out.println("6006 " + " false");
+			//lj.write(new MInteger(6000), new MBoolean(true));
+			System.out.println("600 " + " true");
+			Thread.sleep(500);
+			//lj.write(new MInteger(6006), new MBoolean (false));
+			System.out.println("6006 " + " false");
+		}
+		if(arrayValue == 0){
+			labJackOutput(speed[arrayValue]);
+		}else{
+		labJackOutput(speed[arrayValue-1]);
+		arrayValue--;
+		}
 	}
 
-	public void decrease() throws InterruptedException,
-			ConfigurationError, OutOfRange, NoConnection {
-		// Check if we are already at max reverse speed
-		if (this.ramping.getCurrentValue().intValue() != MotorSpeed.REVERSE_5.getValue())
-			this.ramping.decrease(STEP_SIZE);
+	public void decrease() throws InterruptedException, ConfigurationError,
+			OutOfRange, NoConnection {
+		if (arrayValue == 5){
+			//lj.write(new MInteger(6006), new MBoolean (false));
+			System.out.println("6006 " + " false");
+			//lj.write(new MInteger(6000), new MBoolean(false));
+			System.out.println("6000 " + " false");
+			Thread.sleep(500);
+			//lj.write(new MInteger(6006), new MBoolean (false));
+			System.out.println("6006 " + " false");
+		}
+		if(arrayValue == 10){
+			labJackOutput(speed[arrayValue]);
+		}else{
+		labJackOutput(speed[arrayValue+1]);
+		arrayValue++;
+		}
 	}
 }

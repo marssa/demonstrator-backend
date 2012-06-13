@@ -18,6 +18,7 @@ package org.marssa.demonstrator.web_services.motor;
 import java.util.ArrayList;
 
 
+import org.marssa.demonstrator.constants.Constants;
 import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
@@ -33,12 +34,12 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
-public class MotorControllerApplication extends Application {
+public class SternMotorControllerApplication extends Application {
 	
 	private ArrayList<CacheDirective> cacheDirectives;
 	private SternDriveMotorController motorController;
 	
-	public MotorControllerApplication(ArrayList<CacheDirective> cacheDirectives, SternDriveMotorController motorController) {
+	public SternMotorControllerApplication(ArrayList<CacheDirective> cacheDirectives, SternDriveMotorController motorController) {
 		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 	}
@@ -49,26 +50,18 @@ public class MotorControllerApplication extends Application {
     @Override
     public synchronized Restlet createInboundRoot() {
         Router router = new Router(getContext());
-       /* 
+       
         // Create the motor speed control handler
-        Restlet speedControl = new Restlet() {
+        Restlet turnOffMotor = new Restlet() {
         	@Override
             public void handle(Request request, Response response) {
         		response.setCacheDirectives(cacheDirectives);
         		try {
-        			double value = Float.parseFloat(request.getAttributes().get("speed").toString());
-        			motorController.rampTo(new MDecimal(value));
-        			response.setEntity("Ramping motor speed to " + value + "%", MediaType.TEXT_PLAIN);
+        			motorController.stop();
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
-        		} catch (InterruptedException e) {
-        			response.setStatus(Status.INFO_PROCESSING, "The ramping algorithm has been interrupted");
-        			e.printStackTrace();
-				} catch (ConfigurationError e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The request has returned a ConfigurationError");
-					e.printStackTrace();
-				} catch (OutOfRange e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The specified value is out of range");
+        		} catch (NoConnection e) {
+					response.setStatus(Status.SERVER_ERROR_INTERNAL, "There is no connection");
 					e.printStackTrace();
 				}
             }
@@ -80,7 +73,7 @@ public class MotorControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		response.setCacheDirectives(cacheDirectives);
         		try {
-        			motorController.increase(Constants.MOTOR.STEP_SIZE);
+        			motorController.increase();
     				response.setEntity("Increasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
@@ -106,7 +99,7 @@ public class MotorControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		response.setCacheDirectives(cacheDirectives);
         		try {
-					motorController.decrease(Constants.MOTOR.STEP_SIZE);
+					motorController.decrease();
     				response.setEntity("Decreasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
@@ -135,10 +128,10 @@ public class MotorControllerApplication extends Application {
             }
         };
         
-        router.attach("/speed/{speed}", speedControl);
+        router.attach("/stop", turnOffMotor);
         router.attach("/increaseSpeed", increaseSpeed);
         router.attach("/decreaseSpeed", decreaseSpeed);
-        router.attach("/speed", speedMonitor);*/
+        router.attach("/speed", speedMonitor);
         
         return router;
     }

@@ -18,6 +18,7 @@ package org.marssa.demonstrator.web_services;
 import java.util.ArrayList;
 
 import org.marssa.demonstrator.constants.Constants;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
@@ -28,7 +29,8 @@ import org.marssa.demonstrator.web_services.GPS_Receiver.GPSReceiverApplication;
 import org.marssa.demonstrator.web_services.lightControlPage.LightControlPageApplication;
 import org.marssa.demonstrator.web_services.lighting.LightControllerApplication;
 import org.marssa.demonstrator.web_services.motionControlPage.MotionControlPageApplication;
-import org.marssa.demonstrator.web_services.motor.MotorControllerApplication;
+import org.marssa.demonstrator.web_services.motor.AuxilirayMotorControllerApplication;
+import org.marssa.demonstrator.web_services.motor.SternMotorControllerApplication;
 import org.marssa.demonstrator.web_services.path_planning.PathControllerApplication;
 import org.marssa.services.navigation.GpsReceiver;
 import org.restlet.Component;
@@ -54,7 +56,7 @@ public class WebServices extends ServerResource {
 	 */
 	public WebServices(NavigationLightsController navLightsController,
 			UnderwaterLightsController underwaterLightsController,
-			SternDriveMotorController motorController, RudderController rudderController,
+			SternDriveMotorController sternMotorController,AuxiliaryMotorsController auxiliaryMotorController, RudderController rudderController,
 			GpsReceiver gpsReceiver, PathPlanningController pathPlanningController) {
 		// Set caching directives to noCache and noStore
 		cacheDirectives.add(CacheDirective.noCache());
@@ -83,11 +85,17 @@ public class WebServices extends ServerResource {
 						navLightsController, underwaterLightsController));
 
 		// Attach the motor control application
+		//TODO WebServices shall accept a parameter of auxiliary motor
 		component.getDefaultHost()
 				.attach("/motor",
-						new MotorControllerApplication(cacheDirectives,
-								motorController));
-
+						new AuxilirayMotorControllerApplication(cacheDirectives,
+								auxiliaryMotorController));
+		
+		// Attach the motor control application
+		component.getDefaultHost()
+		.attach("/motor",
+				new SternMotorControllerApplication(cacheDirectives,
+						sternMotorController));
 		// Attach the rudder control application
 		component.getDefaultHost().attach(
 				"/rudder",
@@ -102,7 +110,7 @@ public class WebServices extends ServerResource {
 		component.getDefaultHost().attach(
 				"/motionControlPage",
 				new MotionControlPageApplication(cacheDirectives,
-						motorController, rudderController));
+						sternMotorController, rudderController));
 
 		// Attach the motion control feedback application
 		component.getDefaultHost().attach(
@@ -114,7 +122,7 @@ public class WebServices extends ServerResource {
 				component.getDefaultHost().attach(
 						"/pathPlanner",
 						new PathControllerApplication(cacheDirectives,
-								motorController, rudderController,gpsReceiver,pathPlanningController));
+								sternMotorController, rudderController,gpsReceiver,pathPlanningController));
 	}
 
 	public void start() throws Exception {

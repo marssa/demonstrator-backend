@@ -18,6 +18,7 @@ package org.marssa.demonstrator;
 import java.net.UnknownHostException;
 
 import org.marssa.demonstrator.constants.Constants;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
@@ -43,7 +44,7 @@ import ch.qos.logback.classic.Logger;
  */
 public class JSVC extends ServerResource {
 	private static final Logger logger = (Logger) LoggerFactory
-			.getLogger(Main.class);
+			.getLogger(JSVC.class);
 
 	/**
 	 * @param args
@@ -54,7 +55,8 @@ public class JSVC extends ServerResource {
 		LabJackUE9 labJackue9 = null;
 		NavigationLightsController navLightsController;
 		UnderwaterLightsController underwaterLightsController;
-		SternDriveMotorController motorController;
+		SternDriveMotorController sternMotorController;
+		AuxiliaryMotorsController auxiliaryMotorControl;
 		RudderController rudderController;
 		GpsReceiver gpsReceiver;
 		WebServices webServices;
@@ -92,9 +94,13 @@ public class JSVC extends ServerResource {
 			logger.info("Path Planning controller initialised successfully");
 			
 			logger.info("Initialising motor controller ... ");
-			motorController = new SternDriveMotorController(labJackue9);
+			sternMotorController = new SternDriveMotorController(labJackue9);
 			logger.info("Motor controller initialised successfully");
 
+			logger.info("Initialising motor controller ... ");
+			auxiliaryMotorControl = new AuxiliaryMotorsController(labJack);
+			logger.info("Motor controller initialised successfully");
+			
 			logger.info("Initialising rudder controller ... ");
 			rudderController = new RudderController(labJack);
 			logger.info("Rudder controller initialised successfully");
@@ -106,7 +112,7 @@ public class JSVC extends ServerResource {
 
 			logger.info("Initialising web services ... ");
 			webServices = new WebServices(navLightsController,
-					underwaterLightsController, motorController,
+					underwaterLightsController, sternMotorController,auxiliaryMotorControl,
 					rudderController, gpsReceiver,pathPlanningController);
 			logger.info("Web services initialised successfully");
 
