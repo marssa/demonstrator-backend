@@ -76,7 +76,7 @@
 			<name>Public online Restlet repository</name>
 			<url>http://maven.restlet.org</url>
 		</repository>
-	</repositories>
+			</repositories>
 
 	<dependencies>
 		<dependency>
@@ -116,7 +116,7 @@
 			<artifactId>logback-core</artifactId>
 			<version>1.0.0</version>
 		</dependency>
-	</dependencies>
+		</dependencies>
 
 	<build>
 		<plugins>

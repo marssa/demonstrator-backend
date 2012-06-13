@@ -90,8 +90,13 @@ public class Main extends ServerResource {
 			ArrayList<Waypoint> wayPointList =  new ArrayList<Waypoint>();
 			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(35.983267)) , new Longitude(new DegreesDecimal(14.387419)))));
 			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.000184)) , new Longitude(new DegreesDecimal(14.376021)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.010598)) , new Longitude(new DegreesDecimal(14.391477)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.024835)) , new Longitude(new DegreesDecimal(14.339797)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.021192)) , new Longitude(new DegreesDecimal(14.318054)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.015387)) , new Longitude(new DegreesDecimal(14.322254)))));
+			
 			pathPlanningController.setPathList(wayPointList);
-			pathPlanningController.setTestCurrent(new Coordinate(new Latitude(new DegreesDecimal(35.971663)) , new Longitude(new DegreesDecimal(14.358312))),50);
+			pathPlanningController.setTestCurrent(new Coordinate(new Latitude(new DegreesDecimal(35.971663)) , new Longitude(new DegreesDecimal(14.358312))),270);
 			pathPlanningController.startFollowingPath();
 			
 		}
