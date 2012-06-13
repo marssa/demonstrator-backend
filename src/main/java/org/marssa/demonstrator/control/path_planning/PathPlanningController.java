@@ -15,6 +15,8 @@
  */
 package org.marssa.demonstrator.control.path_planning;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -83,6 +85,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	
 	private Coordinate nextHeading;
 	private int count = 0;
+	private int countPath = 1;
 	private LabJack lj;
 	ArrayList<Waypoint> wayPointList;
 	MTimer timer;
@@ -128,12 +131,74 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		
 	public void getEstimatedPosition() throws OutOfRange
 	{
-		double distance = 0.05;
-		double radius =6371;
-		double lat2 = Math.asin( Math.sin(currentPositionTest.getLatitude().getDMS().doubleValue())*Math.cos(distance/radius) + Math.cos(currentPositionTest.getLatitude().getDMS().doubleValue())*Math.sin(distance/radius)*Math.cos(currentHeadingTest) );
-	    double lon2 = currentPositionTest.getLongitude().getDMS().doubleValue() + Math.atan2(Math.sin(currentHeadingTest)*Math.sin(distance/radius)*Math.cos(currentPositionTest.getLatitude().getDMS().doubleValue()), Math.cos(distance/radius)-Math.sin(currentPositionTest.getLatitude().getDMS().doubleValue())*Math.sin(lat2));
-	    currentPositionTest = new Coordinate(new Latitude(new DegreesDecimal(lat2)) , new Longitude(new DegreesDecimal(lon2)));
-	    logger.info("Next Position:"+currentPositionTest);
+		double dist = 0.003/6371.0;
+		double brng = Math.toRadians(currentHeadingTest);
+		double lat1 = Math.toRadians(currentPositionTest.getLatitude().getDMS().doubleValue());
+		double lon1 = Math.toRadians(currentPositionTest.getLongitude().getDMS().doubleValue());
+
+		double lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) + Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) );
+		double a = Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1), Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
+		//System.out.println("a = " +  a);
+		double lon2 = lon1 + a;
+		lon2 = (lon2+ 3*Math.PI) % (2*Math.PI) - Math.PI;
+        double lat2Degrees = Math.toDegrees(lat2);
+        double lon2Degrees = Math.toDegrees(lon2);
+        currentPositionTest =  new Coordinate(new Latitude(new DegreesDecimal(lat2Degrees)) , new Longitude(new DegreesDecimal(lon2Degrees)));
+	   //logger.info(""+lat2Degrees+","+lon2Degrees);
+        
+        System.out.format("%f,%f%n",lat2Degrees,lon2Degrees);
+	    
+	}
+	
+	public void shortestAngle(double _currentHeading, double _targetHeading,int angleOut) throws NoConnection, NoValue, OutOfRange
+	{
+		if (_targetHeading > _currentHeading)
+		{
+			if((_targetHeading-_currentHeading) > 180)
+			{
+				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(false));
+				//logger.info("Rotate to Left");
+				currentHeadingTest = currentHeadingTest -angleOut;
+				if (currentHeadingTest < 0)
+				{
+					currentHeadingTest += 360;
+				}
+			}
+			else
+			{
+				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(true));//the rudders are brought back into the center after directing the vessel.
+				//logger.info("Rotate to Right");
+				currentHeadingTest = currentHeadingTest +angleOut;
+				if (currentHeadingTest > 359)
+				{
+					currentHeadingTest -= 360;
+				}
+			}
+			
+		}
+		else
+		{
+			if ((_currentHeading - _targetHeading) >= 180)
+			{
+				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(true));//the rudders are brought back into the center after directing the vessel.
+				//logger.info("Rotate to Right");
+				currentHeadingTest = currentHeadingTest +angleOut;
+				if (currentHeadingTest > 359)
+				{
+					currentHeadingTest -= 360;
+				}
+			}
+			else
+			{
+				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(false));
+				//logger.info("Rotate to Left");
+				currentHeadingTest = currentHeadingTest -angleOut;
+				if (currentHeadingTest < 0)
+				{
+					currentHeadingTest += 360;
+				}
+			}
+		}
 	}
 	// This method is called upon to drive the vessel in the right direction
 	public void drive() throws NoConnection, NoValue, OutOfRange, InterruptedException {
@@ -141,47 +206,25 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		//double currentHeading = gpsReceiver.getCOG().doubleValue();
 		double currentHeading = currentHeadingTest;
 		double targetHeading = determineHeading();
-		double difference =  (currentHeading - targetHeading) * -1;
+		double difference =  Math.abs(currentHeading - targetHeading);
 		
-		logger.info("Current Heading:"+currentHeading);
-		logger.info("Target Heading:"+targetHeading);
+		//logger.info("Current Heading:"+currentHeading);
+		//logger.info("Target Heading:"+targetHeading);
 		
 		//if the difference is minimal the system will enter this if statement and adjust the rudder slightly
 		if (difference < Constants.PATH.Path_Accuracy_Lower.doubleValue())
 		{
 			//rotateToCentre(); 
-			logger.info("Rotate to Centre");
+			//logger.info("Rotate to Centre");
 		}
 		if ((difference >= Constants.PATH.Path_Accuracy_Lower.doubleValue()) && (difference <= Constants.PATH.Path_Accuracy_Upper.doubleValue()))
 		{
-			if (currentHeading < targetHeading)
-			{
-				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(true));//the rudders are brought back into the center after directing the vessel.
-				logger.info("Rotate to Right");
-				currentHeadingTest = currentHeadingTest +5;
-			}
-			else
-			{
-				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(false));
-				logger.info("Rotate to Right");
-				currentHeadingTest = currentHeadingTest -5;
-			}
+			shortestAngle(currentHeading,targetHeading,5);
 		}
 		//if the difference is large the system will enter this if statement and adjust the rudder a lot
 		else if (difference > Constants.PATH.Path_Accuracy_Upper.doubleValue())
 		{
-			if (currentHeading < targetHeading)
-			{
-				//rudderController.rotateMultiple(Constants.RUDDER.BIG_ROTATIONS , new MBoolean(true));
-				logger.info("Rotate to Right Big");
-				currentHeadingTest = currentHeadingTest +15;
-			}
-			else
-			{
-				//rudderController.rotateMultiple(Constants.RUDDER.BIG_ROTATIONS , new MBoolean(false));
-				logger.info("Rotate to Left Big");
-				currentHeadingTest = currentHeadingTest -5;
-			}
+			shortestAngle(currentHeading,targetHeading,15);
 		}
 		//calculate bearing
 	}
@@ -189,37 +232,39 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	//This method is used to determine the bearing we should be on to reach the next way point
 	public double determineHeading() throws NoConnection, NoValue, OutOfRange
 	{
-		//Coordinate currentPosition = gpsReceiver.getCoordinate();
 		Coordinate currentPosition = currentPositionTest;
 		
-		logger.info("Current Position:"+currentPosition);
-		//double dLat = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue() - currentPosition.getLatitude().getDMS().doubleValue());
-		double dLon = Math.toRadians(nextHeading.getLongitude().getDMS().doubleValue() - currentPosition.getLongitude().getDMS().doubleValue());
+		//logger.info("Current Position:"+currentPosition);
+	
 		
-		double y = Math.sin(dLon) * Math.cos(currentPosition.getLatitude().getDMS().doubleValue());
-		double x = Math.cos(nextHeading.getLatitude().getDMS().doubleValue())*Math.sin(currentPosition.getLatitude().getDMS().doubleValue()) -
-		        Math.sin(nextHeading.getLatitude().getDMS().doubleValue())*Math.cos(currentPosition.getLatitude().getDMS().doubleValue())*Math.cos(dLon);
-		return Math.atan2(y, x);
+		  double longitude1 = currentPosition.getLongitude().getDMS().doubleValue();
+		  double longitude2 = nextHeading.getLongitude().getDMS().doubleValue();
+		  double latitude1 = Math.toRadians(currentPosition.getLatitude().getDMS().doubleValue());
+		  double latitude2 = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue());
+		  double longDiff= Math.toRadians(longitude2-longitude1);
+		  double y= Math.sin(longDiff)*Math.cos(latitude2);
+		  double x=Math.cos(latitude1)*Math.sin(latitude2)-Math.sin(latitude1)*Math.cos(latitude2)*Math.cos(longDiff);
+
+		  return (Math.toDegrees(Math.atan2(y, x))+360)%360;
+		
 	}
 	
 	//this method is used to determine if we have arrived at the next destination. This is calculated if the distance between our current position and
 	//the target waypoint is less than 10 meters
 	public boolean arrived() throws NoConnection, NoValue, OutOfRange
 	{
-		//Coordinate currentPosition = gpsReceiver.getCoordinate();
 		Coordinate currentPosition = currentPositionTest;
-		double radius = 6371; // km
-		double dLat = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue() - currentPosition.getLatitude().getDMS().doubleValue());
-		double dLon = Math.toRadians(nextHeading.getLongitude().getDMS().doubleValue() - currentPosition.getLongitude().getDMS().doubleValue());
-		double lat1 = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue());
-		double lat2 = Math.toRadians(currentPosition.getLatitude().getDMS().doubleValue());
+        double earthRadius = 3958.75;
+	    double dLat = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue() - currentPosition.getLatitude().getDMS().doubleValue());
+	    double dLng = Math.toRadians(nextHeading.getLongitude().getDMS().doubleValue() - currentPosition.getLongitude().getDMS().doubleValue());
+	    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+	               Math.cos(Math.toRadians(currentPosition.getLatitude().getDMS().doubleValue())) * Math.cos(Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue())) *
+	               Math.sin(dLng/2) * Math.sin(dLng/2);
+	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	    double distance = (earthRadius * c);
 		
-		double angle = Math.sin(dLat/2) * Math.sin(dLat/2) +
-		        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-		double c = 2 * Math.atan2(Math.sqrt(angle), Math.sqrt(1-angle)); 
-		double distance = radius * c;
-		
-		if (distance < 0.01)
+		//logger.info("Distance to Next Waypoint:"+distance);
+		if (distance < 0.0621371192) //10 meters in miles
 		{
 			return true;
 		}
@@ -232,7 +277,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	//This method is used in order to check if the end of the trip has been reached, i.e there are no more way points in the list.
 	public boolean endOfTrip()
 	{
-		if (count == wayPointList.size())
+		if (count == wayPointList.size()-1)
 		{
 			return true;
 		}
@@ -246,12 +291,13 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	public void run()
 	{
 		try {
-			if (arrived() && endOfTrip()) //If we have arrived and its the end of the trip (no more way points)
+			boolean arrive = arrived();
+			if (arrive && endOfTrip()) //If we have arrived and its the end of the trip (no more way points)
 			{
 				//motorController.rampTo(new MDecimal(0)); //we then kill the engines
 				logger.info("Kill Engines");
 			}
-			else if (arrived() && ! endOfTrip()) //if we have arrived at our next way point but its not the end of the trip
+			else if (arrive && ! endOfTrip()) //if we have arrived at our next way point but its not the end of the trip
 			{
 				logger.info("Arrived....next waypoint");
 				count++;
@@ -261,7 +307,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 			}
 			else
 			{
-				logger.info("Driving to next waypoint");
+				//logger.info("Driving to next waypoint");
 				getEstimatedPosition();
 				drive();//else if we are on our way to the next way point we continue driving the vessel
 			}
@@ -281,7 +327,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		/*catch (ConfigurationError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}*/ 
 	}
 	
 	//this method is called upon by the RESTlet web services.
@@ -290,7 +336,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		//POP OUT ITEM SOMEHOW
 		count =0;
 		setNextHeading(wayPointList.get(count).getCoordinate()); //we set the next way point to the first in the list
-		timer.addSchedule(this , 1000); //we create the timer schedule for every 1 sec.
+		timer.addSchedule(this,0,10); //we create the timer schedule for every 1 sec.
 	}
 	
 	//This method is called upon by the RESTlet web services.

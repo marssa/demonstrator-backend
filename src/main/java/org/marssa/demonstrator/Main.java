@@ -16,15 +16,20 @@
 package org.marssa.demonstrator;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.demonstrator.web_services.WebServices;
+import org.marssa.demonstrator.web_services.path_planning.Waypoint;
+import org.marssa.footprint.datatypes.composite.Coordinate;
+import org.marssa.footprint.datatypes.composite.Latitude;
+import org.marssa.footprint.datatypes.composite.Longitude;
+import org.marssa.footprint.datatypes.decimal.DegreesDecimal;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.NoValue;
@@ -51,94 +56,108 @@ public class Main extends ServerResource {
 	 *            the args
 	 */
 	public static void main(java.lang.String[] args) {
-		LabJackU3 labJack = null;
+		LabJackU3 labJacku3 = null;
 		LabJackUE9 labJackue9 = null;
 		NavigationLightsController navLightsController;
 		UnderwaterLightsController underwaterLightsController;
-		SternDriveMotorController sternMotorController;
-		AuxiliaryMotorsController auxiliaryMotorControl;
+		SternDriveMotorController motorController;
 		RudderController rudderController;
 		GpsReceiver gpsReceiver;
 		WebServices webServices;
 		PathPlanningController pathPlanningController;
 
+		/*
 		// Initialise LabJack
 		try {
 			logger.info("Initialising LabJack ...");
-			labJack = LabJackU3.getInstance(Constants.LABJACK.HOST,
-					Constants.LABJACK.PORT);
+			labJackue9 = LabJackUE9.getInstance(Constants.LABJACKUE9.HOST,
+					Constants.LABJACKUE9.PORT);
 			logger.info("LabJack initialized successfully on {}:{}",
-					Constants.LABJACK.HOST, Constants.LABJACK.PORT);
+					Constants.LABJACKUE9.HOST, Constants.LABJACKUE9.PORT);
 		} catch (Exception e) {
 			logger.error("Failed to initialize LabJack", e);
 			System.exit(1);
-		}
+		}*/
 
 		// Initialise Controllers and Receivers
 		try {
-			logger.info("Initialising navigation lights controller ... ");
-			navLightsController = new NavigationLightsController(
-					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
-					LabJack.FIO4_DIR_ADDR);
-			logger.info("Navigation lights controller initialised successfully");
-
-			logger.info("Initialising underwater lights controller ... ");
-			underwaterLightsController = new UnderwaterLightsController(
-					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
-					LabJack.FIO13_DIR_ADDR);
-			logger.info("Underwater lights controller initialised successfully");
-
+			
 			logger.info("Initialising Path Planning controller ... ");
 			//pathPlanningController = new PathPlanningController(motorController,rudderController,gpsReceiver);
 			pathPlanningController = new PathPlanningController(null, null,null);
 			logger.info("Path Planning controller initialised successfully");
+			//---------------------------------CODE FOR TESTING PATH PLANNING----------------------------------
+			ArrayList<Waypoint> wayPointList =  new ArrayList<Waypoint>();
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(35.983267)) , new Longitude(new DegreesDecimal(14.387419)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.000184)) , new Longitude(new DegreesDecimal(14.376021)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.010598)) , new Longitude(new DegreesDecimal(14.391477)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.024835)) , new Longitude(new DegreesDecimal(14.339797)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.021192)) , new Longitude(new DegreesDecimal(14.318054)))));
+			wayPointList.add(new Waypoint("","",new Coordinate(new Latitude(new DegreesDecimal(36.015387)) , new Longitude(new DegreesDecimal(14.322254)))));
 			
-			logger.info("Initialising motor controller ... ");
-			sternMotorController = new SternDriveMotorController(labJackue9);
-			logger.info("Motor controller initialised successfully");
-
-			logger.info("Initialising motor controller ... ");
-			auxiliaryMotorControl = new AuxiliaryMotorsController(labJack);
-			logger.info("Motor controller initialised successfully");
+			pathPlanningController.setPathList(wayPointList);
+			pathPlanningController.setTestCurrent(new Coordinate(new Latitude(new DegreesDecimal(35.971663)) , new Longitude(new DegreesDecimal(14.358312))),270);
+			pathPlanningController.startFollowingPath();
 			
-			logger.info("Initialising rudder controller ... ");
-			rudderController = new RudderController(labJack);
-			logger.info("Rudder controller initialised successfully");
-
-			logger.info("Initialising GPS receiver ... ");
-			gpsReceiver = new GpsReceiver(Constants.GPS.HOST,
-					Constants.GPS.PORT);
-			logger.info("GPS receiver initialised successfully");
-
-			logger.info("Initialising web services ... ");
-			webServices = new WebServices(navLightsController,
-					underwaterLightsController, sternMotorController,auxiliaryMotorControl,
-					rudderController, gpsReceiver,pathPlanningController);
-			logger.info("Web services initialised successfully");
-
-			logger.info("Starting restlet web servicves ... ");
-			webServices.start();
-			logger.info("Web servicves started. Listening on {}:{}",
-					Constants.GPS.HOST, Constants.GPS.PORT);
-		} catch (ConfigurationError e) {
-			logger.error("ConfigurationError exception has been caught", e);
-			System.exit(1);
-		} catch (OutOfRange e) {
-			logger.error("OutOfRange exception has been caught", e);
-			System.exit(1);
-		} catch (UnknownHostException e) {
-			logger.error("UnknownHostException exception has been caught", e);
-			System.exit(1);
-		} catch (NoConnection e) {
-			logger.error("NoConnection exception has been caught", e);
-			System.exit(1);
-		} catch (InterruptedException e) {
-			logger.error("InterruptedException exception has been caught", e);
-			System.exit(1);
-		} catch (NoValue e) {
-			logger.error("NoValue exception has been caught", e);
-			System.exit(1);
-		} catch (Exception e) {
+		}
+			//---------------------------------CODE FOR TESTING PATH PLANNING----------------------------------
+			
+			
+//			logger.info("Initialising navigation lights controller ... ");
+//			navLightsController = new NavigationLightsController(
+//					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
+//					LabJack.FIO4_DIR_ADDR);
+//			logger.info("Navigation lights controller initialised successfully");
+//
+//			logger.info("Initialising underwater lights controller ... ");
+//			underwaterLightsController = new UnderwaterLightsController(
+//					Constants.LABJACK.HOST, Constants.LABJACK.PORT,
+//					LabJack.FIO13_DIR_ADDR);
+//			logger.info("Underwater lights controller initialised successfully");
+//			
+//			logger.info("Initialising motor controller ... ");
+//			motorController = new SternDriveMotorController(labJackue9);
+//			logger.info("Motor controller initialised successfully");
+//
+//			logger.info("Initialising rudder controller ... ");
+//			rudderController = new RudderController(labJacku3);
+//			logger.info("Rudder controller initialised successfully");
+//
+//			logger.info("Initialising GPS receiver ... ");
+//			gpsReceiver = new GpsReceiver(Constants.GPS.HOST,
+//					Constants.GPS.PORT);
+//			logger.info("GPS receiver initialised successfully");
+//
+//			logger.info("Initialising web services ... ");
+//			webServices = new WebServices(navLightsController,
+//					underwaterLightsController, motorController,
+//					rudderController, gpsReceiver,pathPlanningController);
+//			logger.info("Web services initialised successfully");
+//
+//			logger.info("Starting restlet web servicves ... ");
+//			webServices.start();
+//			logger.info("Web servicves started. Listening on {}:{}",
+//					Constants.GPS.HOST, Constants.GPS.PORT);
+//		} catch (ConfigurationError e) {
+//			logger.error("ConfigurationError exception has been caught", e);
+//			System.exit(1);
+//		} catch (OutOfRange e) {
+//			logger.error("OutOfRange exception has been caught", e);
+//			System.exit(1);
+//		} catch (UnknownHostException e) {
+//			logger.error("UnknownHostException exception has been caught", e);
+//			System.exit(1);
+//		} catch (NoConnection e) {
+//			logger.error("NoConnection exception has been caught", e);
+//			System.exit(1);
+//		} catch (InterruptedException e) {
+//			logger.error("InterruptedException exception has been caught", e);
+//			System.exit(1);
+//		} catch (NoValue e) {
+//			logger.error("NoValue exception has been caught", e);
+//			System.exit(1);
+//		} 
+			catch (Exception e) {
 			logger.error("General exception has been caught", e);
 			System.exit(1);
 		}
