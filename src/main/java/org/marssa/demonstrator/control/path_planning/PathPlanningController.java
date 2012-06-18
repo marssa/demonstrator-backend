@@ -378,5 +378,36 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		routeReverse = true;
 		setNextHeading(wayPointList.get(count).getCoordinate()); //we set the next way point to the first in the list
 		timer.addSchedule(this,0,10); 
+	}
+
+	@Override
+	public MDecimal getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void outputValue(MDecimal arg0) throws ConfigurationError,
+			OutOfRange, NoConnection {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPolaritySignal(Polarity arg0) throws NoConnection {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public MDecimal getAngle() throws NoConnection {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void rotate(MBoolean arg0) throws InterruptedException, NoConnection {
+		// TODO Auto-generated method stub
+		
 	}	
 }
