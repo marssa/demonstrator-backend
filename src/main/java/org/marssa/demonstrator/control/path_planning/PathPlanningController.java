@@ -155,7 +155,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
     {
     	currentPositionRead = gpsReceiver.getCoordinate();
     }
-	public void shortestAngle(double _currentHeading, double _targetHeading,int angleOut) throws NoConnection, NoValue, OutOfRange
+	public void shortestAngle(double _currentHeading, double _targetHeading,MInteger angleOut) throws NoConnection, NoValue, OutOfRange, InterruptedException
 	{
 		if (_targetHeading > _currentHeading)
 		{
@@ -163,21 +163,34 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 			{
 				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(false));
 				//logger.info("Rotate to Left");
-				currentHeadingRead = currentHeadingRead -angleOut;
+				
+				//FOR SIMULATOR
+				/*currentHeadingRead = currentHeadingRead -angleOut;
 				if (currentHeadingRead < 0)
 				{
 					currentHeadingRead += 360;
-				}
+				}*/
+				//FOR SIMULATOR
+				
+				rudderController.rotateMultiple(angleOut, new MBoolean(true));
+				
+				
 			}
 			else
 			{
 				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(true));//the rudders are brought back into the center after directing the vessel.
 				//logger.info("Rotate to Right");
-				currentHeadingRead = currentHeadingRead +angleOut;
+				//FOR SIMULATOR
+				//currentHeadingRead = currentHeadingRead +angleOut;
+				/*rudderController.rotateMultiple(angleOut, new MBoolean(false));
 				if (currentHeadingRead > 359)
 				{
 					currentHeadingRead -= 360;
-				}
+				}*/
+				//FOR SIMULATOR
+				
+				rudderController.rotateMultiple(angleOut, new MBoolean(false));
+				
 			}
 			
 		}
@@ -187,21 +200,27 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 			{
 				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(true));//the rudders are brought back into the center after directing the vessel.
 				//logger.info("Rotate to Right");
-				currentHeadingRead = currentHeadingRead +angleOut;
+				//FOR SIMULATOR
+				/*currentHeadingRead = currentHeadingRead +angleOut;
 				if (currentHeadingRead > 359)
 				{
 					currentHeadingRead -= 360;
-				}
+				}*/
+				//FOR SIMULATOR
+				rudderController.rotateMultiple(angleOut, new MBoolean(false));
 			}
 			else
 			{
 				//rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(false));
 				//logger.info("Rotate to Left");
-				currentHeadingRead = currentHeadingRead -angleOut;
+				//FOR SIMULATOR
+				/*currentHeadingRead = currentHeadingRead -angleOut;
 				if (currentHeadingRead < 0)
 				{
 					currentHeadingRead += 360;
-				}
+				}*/
+				//FOR SIMULATOR
+				rudderController.rotateMultiple(angleOut, new MBoolean(true));
 			}
 		}
 	}
@@ -222,16 +241,17 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		if (difference < Constants.PATH.Path_Accuracy_Lower.doubleValue())
 		{
 			//rotateToCentre(); 
-			//logger.info("Rotate to Centre");
+			logger.info("Rotate to Centre");
+			rudderController.rotateToCentre();
 		}
 		if ((difference >= Constants.PATH.Path_Accuracy_Lower.doubleValue()) && (difference <= Constants.PATH.Path_Accuracy_Upper.doubleValue()))
 		{
-			shortestAngle(currentHeading,targetHeading,5);
+			shortestAngle(currentHeading,targetHeading,new MInteger(5));
 		}
 		//if the difference is large the system will enter this if statement and adjust the rudder a lot
 		else if (difference > Constants.PATH.Path_Accuracy_Upper.doubleValue())
 		{
-			shortestAngle(currentHeading,targetHeading,15);
+			shortestAngle(currentHeading,targetHeading,new MInteger(15));
 		}
 		//calculate bearing
 	}
@@ -389,6 +409,135 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		timer.addSchedule(this,0,10); 
 	}
 
+	/**
+	 * The rotateMultiple is used to use the rotate method multiple times
+	 */
+	public synchronized void rotateMultiple(MInteger multiple,
+			MBoolean direction) throws InterruptedException, NoConnection {
+		for (int x = 0; x < multiple.intValue(); x++) {
+			if (angle.doubleValue() > 30 && direction.getValue() == true) {
+				break;
+			} else if (angle.doubleValue() < -30
+					&& direction.getValue() == false) {
+				break;
+			}
+			rotate(direction);
+		}
+
+	}
+
+	/**
+	 * The rotateExtreme is used to rotate to the extreme possible angles
+	 */
+	public synchronized void rotateExtreme(MBoolean direction)
+			throws InterruptedException, NoConnection {
+
+		while (angle.doubleValue() < 32 && direction.getValue() == true) {
+			rotate(direction);
+		}
+
+		while (angle.doubleValue() > -32 && direction.getValue() == false) {
+			rotate(direction);
+		}
+
+	}
+
+	/**
+	 * The rotateToCentre is used to rotate the rudder to approximate its centre
+	 * position
+	 */
+	public void rotateToCentre() throws NoConnection, InterruptedException {
+		while (angle.doubleValue() > 5) {
+			rotate(new MBoolean(false));
+		}
+		while (angle.doubleValue() < -5) {
+			rotate(new MBoolean(true));
+		}
+	}
+
+	/**
+	 * The rotate is used to rotate the stepper motor by one step in either left
+	 * or right direction The MBoolean direction false means that the rudder has
+	 * negative angle (turns the boat to the left direction) The MBoolean
+	 * direction true means that the rudder has positive angle (turns the boat
+	 * to the right direction)
+	 */
+	public void rotate(MBoolean direction) throws NoConnection,
+			InterruptedException {
+		if ((stepLeft == 0 && direction.getValue())
+				|| (stepRight == 3 && direction.getValue() == false)) {
+			lj.write(STEPPER1, HIGH);
+			lj.write(STEPPER2, HIGH);
+			lj.write(STEPPER3, LOW);
+			lj.write(STEPPER4, LOW);
+			stepLeft = 1;
+			stepRight = 0;
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
+			return;
+		}
+		if ((stepLeft == 1 && direction.getValue())
+				|| (stepRight == 2 && direction.getValue() == false)) {
+			lj.write(STEPPER1, LOW);
+			lj.write(STEPPER2, HIGH);
+			lj.write(STEPPER3, HIGH);
+			lj.write(STEPPER4, LOW);
+			stepLeft = 2;
+			stepRight = 3;
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
+			return;
+		}
+		if ((stepLeft == 2 && direction.getValue())
+				|| (stepRight == 1 && direction.getValue() == false)) {
+			lj.write(STEPPER1, LOW);
+			lj.write(STEPPER2, LOW);
+			lj.write(STEPPER3, HIGH);
+			lj.write(STEPPER4, HIGH);
+			stepLeft = 3;
+			stepRight = 2;
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
+			return;
+		}
+		if ((stepLeft == 3 && direction.getValue())
+				|| (stepRight == 0 && direction.getValue() == false)) {
+			lj.write(STEPPER1, HIGH);
+			lj.write(STEPPER2, LOW);
+			lj.write(STEPPER3, LOW);
+			lj.write(STEPPER4, HIGH);
+			stepLeft = 0;
+			stepRight = 1;
+			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
+			return;
+		}
+	}
+
+	/**
+	 * The getAngle returns the actual angle of the rudder
+	 */
+	public MDecimal getAngle() throws NoConnection {
+		try {
+			double voltageValue = lj.read(new MInteger(0), new MInteger(8),
+					new MInteger(1)).doubleValue(); // value that needs to be
+													// read from the labjack
+			if (voltageValue < 2.45) {
+				voltageDifference = 2.45 - voltageValue;
+				angleDifference = voltageDifference * 57.14;
+				angle = new MDecimal(angleDifference);
+			}
+			if (voltageValue > 2.45) {
+				voltageDifference = voltageValue - 2.45;
+				angleDifference = voltageDifference * 57.14;
+				angle = new MDecimal(-angleDifference);
+			}
+			if (voltageValue == 2.45) {
+				angle = new MDecimal(0);
+			}
+		} catch (IOException e) {
+			throw new NoConnection("Cannot read from LabJack\n"
+					+ e.getMessage(), e.getCause());
+		}
+		return angle;
+	}
+
 	@Override
 	public MDecimal getValue() {
 		// TODO Auto-generated method stub
@@ -407,16 +556,5 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		// TODO Auto-generated method stub
 		
 	}
+}	
 
-	@Override
-	public MDecimal getAngle() throws NoConnection {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void rotate(MBoolean arg0) throws InterruptedException, NoConnection {
-		// TODO Auto-generated method stub
-		
-	}	
-}
