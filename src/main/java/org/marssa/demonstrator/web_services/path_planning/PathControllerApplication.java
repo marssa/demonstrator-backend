@@ -22,6 +22,9 @@ import java.util.concurrent.ConcurrentMap;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.control.rudder.RudderController;
+import org.marssa.footprint.exceptions.ConfigurationError;
+import org.marssa.footprint.exceptions.NoConnection;
+import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.services.navigation.GpsReceiver;
 import org.restlet.Application;
 import org.restlet.Request;
@@ -91,11 +94,73 @@ public class PathControllerApplication extends Application {
         			response.setEntity("The system has started following the path ", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
-        		} 
+        		} catch (NoConnection e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ConfigurationError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OutOfRange e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
             }
         };
         
-              
+        Restlet comeHome = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
+        		try {
+        			//We here call upon the startfollowingpath method using the pathplanningcontroller instance.
+        			pathPlanningController.returnHome();
+        			response.setEntity("The system has started following the path ", MediaType.TEXT_PLAIN);
+        		} catch (NumberFormatException e) {
+        			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
+        		} catch (NoConnection e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ConfigurationError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OutOfRange e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+            }
+        };
+        
+        Restlet reverseRoute = new Restlet() {
+        	@Override
+            public void handle(Request request, Response response) {
+        		response.setCacheDirectives(cacheDirectives);
+        		try {
+        			//We here call upon the startfollowingpath method using the pathplanningcontroller instance.
+        			pathPlanningController.reverseTheRoute();
+        			response.setEntity("The system has started following the path ", MediaType.TEXT_PLAIN);
+        		} catch (NumberFormatException e) {
+        			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
+        		} catch (NoConnection e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ConfigurationError e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (OutOfRange e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+            }
+        };
                 
         router.attach("/enterwaypoints", WayPointResource.class);
         //the enterwaypoints method is called upon by the from end using a @post annotation. The waypointsresource class is used to receive the data.
@@ -103,7 +168,8 @@ public class PathControllerApplication extends Application {
         //The startFollowing method defined above is called upon when the front end initiates a request
         router.attach("/stopFollowing",stopFollowing);
         //The stopFollowing method defined above is called upon when the front end initiates a request
-        
+        router.attach("/comeHome",comeHome);
+        router.attach("/reverseRoute",reverseRoute);
         return router;
     }
 }

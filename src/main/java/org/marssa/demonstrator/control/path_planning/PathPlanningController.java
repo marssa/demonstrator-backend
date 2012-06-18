@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.composite.Coordinate;
@@ -89,6 +90,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	private LabJack lj;
 	ArrayList<Waypoint> wayPointList;
 	MTimer timer;
+	boolean routeReverse =false;
 	/**
 	 * @throws ConfigurationError
 	 * @throws OutOfRange
@@ -294,7 +296,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 			boolean arrive = arrived();
 			if (arrive && endOfTrip()) //If we have arrived and its the end of the trip (no more way points)
 			{
-				//motorController.rampTo(new MDecimal(0)); //we then kill the engines
+				motorController.stop();
 				logger.info("Kill Engines");
 			}
 			else if (arrive && ! endOfTrip()) //if we have arrived at our next way point but its not the end of the trip
@@ -330,11 +332,24 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		}*/ 
 	}
 	
+	public void setCruisingThrust() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
+	{
+		motorController.stop();
+		motorController.increase();//20% forward
+		motorController.increase();//20% forward
+		motorController.increase();//20% forward
+	}
 	//this method is called upon by the RESTlet web services.
-	public void startFollowingPath()
+	public void startFollowingPath() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
 	{
 		//POP OUT ITEM SOMEHOW
 		count =0;
+		setCruisingThrust();
+		if (routeReverse == true)
+		{
+			Collections.reverse(wayPointList);
+			routeReverse = false;
+		}
 		setNextHeading(wayPointList.get(count).getCoordinate()); //we set the next way point to the first in the list
 		timer.addSchedule(this,0,10); //we create the timer schedule for every 1 sec.
 	}
@@ -346,137 +361,22 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	}
 	//Path Planning Controller
 	//Motor Controller
-
-	public void outputValue(MDecimal motorSpeed) throws ConfigurationError,
-			OutOfRange, NoConnection {
-		System.out.println(motorSpeed);
-		MInteger actualValue = new MInteger((int) ((Math.pow(2, 32) - 1)
-				* motorSpeed.abs().doubleValue() / 100.0));
-		/*
-		 * The Motor connected to TIMER_0 is slightly faster. Hence it is being
-		 * scaled down to 90% of the requested value.
-		 */
-		lj.setTimerValue(LabJackU3.TimerU3.TIMER_0, new MInteger(
-				(int) (actualValue.doubleValue() * 0.9)));
-		lj.setTimerValue(LabJackU3.TimerU3.TIMER_1, actualValue);
-	}
-
-	public MDecimal getValue() {
-		return ramping.getCurrentValue();
-	}
-
-	public void rampTo(MDecimal desiredValue) throws InterruptedException,
-			ConfigurationError, OutOfRange {
-		ramping.rampTo(desiredValue);
-	}
     
-	public void setPolaritySignal(Polarity polarity) throws NoConnection {
-		switch (polarity) {
-		case POSITIVE:
-			lj.write(MOTOR_0_DIRECTION, new MBoolean(true));
-			lj.write(MOTOR_1_DIRECTION, new MBoolean(true));
-			break;
-		case NEGATIVE:
-			lj.write(MOTOR_0_DIRECTION, new MBoolean(false));
-			lj.write(MOTOR_1_DIRECTION, new MBoolean(false));
-			break;
-		case OFF:
-			// TODO handle the case to switch off the motors
-			break;
-		}
-	}
-	
-	//Motor controller
-	
-	//Rudder Controller
-	
-	public void rotate(MBoolean direction) throws NoConnection,
-	InterruptedException {
-		if ((stepLeft == 0 && direction.getValue())
-		|| (stepRight == 3 && direction.getValue() == false)) {
-			lj.write(STEPPER1, HIGH);
-			lj.write(STEPPER2, HIGH);
-			lj.write(STEPPER3, LOW);
-			lj.write(STEPPER4, LOW);
-			stepLeft = 1;
-			stepRight = 0;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
-	return;
-		}
-		if ((stepLeft == 1 && direction.getValue())
-			|| (stepRight == 2 && direction.getValue() == false)) {
-			lj.write(STEPPER1, LOW);
-			lj.write(STEPPER2, HIGH);
-			lj.write(STEPPER3, HIGH);
-			lj.write(STEPPER4, LOW);
-			stepLeft = 2;
-			stepRight = 3;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
-	return;
-		}
-		if ((stepLeft == 2 && direction.getValue())
-		|| (stepRight == 1 && direction.getValue() == false)) {
-			lj.write(STEPPER1, LOW);
-			lj.write(STEPPER2, LOW);
-			lj.write(STEPPER3, HIGH);
-			lj.write(STEPPER4, HIGH);
-			stepLeft = 3;
-			stepRight = 2;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
-	return;
-		}
-		if ((stepLeft == 3 && direction.getValue())
-		|| (stepRight == 0 && direction.getValue() == false)) {
-			lj.write(STEPPER1, HIGH);
-			lj.write(STEPPER2, LOW);
-			lj.write(STEPPER3, LOW);
-			lj.write(STEPPER4, HIGH);
-			stepLeft = 0;
-			stepRight = 1;
-			Thread.sleep(Constants.RUDDER.RUDDER_DELAY.intValue());
-			return;
-		}
-}
-
-	public void rotateToCentre() throws NoConnection, InterruptedException {
-		while (angle.doubleValue() > 5) {
-			rotate(new MBoolean(false));
-		}
-		while (angle.doubleValue() < -5) {
-			rotate(new MBoolean(true));
-		}
-	}
-	
-/**
-* The getAngle returns the actual angle of the rudder
-*/
-	public MDecimal getAngle() throws NoConnection 
+	public void returnHome() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
 	{
-		try {
-			double voltageValue = lj.read(new MInteger(0), new MInteger(8),
-			new MInteger(1)).doubleValue(); // value that needs to be
-											// read from the labjack
-			if (voltageValue < 2.45) {
-				voltageDifference = 2.45 - voltageValue;
-				angleDifference = voltageDifference * 57.14;
-				angle = new MDecimal(angleDifference);
-			}
-			if (voltageValue > 2.45) {
-				voltageDifference = voltageValue - 2.45;
-				angleDifference = voltageDifference * 57.14;
-				angle = new MDecimal(-angleDifference);
-			}
-			if (voltageValue == 2.45) {
-				angle = new MDecimal(0);
-			}
-		} catch (IOException e) {
-			throw new NoConnection("Cannot read from LabJack\n"
-			+ e.getMessage(), e.getCause());
-		}
-		return angle;
+		setCruisingThrust();
+		timer.cancel();
+		setNextHeading(wayPointList.get(0).getCoordinate()); //we set the next way point to the first in the list
+		timer.addSchedule(this,0,10);
 	}
 	
-	
-	//Rudder Controller
-	
+	public void reverseTheRoute() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
+	{
+		setCruisingThrust();
+		timer.cancel();
+		count =0;
+		routeReverse = true;
+		setNextHeading(wayPointList.get(count).getCoordinate()); //we set the next way point to the first in the list
+		timer.addSchedule(this,0,10); 
+	}	
 }
