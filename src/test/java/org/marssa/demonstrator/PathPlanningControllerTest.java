@@ -297,6 +297,8 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 			{
 				motorController.stop();
 				logger.info("Kill Engines");
+				wayPointList = new ArrayList<Waypoint>();
+				timer.cancel();
 			}
 			else if (arrive && ! endOfTrip()) //if we have arrived at our next way point but its not the end of the trip
 			{
@@ -358,18 +360,14 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	{
 		timer.cancel(); //this cancels the timer.
 		logger.info("Stop Following the Path");
-		
+		wayPointList = new ArrayList<Waypoint>();
 	}
 	//Path Planning Controller
 	//Motor Controller
     
 	public void returnHome() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
 	{
-		logger.info("Cruising Thrust 60%");
-		logger.info("Starting to Return Home");
-		timer.cancel();
-		setNextHeading(wayPointList.get(0).getCoordinate()); //we set the next way point to the first in the list
-		timer.addSchedule(this,0,10);
+
 	}
 	
 	public void reverseTheRoute() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
@@ -377,10 +375,7 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 		logger.info("Cruising Thrust 60%");
 		logger.info("Reversing the Route");
 		timer.cancel();
-		count =0;
-		routeReverse = true;
-		setNextHeading(wayPointList.get(count).getCoordinate()); //we set the next way point to the first in the list
-		timer.addSchedule(this,0,10); 
+		routeReverse = true; 
 	}
 
 	/**
