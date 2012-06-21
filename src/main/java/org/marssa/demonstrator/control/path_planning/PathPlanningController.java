@@ -15,12 +15,14 @@
  */
 package org.marssa.demonstrator.control.path_planning;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.marssa.demonstrator.constants.Constants;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
+import org.marssa.demonstrator.control.rudder.RudderController;
+import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.composite.Coordinate;
 import org.marssa.footprint.datatypes.composite.Latitude;
@@ -34,13 +36,8 @@ import org.marssa.footprint.exceptions.NoValue;
 import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
 import org.marssa.footprint.interfaces.control.rudder.IRudderController;
-import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
-import org.marssa.demonstrator.control.rudder.RudderController;
-import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.services.control.Ramping;
 import org.marssa.services.diagnostics.daq.LabJack;
-import org.marssa.services.diagnostics.daq.LabJackU3;
 import org.marssa.services.navigation.GpsReceiver;
 import org.marssa.services.scheduling.MTimer;
 import org.marssa.services.scheduling.MTimerTask;

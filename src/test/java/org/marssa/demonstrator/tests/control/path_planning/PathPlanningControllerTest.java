@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator;
+package org.marssa.demonstrator.tests.control.path_planning;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.marssa.demonstrator.constants.Constants;
+import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.composite.Coordinate;
 import org.marssa.footprint.datatypes.composite.Latitude;
@@ -34,14 +34,7 @@ import org.marssa.footprint.exceptions.NoValue;
 import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
 import org.marssa.footprint.interfaces.control.rudder.IRudderController;
-import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
-import org.marssa.demonstrator.control.rudder.RudderController;
-import org.marssa.demonstrator.web_services.path_planning.Waypoint;
-import org.marssa.services.control.Ramping;
 import org.marssa.services.diagnostics.daq.LabJack;
-import org.marssa.services.diagnostics.daq.LabJackU3;
-import org.marssa.services.navigation.GpsReceiver;
 import org.marssa.services.scheduling.MTimer;
 import org.marssa.services.scheduling.MTimerTask;
 import org.slf4j.LoggerFactory;
@@ -57,11 +50,6 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	private static final Logger logger = (Logger) LoggerFactory
 			.getLogger(PathPlanningControllerTest.class);
 	
-	private static final MTimerTask MTimerTask = null;
-	private SternDriveMotorController motorController;
-	private RudderController rudderController;
-	private GpsReceiver gpsReceiver;
-	private Ramping ramping;
 	private final MInteger STEPPER1 = LabJack.FIO8_ADDR;
 	private final MInteger STEPPER2 = LabJack.FIO9_ADDR;
 	private final MInteger STEPPER3 = LabJack.FIO10_ADDR;
@@ -75,18 +63,12 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	private double angleDifference = 0;
 	private static MDecimal angle;
 	
-	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
-	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
-	private final MInteger STEP_DELAY = new MInteger(20);
-	private final MDecimal STEP_SIZE = new MDecimal(1.0f);
-	
 	private Coordinate currentPositionRead;
 	private double currentHeadingRead;
 
 	
 	private Coordinate nextHeading;
 	private int count = 0;
-	private int countPath = 1;
 	private LabJack lj;
 	ArrayList<Waypoint> wayPointList;
 	MTimer timer;
@@ -97,12 +79,8 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	 * @throws NoConnection
 	 * 
 	 */	
-	public  PathPlanningControllerTest(SternDriveMotorController motorController, 
-			RudderController rudderController, GpsReceiver gpsReceiver)
+	public  PathPlanningControllerTest()
 	{
-		this.motorController = motorController;
-		this.rudderController = rudderController;
-		this.gpsReceiver = gpsReceiver;
 		timer = MTimer.getInstance();
 		wayPointList = new ArrayList<Waypoint>();
 	}
@@ -153,7 +131,7 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	
     public void readPosition() throws NoConnection, NoValue, OutOfRange
     {
-    	currentPositionRead = gpsReceiver.getCoordinate();
+    	// currentPositionRead = gpsReceiver.getCoordinate();
     }
 	public void shortestAngle(double _currentHeading, double _targetHeading,double angleOut) throws NoConnection, NoValue, OutOfRange, InterruptedException
 	{
@@ -214,9 +192,7 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 		//if the difference is minimal the system will enter this if statement and adjust the rudder slightly
 		if (difference < Constants.PATH.Path_Accuracy_Lower.doubleValue())
 		{
-			//rotateToCentre(); 
 			logger.info("Rotate to Centre");
-			rudderController.rotateToCentre();
 		}
 		if ((difference >= Constants.PATH.Path_Accuracy_Lower.doubleValue()) && (difference <= Constants.PATH.Path_Accuracy_Upper.doubleValue()))
 		{
@@ -295,7 +271,6 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 			boolean arrive = arrived();
 			if (arrive && endOfTrip()) //If we have arrived and its the end of the trip (no more way points)
 			{
-				motorController.stop();
 				logger.info("Kill Engines");
 				wayPointList = new ArrayList<Waypoint>();
 				timer.cancel();
@@ -335,10 +310,7 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	
 	public void setCruisingThrust() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
 	{
-		motorController.stop();
-		motorController.increase();//20% forward
-		motorController.increase();//20% forward
-		motorController.increase();//20% forward
+		logger.info("Cruising speed set");
 	}
 	//this method is called upon by the RESTlet web services.
 	public void startFollowingPath() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
