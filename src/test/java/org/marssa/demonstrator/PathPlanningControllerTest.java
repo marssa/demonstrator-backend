@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.control.path_planning;
+package org.marssa.demonstrator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,10 +52,10 @@ import ch.qos.logback.classic.Logger;
  * @author Clayton Tabone
  * 
  */
-public class PathPlanningController extends MTimerTask implements IMotorController,IRudderController{
+public class PathPlanningControllerTest extends MTimerTask implements IMotorController,IRudderController{
 	
 	private static final Logger logger = (Logger) LoggerFactory
-			.getLogger(PathPlanningController.class);
+			.getLogger(PathPlanningControllerTest.class);
 	
 	private static final MTimerTask MTimerTask = null;
 	private SternDriveMotorController motorController;
@@ -97,7 +97,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	 * @throws NoConnection
 	 * 
 	 */	
-	public  PathPlanningController(SternDriveMotorController motorController, 
+	public  PathPlanningControllerTest(SternDriveMotorController motorController, 
 			RudderController rudderController, GpsReceiver gpsReceiver)
 	{
 		this.motorController = motorController;
@@ -155,17 +155,27 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
     {
     	currentPositionRead = gpsReceiver.getCoordinate();
     }
-	public void shortestAngle(double _currentHeading, double _targetHeading,MInteger angleOut) throws NoConnection, NoValue, OutOfRange, InterruptedException
+	public void shortestAngle(double _currentHeading, double _targetHeading,double angleOut) throws NoConnection, NoValue, OutOfRange, InterruptedException
 	{
 		if (_targetHeading > _currentHeading)
 		{
 			if((_targetHeading-_currentHeading) > 180)
 			{
-				rudderController.rotateMultiple(angleOut, new MBoolean(true));
+				logger.info("Rotate to Left");
+				currentHeadingRead = currentHeadingRead -angleOut;
+				if (currentHeadingRead < 0)
+				{
+					currentHeadingRead += 360;
+				}
 			}
 			else
 			{
-				rudderController.rotateMultiple(angleOut, new MBoolean(false));
+				logger.info("Rotate to Right");
+				currentHeadingRead = currentHeadingRead +angleOut;
+				if (currentHeadingRead > 359)
+				{
+					currentHeadingRead -= 360;
+				}				
 			}
 			
 		}
@@ -173,11 +183,21 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 		{
 			if ((_currentHeading - _targetHeading) >= 180)
 			{
-				rudderController.rotateMultiple(angleOut, new MBoolean(false));
+				logger.info("Rotate to Right");
+				currentHeadingRead = currentHeadingRead +angleOut;
+				if (currentHeadingRead > 359)
+				{
+					currentHeadingRead -= 360;
+				}
 			}
 			else
 			{
-				rudderController.rotateMultiple(angleOut, new MBoolean(true));
+				logger.info("Rotate to Left");
+				currentHeadingRead = currentHeadingRead -angleOut;
+				if (currentHeadingRead < 0)
+				{
+					currentHeadingRead += 360;
+				}
 			}
 		}
 	}
@@ -185,23 +205,27 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	public void drive() throws NoConnection, NoValue, OutOfRange, InterruptedException {
 		
 		double currentHeading = currentHeadingRead;
-		
 		double targetHeading = determineHeading();
 		double difference =  Math.abs(currentHeading - targetHeading);
 		
+		logger.info("Current Heading:"+currentHeading);
+		logger.info("Target Heading:"+targetHeading);
+		
+		//if the difference is minimal the system will enter this if statement and adjust the rudder slightly
 		if (difference < Constants.PATH.Path_Accuracy_Lower.doubleValue())
 		{
-			
+			//rotateToCentre(); 
+			logger.info("Rotate to Centre");
 			rudderController.rotateToCentre();
 		}
 		if ((difference >= Constants.PATH.Path_Accuracy_Lower.doubleValue()) && (difference <= Constants.PATH.Path_Accuracy_Upper.doubleValue()))
 		{
-			shortestAngle(currentHeading,targetHeading,new MInteger(5));
+			shortestAngle(currentHeading,targetHeading,5.0);
 		}
 		//if the difference is large the system will enter this if statement and adjust the rudder a lot
 		else if (difference > Constants.PATH.Path_Accuracy_Upper.doubleValue())
 		{
-			shortestAngle(currentHeading,targetHeading,new MInteger(15));
+			shortestAngle(currentHeading,targetHeading,15.0);
 		}
 		//calculate bearing
 	}
@@ -210,6 +234,9 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	public double determineHeading() throws NoConnection, NoValue, OutOfRange
 	{
 		Coordinate currentPosition = currentPositionRead;
+		
+		 logger.info("Current Position:"+currentPosition);
+	
 		
 		  double longitude1 = currentPosition.getLongitude().getDMS().doubleValue();
 		  double longitude2 = nextHeading.getLongitude().getDMS().doubleValue();
@@ -237,7 +264,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 	    double distance = (earthRadius * c);
 		
-		//logger.info("Distance to Next Waypoint:"+distance);
+		logger.info("Distance to Next Waypoint:"+distance);
 		if (distance < 0.0621371192) //10 meters in miles
 		{
 			return true;
@@ -276,13 +303,13 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 				logger.info("Arrived....next waypoint");
 				count++;
 				setNextHeading(wayPointList.get(count).getCoordinate()); //we get the next way points from the list and drive.
-				readPosition();
+				getEstimatedPosition();
 				drive();
 			}
 			else
 			{
+				logger.info("Driving to next waypoint");
 				getEstimatedPosition();
-				readPosition();
 				drive();//else if we are on our way to the next way point we continue driving the vessel
 			}
 		} catch (NoConnection e) {
@@ -316,7 +343,7 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	{
 		//POP OUT ITEM SOMEHOW
 		count =0;
-		setCruisingThrust();
+		logger.info("Cruising Thrust 60%");
 		if (routeReverse == true)
 		{
 			Collections.reverse(wayPointList);
@@ -330,13 +357,16 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	public void stopFollowingPath()
 	{
 		timer.cancel(); //this cancels the timer.
+		logger.info("Stop Following the Path");
+		
 	}
 	//Path Planning Controller
 	//Motor Controller
     
 	public void returnHome() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
 	{
-		setCruisingThrust();
+		logger.info("Cruising Thrust 60%");
+		logger.info("Starting to Return Home");
 		timer.cancel();
 		setNextHeading(wayPointList.get(0).getCoordinate()); //we set the next way point to the first in the list
 		timer.addSchedule(this,0,10);
@@ -344,7 +374,8 @@ public class PathPlanningController extends MTimerTask implements IMotorControll
 	
 	public void reverseTheRoute() throws NoConnection, InterruptedException, ConfigurationError, OutOfRange
 	{
-		setCruisingThrust();
+		logger.info("Cruising Thrust 60%");
+		logger.info("Reversing the Route");
 		timer.cancel();
 		count =0;
 		routeReverse = true;
