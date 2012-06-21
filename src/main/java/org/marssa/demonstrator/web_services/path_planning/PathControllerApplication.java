@@ -162,7 +162,7 @@ public class PathControllerApplication extends Application {
             }
         };
                 
-        router.attach("/enterwaypoints", WayPointResource.class);
+        router.attach("/waypoints", WayPointsResource.class);
         //the enterwaypoints method is called upon by the from end using a @post annotation. The waypointsresource class is used to receive the data.
         router.attach("/startFollowing",startFollowing);
         //The startFollowing method defined above is called upon when the front end initiates a request

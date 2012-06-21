@@ -36,8 +36,9 @@ public class SternDriveMotorController{
 	private LabJackUE9 lj;
 	private Ramping ramping;
 	int ordinal;
+	//------------ +  + + + +   - - - - -
 	int[] speed = {16,9,8,6,4,0,4,6,8,9,16};
-	int arrayValue;
+	private int arrayValue;
 
 
 	/**
@@ -93,8 +94,9 @@ public class SternDriveMotorController{
 		if(arrayValue == 0){
 			labJackOutput(speed[arrayValue]);
 		}else{
-		labJackOutput(speed[arrayValue-1]);
-		arrayValue--;
+			arrayValue--;
+		labJackOutput(speed[arrayValue]);
+		
 		}
 	}
 
@@ -112,8 +114,8 @@ public class SternDriveMotorController{
 		if(arrayValue == 10){
 			labJackOutput(speed[arrayValue]);
 		}else{
-		labJackOutput(speed[arrayValue+1]);
-		arrayValue++;
+			arrayValue++;
+		labJackOutput(speed[arrayValue]);
 		}
 	}
 }

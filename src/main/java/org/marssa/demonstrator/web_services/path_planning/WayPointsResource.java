@@ -49,24 +49,35 @@ public class WayPointsResource extends BaseResource {
         // Parse the given representation and retrieve pairs of  
         // "name=value" tokens.  
         Form form = new Form(entity);  
-        String itemName = form.getFirstValue("name");  
-        String itemDescription = form.getFirstValue("description");  
-  
+        String waypointID 	= form.getFirstValue("waypointID");  
+        String waypointName = form.getFirstValue("waypointName");  
+        String waypointLat 	= form.getFirstValue("waypointLat");  
+        String waypointLon 	= form.getFirstValue("waypointLon");
+        
+        double lat =0.0;
+        double lon =0.0;
+        
+        if((waypointLat != "")&&(waypointLon != ""))
+        {
+        	 lat = Double.parseDouble(waypointLat);
+             lon = Double.parseDouble(waypointLon);
+        }
+       
         // Register the new item if one is not already registered.  
-        if (!getWaypoints().containsKey(itemName)  
-                && getWaypoints().putIfAbsent(itemName,  
-                        new Waypoint(itemName, itemDescription,new Coordinate(new Latitude(new DegreesDecimal(12.35)), new Longitude(new DegreesDecimal(12.35))))) == null) {  
+        if (!getWaypoints().containsKey(waypointName)  
+                && getWaypoints().putIfAbsent(waypointName,  
+                        new Waypoint(waypointID, waypointName,new Coordinate(new Latitude(new DegreesDecimal(lat)), new Longitude(new DegreesDecimal(lon))))) == null) {  
             // Set the response's status and entity  
             setStatus(Status.SUCCESS_CREATED);  
             Representation rep = new StringRepresentation("Item created",  
                     MediaType.TEXT_PLAIN);  
             // Indicates where is located the new resource.  
             rep.setIdentifier(getRequest().getResourceRef().getIdentifier()  
-                    + "/" + itemName);  
+                    + "/" + waypointName);  
             result = rep;  
         } else { // Item is already registered.  
             setStatus(Status.CLIENT_ERROR_NOT_FOUND);  
-            result = generateErrorRepresentation("Item " + itemName  
+            result = generateErrorRepresentation("Item " + waypointName  
                     + " already exists.", "1");  
         }  
   
