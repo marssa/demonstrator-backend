@@ -117,7 +117,7 @@ public class PathControllerApplication extends Application {
         		try {
         			//We here call upon the startfollowingpath method using the pathplanningcontroller instance.
         			pathPlanningController.returnHome();
-        			response.setEntity("The system has started following the path ", MediaType.TEXT_PLAIN);
+        			response.setEntity("The system is now coming home ", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
         		} catch (NoConnection e) {
@@ -143,7 +143,7 @@ public class PathControllerApplication extends Application {
         		try {
         			//We here call upon the startfollowingpath method using the pathplanningcontroller instance.
         			pathPlanningController.reverseTheRoute();
-        			response.setEntity("The system has started following the path ", MediaType.TEXT_PLAIN);
+        			response.setEntity("The system has reversed the route ", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
         		} catch (NoConnection e) {

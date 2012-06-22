@@ -18,6 +18,7 @@ package org.marssa.demonstrator.tests.web_services;
 import java.util.ArrayList;
 
 import org.marssa.demonstrator.constants.Constants;
+import org.marssa.demonstrator.tests.control.SternDriveMotorControllerTest;
 import org.marssa.demonstrator.tests.control.TestController;
 import org.marssa.demonstrator.tests.control.path_planning.PathPlanningControllerTest;
 import org.marssa.demonstrator.web_services.StaticFileServerApplication;
@@ -32,6 +33,7 @@ public class WebServicesTest {
 
 	private static final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
 	private static TestController motorController = new TestController();
+	private static SternDriveMotorControllerTest sternMotorController = new SternDriveMotorControllerTest();
 	private static PathPlanningControllerTest pathPlanningController = new PathPlanningControllerTest();
 
 	static class LightState {
@@ -98,6 +100,11 @@ public class WebServicesTest {
 				"/motor",
 				new MotorControllerTestApplication(cacheDirectives,
 						motorController));
+		
+		// Attach the Stern control application
+				component.getDefaultHost().attach(
+						"/sternMotor",
+						new SternMotorControllerTestApplication(cacheDirectives));
 
 		// Attach the rudder control application
 		component.getDefaultHost().attach("/rudder",

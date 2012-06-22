@@ -93,7 +93,7 @@ public class WebServices extends ServerResource {
 		
 		// Attach the motor control application
 		component.getDefaultHost()
-		.attach("/motor",
+		.attach("/sternMotor",
 				new SternMotorControllerApplication(cacheDirectives,
 						sternMotorController));
 		// Attach the rudder control application
