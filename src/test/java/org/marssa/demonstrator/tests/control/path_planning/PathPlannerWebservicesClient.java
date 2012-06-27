@@ -2,6 +2,7 @@ package org.marssa.demonstrator.tests.control.path_planning;
 
 
 import java.io.IOException;  
+import java.util.ArrayList;
 
 import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.datatypes.composite.Coordinate;
@@ -24,8 +25,12 @@ public class PathPlannerWebservicesClient {
         ClientResource itemResource = null;  
   
         // Create a new item  
-        Waypoint item = new Waypoint("01","StartPoint",new Coordinate(new Latitude(new DegreesDecimal(35.983267)) , new Longitude(new DegreesDecimal(14.387419))));  
-        Representation r = itemsResource.post(getRepresentation(item));  
+        ArrayList<Waypoint> wayPointList =  new ArrayList<Waypoint>();
+        Waypoint item1 = new Waypoint("01","Start Point",new Coordinate(new Latitude(new DegreesDecimal(35.983267)) , new Longitude(new DegreesDecimal(14.387419))));  
+        Waypoint item2 = new Waypoint("02","End Point",new Coordinate(new Latitude(new DegreesDecimal(36.000184)) , new Longitude(new DegreesDecimal(14.376021))));  
+        
+        
+        Representation r = itemsResource.post(getRepresentation(item1));  
         if (itemsResource.getStatus().isSuccess()) 
         {  
         	System.out.println("Success......");
