@@ -43,7 +43,8 @@ public class PathPlannerWebservicesClient {
         }  
         */
         ClientResource r = new ClientResource("http://localhost:8182/pathPlanner/waypoints");
-        String str = "{'waypointID':01}";
+        //String str = "{'waypointID':01}";
+        String str = "{\"waypoints\":[{\"waypointID\":0,\"waypointName\":\"default\",\"waypointLat\":35.889808014983046,\"waypointLon\":14.517515771827675},{\"waypointID\":1,\"waypointName\":\"default\",\"waypointLat\":35.88912569609501,\"waypointLon\":14.518422358474709}]}";
         Representation rep = new JsonRepresentation(new JSONObject(str));  
         rep.setMediaType(MediaType.APPLICATION_JSON);  
         Representation reply = r.post(rep); 
