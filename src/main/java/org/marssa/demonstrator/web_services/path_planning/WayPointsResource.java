@@ -72,8 +72,7 @@ public class WayPointsResource extends BaseResource {
             Representation rep = new StringRepresentation("Item created",  
                     MediaType.TEXT_PLAIN);  
             // Indicates where is located the new resource.  
-            rep.setIdentifier(getRequest().getResourceRef().getIdentifier()  
-                    + "/" + waypointName);  
+            //rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/" + waypointName);  
             result = rep;  
         } else { // Item is already registered.  
             setStatus(Status.CLIENT_ERROR_NOT_FOUND);  

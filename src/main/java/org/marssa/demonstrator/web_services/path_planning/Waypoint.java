@@ -42,6 +42,14 @@ public Coordinate getCoordinate() {
 	return coordinate;
 }
 
+public String getLat() {
+	return coordinate.getLatitude().getDMS().toPlainString();
+}
+
+public String getLon() {
+	return coordinate.getLongitude().getDMS().toPlainString();
+}
+
 public void setCoordinate(Coordinate coordinate) {
 	this.coordinate = coordinate;
 }
