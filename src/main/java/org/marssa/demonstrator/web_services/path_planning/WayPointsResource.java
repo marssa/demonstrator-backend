@@ -162,20 +162,27 @@ public class WayPointsResource extends BaseResource {
             // Generate a DOM document representing the list of  
             // items.  
             Document d = representation.getDocument();  
-            Element r = d.createElement("items");  
+            Element r = d.createElement("waypoints");  
             d.appendChild(r);  
             for (Waypoint item : getWaypoints().values()) {  
-                Element eltItem = d.createElement("item");  
+                Element eltItem = d.createElement("waypoint");  
   
-                Element eltName = d.createElement("name");  
-                eltName.appendChild(d.createTextNode(item.getName()));  
+                Element eltName = d.createElement("Id");  
+                eltName.appendChild(d.createTextNode(item.getId()));  
                 eltItem.appendChild(eltName);  
   
-                Element eltDescription = d.createElement("description");  
-                eltDescription.appendChild(d.createTextNode(item  
-                        .getName()));  
+                Element eltDescription = d.createElement("Name");  
+                eltDescription.appendChild(d.createTextNode(item.getName()));  
                 eltItem.appendChild(eltDescription);  
+                
+                Element eltLong = d.createElement("Longitude");  
+                eltDescription.appendChild(d.createTextNode(item.getLon()));  
+                eltItem.appendChild(eltLong);  
   
+                Element eltLat = d.createElement("Latitude");  
+                eltDescription.appendChild(d.createTextNode(item.getLat()));  
+                eltItem.appendChild(eltLat);  
+                
                 r.appendChild(eltItem);  
             }  
             d.normalizeDocument();  
