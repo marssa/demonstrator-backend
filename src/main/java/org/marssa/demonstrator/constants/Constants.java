@@ -31,9 +31,9 @@ public class Constants {
 	 * @author Clayton Tabone
 	 */
 	public final static class SYSTEM {
-		public final static MString ENVIRONMENT = new MString(System.getProperty("org.demonstrator.constants.environment", "production"));
+		public final static MString ENVIRONMENT = new MString(System.getProperty("org.marssa.demonstrator.constants.environment", "production"));
 		public final static MString MODBUS_DEBUG = new MString(System.getProperty("net.wimpi.modbus.debug", (ENVIRONMENT.getContents() == "development") ? "true" : "false"));
-		public final static MString ROOT_URI = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "/root/demonstrator/theDemonStrator-Front-End" : new File(System.getProperty("org.demonstrator.constants.workspace"), "theDemonStrator-Front-End").toString());
+		public final static MString ROOT_URI = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "/root/demonstrator/theDemonStrator-Front-End" : new File(System.getProperty("org.marssa.demonstrator.constants.workspace"), "demonstrator-jquerymobile").toString());
 	}
 	
 	/**

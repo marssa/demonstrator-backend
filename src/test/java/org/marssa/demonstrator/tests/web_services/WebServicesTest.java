@@ -100,11 +100,10 @@ public class WebServicesTest {
 				"/motor",
 				new MotorControllerTestApplication(cacheDirectives,
 						motorController));
-		
+
 		// Attach the Stern control application
-				component.getDefaultHost().attach(
-						"/sternMotor",
-						new SternMotorControllerTestApplication(cacheDirectives));
+		component.getDefaultHost().attach("/sternMotor",
+				new SternMotorControllerTestApplication(cacheDirectives));
 
 		// Attach the rudder control application
 		component.getDefaultHost().attach("/rudder",

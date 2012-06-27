@@ -79,10 +79,10 @@ public class WayPointsResource extends BaseResource {
         ArrayList<JSONObject> arrays = new ArrayList<JSONObject>();
         for (int i = 0; i < size; i++) {
             JSONObject another_json_object = the_json_array.getJSONObject(i);
-            String waypointID = another_json_object.getString("waypointID");
-            String waypointName = another_json_object.getString("waypointName"); 
-            String waypointLat = another_json_object.getString("waypointLat");
-            String waypointLon = another_json_object.getString("waypointLon");
+            String waypointID = another_json_object.getString("id");
+            String waypointName = another_json_object.getString("name"); 
+            String waypointLat = another_json_object.getString("lat");
+            String waypointLon = another_json_object.getString("lng");
             double lat =0.0;
             double lon =0.0;
             
