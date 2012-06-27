@@ -4,6 +4,8 @@ package org.marssa.demonstrator.tests.control.path_planning;
 import java.io.IOException;  
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.datatypes.composite.Coordinate;
 import org.marssa.footprint.datatypes.composite.Latitude;
@@ -11,6 +13,8 @@ import org.marssa.footprint.datatypes.composite.Longitude;
 import org.marssa.footprint.datatypes.decimal.DegreesDecimal;
 import org.marssa.footprint.exceptions.OutOfRange;
 import org.restlet.data.Form;  
+import org.restlet.data.MediaType;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.representation.Representation;  
 import org.restlet.resource.ClientResource;  
 import org.restlet.resource.ResourceException;  
@@ -18,9 +22,9 @@ import org.restlet.resource.ResourceException;
 public class PathPlannerWebservicesClient {  
   
     public static void main(String[] args) throws IOException,  
-            ResourceException, OutOfRange {  
+            ResourceException, OutOfRange, JSONException {  
         // Define our Restlet client resources.  
-        ClientResource itemsResource = new ClientResource(  
+        /*ClientResource itemsResource = new ClientResource(  
                 "http://localhost:8182/pathPlanner/waypoints");  
         ClientResource itemResource = null;  
   
@@ -28,7 +32,6 @@ public class PathPlannerWebservicesClient {
         ArrayList<Waypoint> wayPointList =  new ArrayList<Waypoint>();
         Waypoint item1 = new Waypoint("01","Start Point",new Coordinate(new Latitude(new DegreesDecimal(35.983267)) , new Longitude(new DegreesDecimal(14.387419))));  
         Waypoint item2 = new Waypoint("02","End Point",new Coordinate(new Latitude(new DegreesDecimal(36.000184)) , new Longitude(new DegreesDecimal(14.376021))));  
-        
         
         Representation r = itemsResource.post(getRepresentation(item1));  
         if (itemsResource.getStatus().isSuccess()) 
@@ -38,7 +41,12 @@ public class PathPlannerWebservicesClient {
                     "http://localhost:8182/pathPlanner/startFollowing"); 
         	startFollowing.get();
         }  
-  
+        */
+        ClientResource r = new ClientResource("http://localhost:8182/pathPlanner/waypoints");
+        String str = "{'waypointID':01}";
+        Representation rep = new JsonRepresentation(new JSONObject(str));  
+        rep.setMediaType(MediaType.APPLICATION_JSON);  
+        Representation reply = r.post(rep); 
        
     }  
   

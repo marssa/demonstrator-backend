@@ -16,6 +16,7 @@
 package org.marssa.demonstrator.web_services.path_planning;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.marssa.footprint.datatypes.composite.Coordinate;
 import org.marssa.footprint.datatypes.composite.Latitude;
@@ -33,6 +34,24 @@ import org.restlet.resource.Post;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
   
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import org.json.JSONObject;
+
+import org.json.JSONStringer;
+
+import org.restlet.data.Status;
+
+import org.restlet.ext.json.JsonRepresentation;
+
+import org.restlet.representation.Representation;
+
+import org.restlet.resource.Post;
+
+import org.restlet.resource.ResourceException;
+
+import org.restlet.resource.ServerResource;
 /** 
  * Resource that manages a list of items. 
  *  
@@ -42,44 +61,56 @@ public class WayPointsResource extends BaseResource {
     /** 
      * Handle POST requests: create a new item. 
      * @throws OutOfRange 
+     * @throws JSONException 
      */  
-    @Post  
-    public Representation acceptItem(Representation entity) throws OutOfRange {  
+    @Post("json")  
+    public Representation acceptItem(JsonRepresentation entity) throws OutOfRange, JSONException {  
         Representation result = null;  
-        // Parse the given representation and retrieve pairs of  
-        // "name=value" tokens.  
-        Form form = new Form(entity);  
+        /*Form form = new Form(entity);  
         String waypointID 	= form.getFirstValue("waypointID");  
         String waypointName = form.getFirstValue("waypointName");  
         String waypointLat 	= form.getFirstValue("waypointLat");  
-        String waypointLon 	= form.getFirstValue("waypointLon");
+        String waypointLon 	= form.getFirstValue("waypointLon");*/
         
-        double lat =0.0;
-        double lon =0.0;
-        
-        if((waypointLat != "")&&(waypointLon != ""))
-        {
-        	 lat = Double.parseDouble(waypointLat);
-             lon = Double.parseDouble(waypointLon);
+        JSONObject jsonInput = null;
+        jsonInput = entity.getJsonObject();
+        JSONArray the_json_array = jsonInput.getJSONArray("waypoints");
+        int size = the_json_array.length();
+        ArrayList<JSONObject> arrays = new ArrayList<JSONObject>();
+        for (int i = 0; i < size; i++) {
+            JSONObject another_json_object = the_json_array.getJSONObject(i);
+            String waypointID = another_json_object.getString("waypointID");
+            String waypointName = another_json_object.getString("waypointName"); 
+            String waypointLat = another_json_object.getString("waypointLat");
+            String waypointLon = another_json_object.getString("waypointLon");
+            double lat =0.0;
+            double lon =0.0;
+            
+            if((waypointLat != "")&&(waypointLon != ""))
+            {
+            	 lat = Double.parseDouble(waypointLat);
+                 lon = Double.parseDouble(waypointLon);
+            }
+           
+            // Register the new item if one is not already registered.  
+            if (!getWaypoints().containsKey(waypointName)  
+                    && getWaypoints().putIfAbsent(waypointName,  
+                            new Waypoint(waypointID, waypointName,new Coordinate(new Latitude(new DegreesDecimal(lat)), new Longitude(new DegreesDecimal(lon))))) == null) {  
+                // Set the response's status and entity  
+                setStatus(Status.SUCCESS_CREATED);  
+                Representation rep = new StringRepresentation("Item created",  
+                        MediaType.TEXT_PLAIN);  
+                // Indicates where is located the new resource.  
+                //rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/" + waypointName);  
+                result = rep;  
+            } else { // Item is already registered.  
+                setStatus(Status.CLIENT_ERROR_NOT_FOUND);  
+                result = generateErrorRepresentation("Item " + waypointName  
+                        + " already exists.", "1");  
+            }  
+               
         }
-       
-        // Register the new item if one is not already registered.  
-        if (!getWaypoints().containsKey(waypointName)  
-                && getWaypoints().putIfAbsent(waypointName,  
-                        new Waypoint(waypointID, waypointName,new Coordinate(new Latitude(new DegreesDecimal(lat)), new Longitude(new DegreesDecimal(lon))))) == null) {  
-            // Set the response's status and entity  
-            setStatus(Status.SUCCESS_CREATED);  
-            Representation rep = new StringRepresentation("Item created",  
-                    MediaType.TEXT_PLAIN);  
-            // Indicates where is located the new resource.  
-            //rep.setIdentifier(getRequest().getResourceRef().getIdentifier() + "/" + waypointName);  
-            result = rep;  
-        } else { // Item is already registered.  
-            setStatus(Status.CLIENT_ERROR_NOT_FOUND);  
-            result = generateErrorRepresentation("Item " + waypointName  
-                    + " already exists.", "1");  
-        }  
-  
+        
         return result;  
     }  
   
