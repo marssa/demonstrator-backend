@@ -15,6 +15,7 @@
  */
 package org.marssa.demonstrator.control.electrical_motor;
 
+import org.marssa.demonstrator.JSVC;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.datatypes.integer.MInteger;
@@ -26,6 +27,9 @@ import org.marssa.services.control.Ramping;
 import org.marssa.services.control.Ramping.RampingType;
 import org.marssa.services.diagnostics.daq.LabJack;
 import org.marssa.services.diagnostics.daq.LabJackUE9;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 /**
  * @author Clayton Tabone
@@ -34,12 +38,12 @@ import org.marssa.services.diagnostics.daq.LabJackUE9;
 public class SternDriveMotorController{
 	
 	private LabJackUE9 lj;
-	private Ramping ramping;
 	int ordinal;
-	//------------ +  + + + +   - - - - -
-	int[] speed = {16,9,8,6,4,0,4,6,8,9,16};
+	//------------  -   -  -  -  -   + + + +  +
+	int[] speed = {-16,-9,-8,-6,-4,0,4,6,8,9,16};
 	private int arrayValue;
-
+	private static final Logger logger = (Logger) LoggerFactory
+			.getLogger(JSVC.class);
 
 	/**
 	 * @throws ConfigurationError
@@ -55,6 +59,8 @@ public class SternDriveMotorController{
 	}
 
 	private void labJackOutput(int speed) throws NoConnection {
+		logger.info("Current Speed "+speed);
+		speed = Math.abs(speed);
 		boolean m = false;
 		int p = 0;
 		for (int f = 1; f <= 16; f = (f << 1)) {
@@ -62,19 +68,14 @@ public class SternDriveMotorController{
 			if (r > 0) {
 				m = true;
 			}
-			System.out.print(6001 + p);
-			System.out.println(m ? true : false);
-			//lj.write(new MInteger(6000 + p), new MBoolean(m ? true : false));
+			logger.info("Port: "+(6008 + p)+" "+(m ? true : false));
+			lj.write(new MInteger(6008 + p), new MBoolean(m ? true : false));
 			m = false;
 			p++;
 		}
 
 	}
 
-
-	public MDecimal getValue() {
-		return ramping.getCurrentValue();
-	}
 
 	public void stop() throws NoConnection{
 		labJackOutput(speed[5]);
@@ -83,18 +84,14 @@ public class SternDriveMotorController{
 	public void increase() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
-			//lj.write(new MInteger(6000), new MBoolean(true));
-			System.out.println("600 " + " true");
-			Thread.sleep(500);
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
+			lj.write(new MInteger(6000), new MBoolean (false));
+			logger.info("DPDT relay1----60013 " + " false ------ increase");
+			Thread.sleep(1000);
 		}
-		if(arrayValue == 0){
+		if(arrayValue == 10){
 			labJackOutput(speed[arrayValue]);
 		}else{
-			arrayValue--;
+			arrayValue++;
 		labJackOutput(speed[arrayValue]);
 		
 		}
@@ -103,18 +100,14 @@ public class SternDriveMotorController{
 	public void decrease() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
-			//lj.write(new MInteger(6000), new MBoolean(false));
-			System.out.println("6000 " + " false");
-			Thread.sleep(500);
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
+			lj.write(new MInteger(6000), new MBoolean (false));
+			logger.info("DPDT relay2----6013 " + " true ------ decrease");
+			Thread.sleep(1000);
 		}
-		if(arrayValue == 10){
+		if(arrayValue == 0){
 			labJackOutput(speed[arrayValue]);
 		}else{
-			arrayValue++;
+			arrayValue--;
 		labJackOutput(speed[arrayValue]);
 		}
 	}
