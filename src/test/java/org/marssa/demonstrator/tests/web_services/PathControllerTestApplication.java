@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.marssa.demonstrator.tests.control.path_planning.PathPlanningControllerTest;
+import org.marssa.demonstrator.tests.control.path_planning.WayPointsResourceTest;
 import org.marssa.demonstrator.web_services.path_planning.WayPointsResource;
 import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.exceptions.ConfigurationError;
@@ -49,7 +50,7 @@ public class PathControllerTestApplication extends Application {
 	
 	public ConcurrentMap<String, Waypoint> getWaypoints() {  
 		ArrayList<Waypoint> waypointList = new ArrayList<Waypoint>(waypoints.values());
-		pathPlanningController.setPathList(waypointList);
+		//pathPlanningController.setPathList(waypointList);
 		return waypoints;  
     }  
 	
@@ -82,6 +83,8 @@ public class PathControllerTestApplication extends Application {
         		response.setCacheDirectives(cacheDirectives);
         		try {
         			//We here call upon the startfollowingpath method using the pathplanningcontroller instance.
+        			ArrayList<Waypoint> waypointList = new ArrayList<Waypoint>(waypoints.values());
+        			pathPlanningController.setPathList(waypointList);
         			pathPlanningController.startFollowingPath();
         			response.setEntity("The system has started following the path ", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
@@ -154,7 +157,7 @@ public class PathControllerTestApplication extends Application {
             }
         };
                 
-        router.attach("/waypoints", WayPointsResource.class);
+        router.attach("/waypoints", WayPointsResourceTest.class);
         //the enterwaypoints method is called upon by the from end using a @post annotation. The waypointsresource class is used to receive the data.
         router.attach("/startFollowing",startFollowing);
         //The startFollowing method defined above is called upon when the front end initiates a request

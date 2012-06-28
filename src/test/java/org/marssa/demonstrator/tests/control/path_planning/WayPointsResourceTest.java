@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.web_services.path_planning;
+package org.marssa.demonstrator.tests.control.path_planning;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.datatypes.composite.Coordinate;
 import org.marssa.footprint.datatypes.composite.Latitude;
 import org.marssa.footprint.datatypes.composite.Longitude;
@@ -56,7 +57,7 @@ import org.restlet.resource.ServerResource;
  * Resource that manages a list of items. 
  *  
  */  
-public class WayPointsResource extends BaseResource {  
+public class WayPointsResourceTest extends BaseResourceTest {  
   
     /** 
      * Handle POST requests: create a new item. 

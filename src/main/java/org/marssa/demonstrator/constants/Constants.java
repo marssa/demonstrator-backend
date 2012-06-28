@@ -31,9 +31,9 @@ public class Constants {
 	 * @author Clayton Tabone
 	 */
 	public final static class SYSTEM {
-		public final static MString ENVIRONMENT = new MString(System.getProperty("org.demonstrator.constants.environment", "production"));
+		public final static MString ENVIRONMENT = new MString(System.getProperty("org.marssa.demonstrator.constants.environment", "production"));
 		public final static MString MODBUS_DEBUG = new MString(System.getProperty("net.wimpi.modbus.debug", (ENVIRONMENT.getContents() == "development") ? "true" : "false"));
-		public final static MString ROOT_URI = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "/root/demonstrator/theDemonStrator-Front-End" : new File(System.getProperty("org.demonstrator.constants.workspace"), "theDemonStrator-Front-End").toString());
+		public final static MString ROOT_URI = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "/root/demonstrator/theDemonStrator-Front-End" : new File(System.getProperty("org.marssa.demonstrator.constants.workspace"), "demonstrator-jquerymobile").toString());
 	}
 	
 	/**
@@ -45,12 +45,16 @@ public class Constants {
 		public final static MInteger PORT = new MInteger(5021);
 	}
 	
+	public final static class LABJACKUE9 {
+		public final static MString HOST = new MString("192.168.2.105");
+		public final static MInteger PORT = new MInteger(502);
+	}
 	/**
 	 * Web Services Constants
 	 * @author Clayton Tabone
 	 */
 	public final static class WEB_SERVICES {
-		public final static MString HOST = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "192.168.1.1" : "localhost");
+		public final static MString HOST = new MString((SYSTEM.ENVIRONMENT.getContents() == "production") ? "127.0.0.1" : "localhost");
 		public final static MInteger PORT = new MInteger(8182);
 		public final static MInteger MAX_TOTAL_CONNECTIONS = new MInteger(50);
 	}
