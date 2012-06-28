@@ -1,3 +1,18 @@
+/**
+ * Copyright 2012 MARSEC-XL International Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.marssa.demonstrator.tests.control;
 
 import org.marssa.footprint.datatypes.MBoolean;
@@ -36,7 +51,6 @@ public class RudderControllerTest implements IRudderController{
 	/**
 	 * The rotateMultiple is used to use the rotate method multiple times
 	 */
-	@Override
 	public synchronized void rotateMultiple(MInteger multiple,
 			MBoolean direction) throws InterruptedException, NoConnection {
 		for (int x = 0; x < multiple.intValue(); x++) {
@@ -54,7 +68,6 @@ public class RudderControllerTest implements IRudderController{
 	/**
 	 * The rotateExtreme is used to rotate to the extreme possible angles
 	 */
-	@Override
 	public synchronized void rotateExtreme(MBoolean direction)
 			throws InterruptedException, NoConnection {
 
@@ -72,7 +85,6 @@ public class RudderControllerTest implements IRudderController{
 	 * The rotateToCentre is used to rotate the rudder to approximate its centre
 	 * position
 	 */
-	@Override
 	public void rotateToCentre() throws NoConnection, InterruptedException {
 		while (angle.doubleValue() > 5) {
 			rotate(new MBoolean(false));

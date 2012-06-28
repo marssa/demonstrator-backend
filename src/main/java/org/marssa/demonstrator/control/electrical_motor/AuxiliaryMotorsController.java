@@ -77,7 +77,7 @@ public class AuxiliaryMotorsController implements IMotorController {
 				(int) (actualValue.doubleValue() * 0.9)));
 		lj.setTimerValue(LabJackU3.TimerU3.TIMER_1, actualValue);
 	}
-
+@Override
 	public void stop() {
 	}
 
@@ -96,6 +96,7 @@ public class AuxiliaryMotorsController implements IMotorController {
 			break;
 		}
 	}
+@Override
 
 	public MDecimal getValue() {
 		return ramping.getCurrentValue();
@@ -105,8 +106,8 @@ public class AuxiliaryMotorsController implements IMotorController {
 			ConfigurationError, OutOfRange {
 		ramping.rampTo(desiredValue);
 	}
+@Override
 
-	@Override
 	public void increase() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
 		double currentValue = this.ramping.getCurrentValue().doubleValue();
@@ -116,8 +117,7 @@ public class AuxiliaryMotorsController implements IMotorController {
 		else
 			this.ramping.increase(Constants.MOTOR.STEP_SIZE);
 	}
-
-	@Override
+@Override
 	public void decrease() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
 		double currentValue = this.ramping.getCurrentValue().doubleValue();

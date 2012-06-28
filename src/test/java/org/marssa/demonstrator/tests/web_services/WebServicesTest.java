@@ -52,11 +52,9 @@ public class WebServicesTest {
 	static LabJackUE9 labJackue9 ;
 	NavigationLightsController navLightsController;
 	UnderwaterLightsController underwaterLightsController;
-	static SternDriveMotorControllerTest motorController;
 	static RudderControllerTest rudderController;
 	GpsReceiver gpsReceiver;
 	WebServices webServices;
-	static PathPlanningControllerTest pathPlanningController;
 
 	static class LightState {
 		public MBoolean navLightState = new MBoolean(false);
@@ -103,7 +101,7 @@ public class WebServicesTest {
 		logger.info("Rudder controller initialised successfully");
         */
 		logger.info("Initialising Path Planning controller ... ");
-		pathPlanningController = new PathPlanningControllerTest(motorController,rudderController,null);
+		pathPlanningController = new PathPlanningControllerTest();
 		//pathPlanningController = new PathPlanningController(null, null,null);
 		logger.info("Path Planning controller initialised successfully");
 		

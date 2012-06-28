@@ -206,7 +206,7 @@
 						</goals>
 						<configuration>
 							<resourceBundles>
-								<resourceBundle>org.marssa:footprint:${marssaVersion}</resourceBundle>
+								<resourceBundle>org.marssa:footprint:${org.marssa.version}</resourceBundle>
 							</resourceBundles>
 							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
 							<skip>false</skip>

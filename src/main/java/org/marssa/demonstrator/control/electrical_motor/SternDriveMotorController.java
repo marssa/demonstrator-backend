@@ -75,7 +75,6 @@ public class SternDriveMotorController implements IMotorController{
 		}
 
 	}
-
 @Override
 	public void stop() throws NoConnection{
 		labJackOutput(speed[5]);
@@ -109,6 +108,7 @@ public class SternDriveMotorController implements IMotorController{
 		else
 			return new MDecimal(-speedValue);
 	}
+	@Override
 	public void increase() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
@@ -124,7 +124,7 @@ public class SternDriveMotorController implements IMotorController{
 		
 		}
 	}
-
+@Override
 	public void decrease() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
