@@ -81,6 +81,34 @@ public class SternDriveMotorController{
 		labJackOutput(speed[5]);
 	}
 
+	public MDecimal getValue(){
+		int speedValue = 0;
+		boolean rotation;
+		if (speed[arrayValue]>0)
+			rotation = true;
+		else 
+			rotation=false;
+		
+		switch(Math.abs(speed[arrayValue])){
+		case 0:
+			speedValue = 0;
+		case 4:
+			speedValue = 1;
+		case 6:
+			speedValue = 2;
+		case 8:
+			speedValue = 3;
+		case 9:
+			speedValue = 4;
+		case 16:
+			speedValue = 5;
+		break;
+		}
+		if (rotation ==true)
+		return new MDecimal(speedValue);
+		else
+			return new MDecimal(-speedValue);
+	}
 	public void increase() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
