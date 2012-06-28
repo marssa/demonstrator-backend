@@ -17,24 +17,46 @@ package org.marssa.demonstrator.tests.web_services;
 
 import java.util.ArrayList;
 
+import org.marssa.demonstrator.Main;
 import org.marssa.demonstrator.constants.Constants;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
+import org.marssa.demonstrator.control.lighting.NavigationLightsController;
+import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import org.marssa.demonstrator.control.path_planning.PathPlanningController;
+import org.marssa.demonstrator.control.rudder.RudderController;
+import org.marssa.demonstrator.tests.control.RudderControllerTest;
 import org.marssa.demonstrator.tests.control.SternDriveMotorControllerTest;
 import org.marssa.demonstrator.tests.control.TestController;
 import org.marssa.demonstrator.tests.control.path_planning.PathPlanningControllerTest;
 import org.marssa.demonstrator.web_services.StaticFileServerApplication;
+import org.marssa.demonstrator.web_services.WebServices;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
+import org.marssa.services.navigation.GpsReceiver;
 import org.restlet.Component;
 import org.restlet.Server;
 import org.restlet.data.CacheDirective;
 import org.restlet.data.Protocol;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 public class WebServicesTest {
-
+	private static final Logger logger = (Logger) LoggerFactory
+			.getLogger(WebServicesTest.class);
 	private static final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
-	private static TestController motorController = new TestController();
-	private static SternDriveMotorControllerTest sternMotorController = new SternDriveMotorControllerTest();
-	private static PathPlanningControllerTest pathPlanningController = new PathPlanningControllerTest();
+	 //private static TestController motorController = new TestController();
+	//private static SternDriveMotorControllerTest sternMotorController = new SternDriveMotorControllerTest();
+	//private static PathPlanningControllerTest pathPlanningController = new PathPlanningControllerTest();
+	static LabJackUE9 labJackue9 ;
+	NavigationLightsController navLightsController;
+	UnderwaterLightsController underwaterLightsController;
+	static SternDriveMotorControllerTest motorController;
+	static RudderControllerTest rudderController;
+	GpsReceiver gpsReceiver;
+	WebServices webServices;
+	static PathPlanningControllerTest pathPlanningController;
 
 	static class LightState {
 		public MBoolean navLightState = new MBoolean(false);
@@ -65,6 +87,26 @@ public class WebServicesTest {
 	 *            the args
 	 */
 	public static void main(java.lang.String[] args) {
+		/*
+		logger.info("Initialising LabJack ...");
+		labJackue9 = LabJackUE9.getInstance(Constants.LABJACKUE9.HOST,
+				Constants.LABJACKUE9.PORT);
+		logger.info("LabJack initialized successfully on {}:{}",
+				Constants.LABJACKUE9.HOST, Constants.LABJACKUE9.PORT);
+
+		logger.info("Initialising motor controller ... ");
+		motorController = new SternDriveMotorControllerTest(labJackue9);
+		logger.info("Motor controller initialised successfully");
+
+		logger.info("Initialising rudder controller ... ");
+		rudderController = new RudderControllerTest(labJackue9);
+		logger.info("Rudder controller initialised successfully");
+        */
+		logger.info("Initialising Path Planning controller ... ");
+		pathPlanningController = new PathPlanningControllerTest(motorController,rudderController,null);
+		//pathPlanningController = new PathPlanningController(null, null,null);
+		logger.info("Path Planning controller initialised successfully");
+		
 		// Create a new Component
 		Component component = new Component();
 
@@ -95,12 +137,6 @@ public class WebServicesTest {
 		component.getDefaultHost().attach("/lighting",
 				new LightControllerTestApplication(cacheDirectives));
 
-		// Attach the motor control application
-		component.getDefaultHost().attach(
-				"/motor",
-				new MotorControllerTestApplication(cacheDirectives,
-						motorController));
-
 		// Attach the Stern control application
 		component.getDefaultHost().attach("/sternMotor",
 				new SternMotorControllerTestApplication(cacheDirectives));
@@ -112,12 +148,6 @@ public class WebServicesTest {
 		// Attach the GPS receiver application
 		component.getDefaultHost().attach("/gps",
 				new GPSReceiverTestApplication(cacheDirectives));
-
-		// Attach the motion control feedback application
-		component.getDefaultHost().attach(
-				"/motionControlPage",
-				new MotionControlPageTestApplication(cacheDirectives,
-						motorController));
 
 		// Attach the motion control feedback application
 		component.getDefaultHost().attach("/lightControlPage",

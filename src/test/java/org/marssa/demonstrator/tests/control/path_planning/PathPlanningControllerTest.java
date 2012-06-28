@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.marssa.demonstrator.constants.Constants;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
+import org.marssa.demonstrator.control.rudder.RudderController;
+import org.marssa.demonstrator.tests.control.RudderControllerTest;
+import org.marssa.demonstrator.tests.control.SternDriveMotorControllerTest;
 import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.composite.Coordinate;
@@ -35,6 +39,7 @@ import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
 import org.marssa.footprint.interfaces.control.rudder.IRudderController;
 import org.marssa.services.diagnostics.daq.LabJack;
+import org.marssa.services.navigation.GpsReceiver;
 import org.marssa.services.scheduling.MTimer;
 import org.marssa.services.scheduling.MTimerTask;
 import org.slf4j.LoggerFactory;
@@ -66,6 +71,8 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	private Coordinate currentPositionRead;
 	private double currentHeadingRead;
 
+	private SternDriveMotorControllerTest motorController;
+	private RudderControllerTest rudderController;
 	
 	private Coordinate nextHeading;
 	private int count = 0;
@@ -79,8 +86,11 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 	 * @throws NoConnection
 	 * 
 	 */	
-	public  PathPlanningControllerTest()
+	public  PathPlanningControllerTest(SternDriveMotorControllerTest motorController, 
+			RudderControllerTest rudderController, GpsReceiver gpsReceiver)
 	{
+		this.motorController = motorController;
+		this.rudderController = rudderController;
 		timer = MTimer.getInstance();
 		wayPointList = new ArrayList<Waypoint>();
 	}
@@ -140,6 +150,7 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 			if((_targetHeading-_currentHeading) > 180)
 			{
 				logger.info("Rotate to Left");
+				//rudderController.rotateMultiple(angleOut, new MBoolean(true));
 				currentHeadingRead = currentHeadingRead -angleOut;
 				if (currentHeadingRead < 0)
 				{
@@ -196,12 +207,12 @@ public class PathPlanningControllerTest extends MTimerTask implements IMotorCont
 		}
 		if ((difference >= Constants.PATH.Path_Accuracy_Lower.doubleValue()) && (difference <= Constants.PATH.Path_Accuracy_Upper.doubleValue()))
 		{
-			shortestAngle(currentHeading,targetHeading,5.0);
+			shortestAngle(currentHeading,targetHeading,5);
 		}
 		//if the difference is large the system will enter this if statement and adjust the rudder a lot
 		else if (difference > Constants.PATH.Path_Accuracy_Upper.doubleValue())
 		{
-			shortestAngle(currentHeading,targetHeading,15.0);
+			shortestAngle(currentHeading,targetHeading,15);
 		}
 		//calculate bearing
 	}

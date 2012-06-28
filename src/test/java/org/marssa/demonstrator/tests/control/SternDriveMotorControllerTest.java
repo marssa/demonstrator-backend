@@ -15,6 +15,7 @@
  */
 package org.marssa.demonstrator.tests.control;
 
+import org.marssa.demonstrator.JSVC;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.datatypes.integer.MInteger;
@@ -26,20 +27,22 @@ import org.marssa.services.control.Ramping;
 import org.marssa.services.control.Ramping.RampingType;
 import org.marssa.services.diagnostics.daq.LabJack;
 import org.marssa.services.diagnostics.daq.LabJackUE9;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Logger;
 
 /**
  * @author Clayton Tabone
  * 
  */
 public class SternDriveMotorControllerTest{
-	
-	//private LabJackUE9 lj;
-	private Ramping ramping;
+	private LabJackUE9 lj;
 	int ordinal;
-	//------------ +  + + + +   - - - - -
-	int[] speed = {16,9,8,6,4,0,4,6,8,9,16};
+	//------------  -   -  -  -  -   + + + +  +
+	int[] speed = {-16,-9,-8,-6,-4,0,4,6,8,9,16};
 	private int arrayValue;
-
+	private static final Logger logger = (Logger) LoggerFactory
+			.getLogger(JSVC.class);
 
 	/**
 	 * @throws ConfigurationError
@@ -47,29 +50,25 @@ public class SternDriveMotorControllerTest{
 	 * @throws NoConnection
 	 * 
 	 */
-	public SternDriveMotorControllerTest()
-	{
-		//this.lj = lj;
+	public SternDriveMotorControllerTest(LabJackUE9 lj) throws ConfigurationError,
+			OutOfRange, NoConnection {
+		this.lj = lj;
 		arrayValue=5;
-		//labJackOutput(speed[arrayValue]);
-		//System.out.println(m ? true : false);
-		System.out.print("Neutral");
+		labJackOutput(speed[arrayValue]);
 	}
 
 	private void labJackOutput(int speed) throws NoConnection {
+		logger.info("Current Speed "+speed);
+		speed = Math.abs(speed);
 		boolean m = false;
 		int p = 0;
-		System.out.print("Current Speed"+speed);
-		//check polarity
-		//modulus
 		for (int f = 1; f <= 16; f = (f << 1)) {
 			int r = speed&f;
 			if (r > 0) {
 				m = true;
 			}
-			System.out.print(6001 + p);
-			System.out.println(m ? true : false);
-			//lj.write(new MInteger(6000 + p), new MBoolean(m ? true : false));
+			logger.info("Port: "+(6008 + p)+" "+(m ? true : false));
+			lj.write(new MInteger(6008 + p), new MBoolean(m ? true : false));
 			m = false;
 			p++;
 		}
@@ -77,29 +76,49 @@ public class SternDriveMotorControllerTest{
 	}
 
 
-	public MDecimal getValue() {
-		return ramping.getCurrentValue();
-	}
-
 	public void stop() throws NoConnection{
 		labJackOutput(speed[5]);
 	}
 
+	public MDecimal getValue(){
+		int speedValue = 0;
+		boolean rotation;
+		if (speed[arrayValue]>0)
+			rotation = true;
+		else 
+			rotation=false;
+		
+		switch(Math.abs(speed[arrayValue])){
+		case 0:
+			speedValue = 0;
+		case 4:
+			speedValue = 1;
+		case 6:
+			speedValue = 2;
+		case 8:
+			speedValue = 3;
+		case 9:
+			speedValue = 4;
+		case 16:
+			speedValue = 5;
+		break;
+		}
+		if (rotation ==true)
+		return new MDecimal(speedValue);
+		else
+			return new MDecimal(-speedValue);
+	}
 	public void increase() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
-			//lj.write(new MInteger(6000), new MBoolean(true));
-			System.out.println("600 " + " true");
-			Thread.sleep(500);
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
+			lj.write(new MInteger(6000), new MBoolean (false));
+			logger.info("DPDT relay1----60013 " + " false ------ increase");
+			Thread.sleep(1000);
 		}
-		if(arrayValue == 0){
+		if(arrayValue == 10){
 			labJackOutput(speed[arrayValue]);
 		}else{
-			arrayValue--;
+			arrayValue++;
 		labJackOutput(speed[arrayValue]);
 		
 		}
@@ -108,18 +127,14 @@ public class SternDriveMotorControllerTest{
 	public void decrease() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
-			//lj.write(new MInteger(6000), new MBoolean(false));
-			System.out.println("6000 " + " false");
-			Thread.sleep(500);
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
+			lj.write(new MInteger(6000), new MBoolean (false));
+			logger.info("DPDT relay2----6013 " + " true ------ decrease");
+			Thread.sleep(1000);
 		}
-		if(arrayValue == 10){
+		if(arrayValue == 0){
 			labJackOutput(speed[arrayValue]);
 		}else{
-			arrayValue++;
+			arrayValue--;
 		labJackOutput(speed[arrayValue]);
 		}
 	}

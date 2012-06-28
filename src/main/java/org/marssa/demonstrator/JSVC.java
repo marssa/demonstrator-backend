@@ -102,7 +102,7 @@ public class JSVC extends ServerResource {
 			logger.info("Motor controller initialised successfully");
 			
 			logger.info("Initialising rudder controller ... ");
-			rudderController = new RudderController(labJack);
+			rudderController = new RudderController(labJackue9);
 			logger.info("Rudder controller initialised successfully");
 
 			logger.info("Initialising GPS receiver ... ");
