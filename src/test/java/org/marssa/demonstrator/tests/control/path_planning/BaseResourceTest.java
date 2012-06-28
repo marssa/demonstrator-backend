@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.web_services.path_planning;
+package org.marssa.demonstrator.tests.control.path_planning;
 
 import java.util.concurrent.ConcurrentMap;
 
+import org.marssa.demonstrator.tests.web_services.PathControllerTestApplication;
+import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.restlet.resource.ServerResource;
   
 /** 
@@ -24,7 +26,7 @@ import org.restlet.resource.ServerResource;
  * all resources. 
  *  
  */  
-public abstract class BaseResource extends ServerResource {  
+public abstract class BaseResourceTest extends ServerResource {  
   
     /** 
      * Returns the map of items managed by this application. 
@@ -32,7 +34,7 @@ public abstract class BaseResource extends ServerResource {
      * @return the map of items managed by this application. 
      */  
     protected ConcurrentMap<String, Waypoint> getWaypoints() {  
-        return ((PathControllerApplication) getApplication()).getWaypoints();  
+        return ((PathControllerTestApplication) getApplication()).getWaypoints();  
     }  
   
 }  

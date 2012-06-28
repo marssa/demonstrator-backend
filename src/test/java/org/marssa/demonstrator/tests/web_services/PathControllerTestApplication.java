@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.marssa.demonstrator.tests.control.path_planning.PathPlanningControllerTest;
+import org.marssa.demonstrator.tests.control.path_planning.WayPointsResourceTest;
 import org.marssa.demonstrator.web_services.path_planning.WayPointsResource;
 import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.exceptions.ConfigurationError;
@@ -156,7 +157,7 @@ public class PathControllerTestApplication extends Application {
             }
         };
                 
-        router.attach("/waypoints", WayPointsResource.class);
+        router.attach("/waypoints", WayPointsResourceTest.class);
         //the enterwaypoints method is called upon by the from end using a @post annotation. The waypointsresource class is used to receive the data.
         router.attach("/startFollowing",startFollowing);
         //The startFollowing method defined above is called upon when the front end initiates a request

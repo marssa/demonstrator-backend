@@ -112,7 +112,7 @@ public class JSVC extends ServerResource {
 
 			logger.info("Initialising web services ... ");
 			webServices = new WebServices(navLightsController,
-					underwaterLightsController, sternMotorController,auxiliaryMotorControl,
+					underwaterLightsController, sternMotorController,
 					rudderController, gpsReceiver,pathPlanningController);
 			logger.info("Web services initialised successfully");
 

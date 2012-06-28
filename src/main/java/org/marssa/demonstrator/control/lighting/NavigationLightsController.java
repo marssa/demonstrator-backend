@@ -25,6 +25,7 @@ import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.interfaces.control.lighting.ILightToggle;
 import org.marssa.footprint.logger.MMarker;
 import org.marssa.services.diagnostics.daq.LabJackU3;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Logger;
@@ -35,7 +36,7 @@ public class NavigationLightsController implements ILightToggle {
 			.getLogger(NavigationLightsController.class.getName());
 
 	private boolean lightState;
-	private LabJackU3 lj;
+	private LabJackUE9 lj;
 	private String switched;
 	private MInteger navLights;
 	private Object[] poho = { lj.getHost().getContents(),
@@ -55,7 +56,7 @@ public class NavigationLightsController implements ILightToggle {
 		// mode, regardless of FIO4-dir
 		// Set direction for FIO4 port
 		// lj.write(LabJack.FIO4_DIR_ADDR, new MBoolean(true));
-		this.lj = LabJackU3.getInstance(host, port);
+		this.lj = LabJackUE9.getInstance(host, port);
 		logger.info(
 				"An instance of Navigation light controller was instantiated with labjack host {}, and port {}.",
 				poho);
@@ -80,7 +81,7 @@ public class NavigationLightsController implements ILightToggle {
 		// mode, regardless of FIO4-dir
 		// Set direction for FIO4 port
 		// lj.write(LabJack.FIO4_DIR_ADDR, new MBoolean(true));
-		this.lj = LabJackU3.getInstance(host, port);
+		this.lj = LabJackUE9.getInstance(host, port);
 		logger.info(
 				"An instance of Navigation light controller was instantiated with labjack host: {}, and port: {}, with state set to: {}",
 				poho, newState.getValue());

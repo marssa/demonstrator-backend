@@ -89,7 +89,8 @@ public class PathControllerApplication extends Application {
             public void handle(Request request, Response response) {
         		response.setCacheDirectives(cacheDirectives);
         		try {
-        			//We here call upon the startfollowingpath method using the pathplanningcontroller instance.
+        			ArrayList<Waypoint> waypointList = new ArrayList<Waypoint>(waypoints.values());
+        			pathPlanningController.setPathList(waypointList);
         			pathPlanningController.startFollowingPath();
         			response.setEntity("The system has started following the path ", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {

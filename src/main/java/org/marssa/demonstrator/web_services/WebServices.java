@@ -56,7 +56,7 @@ public class WebServices extends ServerResource {
 	 */
 	public WebServices(NavigationLightsController navLightsController,
 			UnderwaterLightsController underwaterLightsController,
-			SternDriveMotorController sternMotorController,AuxiliaryMotorsController auxiliaryMotorController, RudderController rudderController,
+			SternDriveMotorController sternMotorController, RudderController rudderController,
 			GpsReceiver gpsReceiver, PathPlanningController pathPlanningController) {
 		// Set caching directives to noCache and noStore
 		cacheDirectives.add(CacheDirective.noCache());
@@ -86,10 +86,10 @@ public class WebServices extends ServerResource {
 
 		// Attach the motor control application
 		//TODO WebServices shall accept a parameter of auxiliary motor
-		component.getDefaultHost()
+		/* component.getDefaultHost()
 				.attach("/motor",
 						new AuxilirayMotorControllerApplication(cacheDirectives,
-								auxiliaryMotorController));
+								auxiliaryMotorController));*/
 		
 		// Attach the motor control application
 		component.getDefaultHost()
