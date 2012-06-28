@@ -29,7 +29,6 @@ import org.marssa.services.diagnostics.daq.LabJack;
 import org.marssa.services.diagnostics.daq.LabJackU3;
 import org.marssa.services.diagnostics.daq.LabJackU3.TimerConfigModeU3;
 
-
 /**
  * @author Clayton Tabone
  * 
@@ -48,8 +47,8 @@ public class AuxiliaryMotorsController implements IMotorController {
 	 * @throws NoConnection
 	 * 
 	 */
-	public AuxiliaryMotorsController(LabJackU3 lj) throws ConfigurationError, OutOfRange,
-			NoConnection {
+	public AuxiliaryMotorsController(LabJackU3 lj) throws ConfigurationError,
+			OutOfRange, NoConnection {
 		this.lj = lj;
 		lj.setTimerMode(LabJackU3.TimerU3.TIMER_0,
 				TimerConfigModeU3.PWM_OUTPUT_16BIT);
@@ -79,6 +78,9 @@ public class AuxiliaryMotorsController implements IMotorController {
 		lj.setTimerValue(LabJackU3.TimerU3.TIMER_1, actualValue);
 	}
 
+	public void stop() {
+	}
+
 	public void setPolaritySignal(Polarity polarity) throws NoConnection {
 		switch (polarity) {
 		case POSITIVE:
@@ -104,23 +106,26 @@ public class AuxiliaryMotorsController implements IMotorController {
 		ramping.rampTo(desiredValue);
 	}
 
-	public void increase(MDecimal incrementValue) throws InterruptedException,
+	@Override
+	public void increase() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
 		double currentValue = this.ramping.getCurrentValue().doubleValue();
 		if ((currentValue + Constants.MOTOR.STEP_SIZE.doubleValue()) > Constants.MOTOR.MAX_VALUE
 				.doubleValue())
 			this.rampTo(Constants.MOTOR.MAX_VALUE);
 		else
-			this.ramping.increase(incrementValue);
+			this.ramping.increase(Constants.MOTOR.STEP_SIZE);
 	}
 
-	public void decrease(MDecimal decrementValue) throws InterruptedException,
+	@Override
+	public void decrease() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
 		double currentValue = this.ramping.getCurrentValue().doubleValue();
 		if ((currentValue - Constants.MOTOR.STEP_SIZE.doubleValue()) < Constants.MOTOR.MIN_VALUE
 				.doubleValue())
 			this.rampTo(Constants.MOTOR.MIN_VALUE);
 		else
-			this.ramping.decrease(decrementValue);
+			this.ramping.decrease(Constants.MOTOR.STEP_SIZE);
 	}
+
 }

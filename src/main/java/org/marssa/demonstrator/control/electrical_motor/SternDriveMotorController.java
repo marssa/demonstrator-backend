@@ -35,7 +35,7 @@ import ch.qos.logback.classic.Logger;
  * @author Clayton Tabone
  * 
  */
-public class SternDriveMotorController{
+public class SternDriveMotorController implements IMotorController{
 	
 	private LabJackUE9 lj;
 	int ordinal;
@@ -76,7 +76,7 @@ public class SternDriveMotorController{
 
 	}
 
-
+@Override
 	public void stop() throws NoConnection{
 		labJackOutput(speed[5]);
 	}
@@ -138,5 +138,18 @@ public class SternDriveMotorController{
 			arrayValue--;
 		labJackOutput(speed[arrayValue]);
 		}
+	}
+
+	@Override
+	public void outputValue(MDecimal value) throws ConfigurationError,
+			OutOfRange, NoConnection {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPolaritySignal(Polarity polarity) throws NoConnection {
+		// TODO Auto-generated method stub
+		
 	}
 }

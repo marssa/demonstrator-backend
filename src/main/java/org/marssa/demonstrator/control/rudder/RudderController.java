@@ -61,6 +61,7 @@ public class RudderController implements IRudderController {
 	/**
 	 * The rotateMultiple is used to use the rotate method multiple times
 	 */
+	@Override
 	public synchronized void rotateMultiple(MInteger multiple,
 			MBoolean direction) throws InterruptedException, NoConnection {
 		for (int x = 0; x < multiple.intValue(); x++) {
@@ -78,6 +79,7 @@ public class RudderController implements IRudderController {
 	/**
 	 * The rotateExtreme is used to rotate to the extreme possible angles
 	 */
+	@Override
 	public synchronized void rotateExtreme(MBoolean direction)
 			throws InterruptedException, NoConnection {
 
@@ -95,6 +97,7 @@ public class RudderController implements IRudderController {
 	 * The rotateToCentre is used to rotate the rudder to approximate its centre
 	 * position
 	 */
+	@Override
 	public void rotateToCentre() throws NoConnection, InterruptedException {
 		while (angle.doubleValue() > 5) {
 			rotate(new MBoolean(false));
@@ -111,6 +114,7 @@ public class RudderController implements IRudderController {
 	 * direction true means that the rudder has positive angle (turns the boat
 	 * to the right direction)
 	 */
+	@Override
 	public void rotate(MBoolean direction) throws NoConnection,
 			InterruptedException {
 		if ((stepLeft == 0 && direction.getValue())
@@ -162,6 +166,7 @@ public class RudderController implements IRudderController {
 	/**
 	 * The getAngle returns the actual angle of the rudder
 	 */
+	@Override
 	public MDecimal getAngle() throws NoConnection {
 		try {
 			double voltageValue = lj.read(new MInteger(0), new MInteger(8),
@@ -186,6 +191,9 @@ public class RudderController implements IRudderController {
 		}
 		return angle;
 	}
+
+
+
 
 	
 }

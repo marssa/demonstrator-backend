@@ -18,10 +18,7 @@ package org.marssa.demonstrator.web_services.motor;
 import java.util.ArrayList;
 
 
-import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
-import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
@@ -74,7 +71,7 @@ public class SternMotorControllerApplication extends Application {
         		response.setCacheDirectives(cacheDirectives);
         		try {
         			motorController.increase();
-    				response.setEntity("Increasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
+    				response.setEntity("Increasing motor speed by " + "%", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
         		} catch (InterruptedException e) {
@@ -100,7 +97,7 @@ public class SternMotorControllerApplication extends Application {
         		response.setCacheDirectives(cacheDirectives);
         		try {
 					motorController.decrease();
-    				response.setEntity("Decreasing motor speed by " + Constants.MOTOR.STEP_SIZE + "%", MediaType.TEXT_PLAIN);
+    				response.setEntity("Decreasing motor speed by "  + "%", MediaType.TEXT_PLAIN);
         		} catch (NumberFormatException e) {
         			response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, "The value of the speed resource has an incorrect format");
         		} catch (InterruptedException e) {

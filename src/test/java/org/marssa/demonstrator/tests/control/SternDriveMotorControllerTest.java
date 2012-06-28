@@ -33,11 +33,11 @@ import org.marssa.services.diagnostics.daq.LabJackUE9;
  */
 public class SternDriveMotorControllerTest{
 	
-	//private LabJackUE9 lj;
+	private LabJackUE9 lj;
 	private Ramping ramping;
 	int ordinal;
-	//------------ +  + + + +   - - - - -
-	int[] speed = {16,9,8,6,4,0,4,6,8,9,16};
+	//------------  -   -  -  -  -   + + + +  +
+	int[] speed = {-16,-9,-8,-6,-4,0,4,6,8,9,16};
 	private int arrayValue;
 
 
@@ -47,19 +47,18 @@ public class SternDriveMotorControllerTest{
 	 * @throws NoConnection
 	 * 
 	 */
-	public SternDriveMotorControllerTest()
+	public SternDriveMotorControllerTest(LabJackUE9 lj)
 	{
-		//this.lj = lj;
 		arrayValue=5;
-		//labJackOutput(speed[arrayValue]);
-		//System.out.println(m ? true : false);
 		System.out.print("Neutral");
 	}
 
 	private void labJackOutput(int speed) throws NoConnection {
+		System.out.print("Current Speed"+speed);
+		speed = Math.abs(speed);
 		boolean m = false;
 		int p = 0;
-		System.out.print("Current Speed"+speed);
+		
 		//check polarity
 		//modulus
 		for (int f = 1; f <= 16; f = (f << 1)) {
@@ -88,18 +87,13 @@ public class SternDriveMotorControllerTest{
 	public void increase() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
-			//lj.write(new MInteger(6000), new MBoolean(true));
-			System.out.println("600 " + " true");
-			Thread.sleep(500);
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
+			System.out.println("DPDT relay1----6006 " + " false ------ increase");
+			System.out.println("DPDT relay2----6007 " + " false ------ increase");
 		}
-		if(arrayValue == 0){
+		if(arrayValue == 10){
 			labJackOutput(speed[arrayValue]);
 		}else{
-			arrayValue--;
+			arrayValue++;
 		labJackOutput(speed[arrayValue]);
 		
 		}
@@ -108,18 +102,13 @@ public class SternDriveMotorControllerTest{
 	public void decrease() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5){
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
-			//lj.write(new MInteger(6000), new MBoolean(false));
-			System.out.println("6000 " + " false");
-			Thread.sleep(500);
-			//lj.write(new MInteger(6006), new MBoolean (false));
-			System.out.println("6006 " + " false");
+			System.out.println("DPDT relay2----6006 " + " true ------ decrease");
+			System.out.println("DPDT relay2----6007 " + " true ------ decrease");
 		}
-		if(arrayValue == 10){
+		if(arrayValue == 0){
 			labJackOutput(speed[arrayValue]);
 		}else{
-			arrayValue++;
+			arrayValue--;
 		labJackOutput(speed[arrayValue]);
 		}
 	}

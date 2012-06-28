@@ -24,6 +24,7 @@ import org.marssa.demonstrator.tests.control.path_planning.PathPlanningControlle
 import org.marssa.demonstrator.web_services.StaticFileServerApplication;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.restlet.Component;
 import org.restlet.Server;
 import org.restlet.data.CacheDirective;
@@ -33,7 +34,7 @@ public class WebServicesTest {
 
 	private static final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
 	private static TestController motorController = new TestController();
-	private static SternDriveMotorControllerTest sternMotorController = new SternDriveMotorControllerTest();
+	private static SternDriveMotorControllerTest sternMotorController = new SternDriveMotorControllerTest(null);
 	private static PathPlanningControllerTest pathPlanningController = new PathPlanningControllerTest();
 
 	static class LightState {
