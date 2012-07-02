@@ -16,23 +16,18 @@
 package org.marssa.demonstrator.tests.control.path_planning;
 
 
-import java.io.IOException;  
-import java.util.ArrayList;
+import java.io.IOException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.marssa.demonstrator.web_services.path_planning.Waypoint;
-import org.marssa.footprint.datatypes.composite.Coordinate;
-import org.marssa.footprint.datatypes.composite.Latitude;
-import org.marssa.footprint.datatypes.composite.Longitude;
-import org.marssa.footprint.datatypes.decimal.DegreesDecimal;
 import org.marssa.footprint.exceptions.OutOfRange;
-import org.restlet.data.Form;  
+import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.ext.json.JsonRepresentation;
-import org.restlet.representation.Representation;  
-import org.restlet.resource.ClientResource;  
-import org.restlet.resource.ResourceException;  
+import org.restlet.representation.Representation;
+import org.restlet.resource.ClientResource;
+import org.restlet.resource.ResourceException;
   
 public class PathPlannerWebservicesClient {  
   

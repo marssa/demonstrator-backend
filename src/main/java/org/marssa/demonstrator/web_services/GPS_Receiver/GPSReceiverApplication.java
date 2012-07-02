@@ -17,7 +17,6 @@ package org.marssa.demonstrator.web_services.GPS_Receiver;
 
 import java.util.ArrayList;
 
-
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.NoValue;
 import org.marssa.footprint.exceptions.OutOfRange;

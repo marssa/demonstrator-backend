@@ -17,7 +17,6 @@ package org.marssa.demonstrator.web_services.lightControlPage;
 
 import java.util.ArrayList;
 
-
 import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.footprint.datatypes.MBoolean;

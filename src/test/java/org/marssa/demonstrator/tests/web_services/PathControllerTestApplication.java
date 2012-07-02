@@ -20,9 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.marssa.demonstrator.control.path_planning.PathPlanningController;
-import org.marssa.demonstrator.tests.control.path_planning.PathPlanningControllerTest;
 import org.marssa.demonstrator.tests.control.path_planning.WayPointsResourceTest;
-import org.marssa.demonstrator.web_services.path_planning.WayPointsResource;
 import org.marssa.demonstrator.web_services.path_planning.Waypoint;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;

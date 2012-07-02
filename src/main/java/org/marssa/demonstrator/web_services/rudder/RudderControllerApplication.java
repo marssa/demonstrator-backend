@@ -17,7 +17,6 @@ package org.marssa.demonstrator.web_services.rudder;
 
 import java.util.ArrayList;
 
-
 import org.marssa.demonstrator.constants.Constants;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.footprint.datatypes.MBoolean;

@@ -17,7 +17,6 @@ package org.marssa.demonstrator.web_services.motor;
 
 import java.util.ArrayList;
 
-
 import org.marssa.demonstrator.constants.Constants;
 import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;

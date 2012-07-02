@@ -18,14 +18,17 @@ package org.marssa.demonstrator.web_services.path_planning;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.marssa.footprint.datatypes.composite.Coordinate;
 import org.marssa.footprint.datatypes.composite.Latitude;
 import org.marssa.footprint.datatypes.composite.Longitude;
 import org.marssa.footprint.datatypes.decimal.DegreesDecimal;
 import org.marssa.footprint.exceptions.OutOfRange;
-import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Status;
+import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -33,25 +36,6 @@ import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-  
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import org.json.JSONObject;
-
-import org.json.JSONStringer;
-
-import org.restlet.data.Status;
-
-import org.restlet.ext.json.JsonRepresentation;
-
-import org.restlet.representation.Representation;
-
-import org.restlet.resource.Post;
-
-import org.restlet.resource.ResourceException;
-
-import org.restlet.resource.ServerResource;
 /** 
  * Resource that manages a list of items. 
  *  
