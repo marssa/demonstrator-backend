@@ -62,6 +62,12 @@
 			<url>https://github.com/alangrech</url>
 			<id>alangrech</id>
 		</developer>
+		<developer>
+			<email>zak.borg@marsec-xl.org</email>
+			<name>Zak Borg</name>
+			<url>https://github.com/zakborg</url>
+			<id>zakborg</id>
+		</developer>
 	</developers>
 
 	<issueManagement>
