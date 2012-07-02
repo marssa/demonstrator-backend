@@ -269,7 +269,7 @@ public class PathPlanningController extends MTimerTask {
 			routeReverse = false;
 		}
 		setNextHeading(wayPointList.get(count).getCoordinate()); //we set the next way point to the first in the list
-		timer.addSchedule(this,0,10); //we create the timer schedule for every 1 sec.
+		timer.addSchedule(this,0,1000); //we create the timer schedule for every 1 sec.
 	}
 	
 	//This method is called upon by the RESTlet web services.

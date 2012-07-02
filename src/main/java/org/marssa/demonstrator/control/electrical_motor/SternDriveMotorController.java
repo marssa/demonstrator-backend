@@ -15,7 +15,7 @@
  */
 package org.marssa.demonstrator.control.electrical_motor;
 
-import org.marssa.demonstrator.JSVC;
+
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.datatypes.integer.MInteger;
@@ -40,7 +40,7 @@ public class SternDriveMotorController implements IMotorController {
 	int[] speed = { -16, -9, -8, -6, -4, 0, 4, 6, 8, 9, 16 };
 	private int arrayValue;
 	private static final Logger logger = (Logger) LoggerFactory
-			.getLogger(JSVC.class);
+			.getLogger(SternDriveMotorController.class);
 
 	/**
 	 * @throws ConfigurationError
