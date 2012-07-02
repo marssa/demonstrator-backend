@@ -17,8 +17,6 @@ package org.marssa.demonstrator.web_services.motionControlPage;
 
 import java.util.ArrayList;
 
-
-import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
 import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
@@ -33,43 +31,51 @@ import org.restlet.data.Status;
 import org.restlet.routing.Router;
 
 public class MotionControlPageApplication extends Application {
-	
-	private ArrayList<CacheDirective> cacheDirectives;
+
+	private final ArrayList<CacheDirective> cacheDirectives;
 	private SternDriveMotorController motorController = null;
 	private RudderController rudderController = null;
-	
-	public MotionControlPageApplication(ArrayList<CacheDirective> cacheDirectives, SternDriveMotorController motorController, RudderController rudderController) {
+
+	public MotionControlPageApplication(
+			ArrayList<CacheDirective> cacheDirectives,
+			SternDriveMotorController motorController,
+			RudderController rudderController) {
 		this.cacheDirectives = cacheDirectives;
 		this.motorController = motorController;
 		this.rudderController = rudderController;
 	}
 
-    /**
-     * Creates a root Restlet that will receive all incoming calls.
-     */
-    @Override
-    public synchronized Restlet createInboundRoot() {
-        Router router = new Router(getContext());
-        
-        // Create the navigation lights state handler
-        Restlet rudderAndSpeedState = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		response.setCacheDirectives(cacheDirectives);
+	/**
+	 * Creates a root Restlet that will receive all incoming calls.
+	 */
+	@Override
+	public synchronized Restlet createInboundRoot() {
+		Router router = new Router(getContext());
+
+		// Create the navigation lights state handler
+		Restlet rudderAndSpeedState = new Restlet() {
+			@Override
+			public void handle(Request request, Response response) {
+				response.setCacheDirectives(cacheDirectives);
 				try {
-					MDecimal motorSpeed = motorController.getValue();
+					MDecimal motorSpeed = motorController.getSpeed();
 					MDecimal rudderAngle = rudderController.getAngle();
-					response.setEntity("{\"motor\":" + motorSpeed.toJSON().getContents() + ",\"rudder\":" + rudderAngle.toJSON().getContents() + "}", MediaType.APPLICATION_JSON);
+					response.setEntity("{\"motor\":"
+							+ motorSpeed.toJSON().getContents()
+							+ ",\"rudder\":"
+							+ rudderAngle.toJSON().getContents() + "}",
+							MediaType.APPLICATION_JSON);
 				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL, "No connection error has been returned");
+					response.setStatus(Status.SERVER_ERROR_INTERNAL,
+							"No connection error has been returned");
 					e.printStackTrace();
 				}
-    			
-            }
-        };
-        
-        router.attach("/rudderAndSpeed", rudderAndSpeedState);
-        
-        return router;
-    }
+
+			}
+		};
+
+		router.attach("/rudderAndSpeed", rudderAndSpeedState);
+
+		return router;
+	}
 }

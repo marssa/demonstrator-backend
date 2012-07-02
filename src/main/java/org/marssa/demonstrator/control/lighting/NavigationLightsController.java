@@ -17,9 +17,7 @@ package org.marssa.demonstrator.control.lighting;
 
 import java.net.UnknownHostException;
 
-
 import org.marssa.footprint.datatypes.MBoolean;
-import org.marssa.footprint.datatypes.MString;
 import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.interfaces.control.lighting.ILightToggle;
@@ -39,7 +37,7 @@ public class NavigationLightsController implements ILightToggle {
 	private LabJackUE9 lj;
 	private String switched;
 	private MInteger navLights;
-	private Object[] poho = { lj.getHost().getContents(),
+	private final Object[] poho = { lj.getHost().getContents(),
 			lj.getPort().intValue() };
 
 	/**
@@ -50,13 +48,12 @@ public class NavigationLightsController implements ILightToggle {
 	 * @throws UnknownHostException
 	 * @throws NoConnection
 	 */
-	public NavigationLightsController(MString host, MInteger port,
-			MInteger navLights) throws UnknownHostException, NoConnection {
+	public NavigationLightsController(LabJackU3 lj, MInteger navLights)
+			throws UnknownHostException, NoConnection {
 		// TODO There must be something wrong here. FIO4 is operating in output
 		// mode, regardless of FIO4-dir
 		// Set direction for FIO4 port
 		// lj.write(LabJack.FIO4_DIR_ADDR, new MBoolean(true));
-		this.lj = LabJackUE9.getInstance(host, port);
 		logger.info(
 				"An instance of Navigation light controller was instantiated with labjack host {}, and port {}.",
 				poho);
@@ -74,14 +71,12 @@ public class NavigationLightsController implements ILightToggle {
 	 * @throws NoConnection
 	 * @throws UnknownHostException
 	 */
-	public NavigationLightsController(MString host, MInteger port,
-			MInteger navLights, MBoolean newState) throws NoConnection,
-			UnknownHostException {
+	public NavigationLightsController(LabJackU3 lj, MInteger navLights,
+			MBoolean newState) throws NoConnection, UnknownHostException {
 		// TODO There must be something wrong here. FIO4 is operating in output
 		// mode, regardless of FIO4-dir
 		// Set direction for FIO4 port
 		// lj.write(LabJack.FIO4_DIR_ADDR, new MBoolean(true));
-		this.lj = LabJackUE9.getInstance(host, port);
 		logger.info(
 				"An instance of Navigation light controller was instantiated with labjack host: {}, and port: {}, with state set to: {}",
 				poho, newState.getValue());
@@ -89,6 +84,7 @@ public class NavigationLightsController implements ILightToggle {
 		lj.write(navLights, newState);
 	}
 
+	@Override
 	public void toggleLight() throws NoConnection {
 
 		lightState = !lightState;

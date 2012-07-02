@@ -17,9 +17,7 @@ package org.marssa.demonstrator.control.lighting;
 
 import java.net.UnknownHostException;
 
-
 import org.marssa.footprint.datatypes.MBoolean;
-import org.marssa.footprint.datatypes.MString;
 import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.interfaces.control.lighting.ILightToggle;
@@ -43,22 +41,19 @@ public class UnderwaterLightsController implements ILightToggle {
 	private LabJackUE9 lj;
 	private String switched;
 	private MInteger underLights;
-	private Object[] poho = { lj.getHost(), lj.getPort() };
+	private final Object[] poho = { lj.getHost(), lj.getPort() };
 
-	public UnderwaterLightsController(MString host, MInteger port,
-			MInteger underLights) throws UnknownHostException, NoConnection {
+	public UnderwaterLightsController(LabJackU3 lj, MInteger underLights)
+			throws UnknownHostException, NoConnection {
 		underwaterLightLogger
 				.info("An instance of Navigation light controller was instantiated with labjack host {}, and port {}.",
-						host, port);
+						lj.getHost(), lj.getPort());
 		this.lightState = false;
 		this.underLights = underLights;
-		this.lj = LabJackUE9.getInstance(host, port);
 	}
 
-	public UnderwaterLightsController(MString host, MInteger port,
-			MInteger navLights, MBoolean newState) throws NoConnection,
-			UnknownHostException {
-		this.lj = LabJackUE9.getInstance(host, port);
+	public UnderwaterLightsController(LabJackU3 lj, MInteger navLights,
+			MBoolean newState) throws NoConnection, UnknownHostException {
 		underwaterLightLogger
 				.info("An instance of UnderWater light controller was instantiated with labjack host: {}, and port: {}, with state set to: {}",
 						poho, newState.getValue());
@@ -66,6 +61,7 @@ public class UnderwaterLightsController implements ILightToggle {
 		lj.write(navLights, newState);
 	}
 
+	@Override
 	public void toggleLight() throws NoConnection {
 		lightState = !lightState;
 		if (lightState)

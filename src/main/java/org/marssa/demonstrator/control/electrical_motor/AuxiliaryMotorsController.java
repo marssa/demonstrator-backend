@@ -22,6 +22,7 @@ import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
+import org.marssa.footprint.interfaces.control.IController;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
 import org.marssa.services.control.Ramping;
 import org.marssa.services.control.Ramping.RampingType;
@@ -33,13 +34,13 @@ import org.marssa.services.diagnostics.daq.LabJackU3.TimerConfigModeU3;
  * @author Clayton Tabone
  * 
  */
-public class AuxiliaryMotorsController implements IMotorController {
+public class AuxiliaryMotorsController implements IMotorController, IController {
 	private final MInteger MOTOR_0_DIRECTION = LabJack.FIO6_ADDR;
 	private final MInteger MOTOR_1_DIRECTION = LabJack.FIO7_ADDR;
 	private final MInteger STEP_DELAY = new MInteger(20);
 	private final MDecimal STEP_SIZE = new MDecimal(1.0f);
-	private LabJackU3 lj;
-	private Ramping ramping;
+	private final LabJackU3 lj;
+	private final Ramping ramping;
 
 	/**
 	 * @throws ConfigurationError
@@ -64,6 +65,7 @@ public class AuxiliaryMotorsController implements IMotorController {
 				RampingType.ACCELERATED);
 	}
 
+	@Override
 	public void outputValue(MDecimal motorSpeed) throws ConfigurationError,
 			OutOfRange, NoConnection {
 		System.out.println(motorSpeed);
@@ -77,10 +79,12 @@ public class AuxiliaryMotorsController implements IMotorController {
 				(int) (actualValue.doubleValue() * 0.9)));
 		lj.setTimerValue(LabJackU3.TimerU3.TIMER_1, actualValue);
 	}
-@Override
+
+	@Override
 	public void stop() {
 	}
 
+	@Override
 	public void setPolaritySignal(Polarity polarity) throws NoConnection {
 		switch (polarity) {
 		case POSITIVE:
@@ -96,8 +100,8 @@ public class AuxiliaryMotorsController implements IMotorController {
 			break;
 		}
 	}
-@Override
 
+	@Override
 	public MDecimal getValue() {
 		return ramping.getCurrentValue();
 	}
@@ -106,10 +110,10 @@ public class AuxiliaryMotorsController implements IMotorController {
 			ConfigurationError, OutOfRange {
 		ramping.rampTo(desiredValue);
 	}
-@Override
 
-	public void increase() throws InterruptedException,
-			ConfigurationError, OutOfRange, NoConnection {
+	@Override
+	public void increase() throws InterruptedException, ConfigurationError,
+			OutOfRange, NoConnection {
 		double currentValue = this.ramping.getCurrentValue().doubleValue();
 		if ((currentValue + Constants.MOTOR.STEP_SIZE.doubleValue()) > Constants.MOTOR.MAX_VALUE
 				.doubleValue())
@@ -117,15 +121,21 @@ public class AuxiliaryMotorsController implements IMotorController {
 		else
 			this.ramping.increase(Constants.MOTOR.STEP_SIZE);
 	}
-@Override
-	public void decrease() throws InterruptedException,
-			ConfigurationError, OutOfRange, NoConnection {
+
+	@Override
+	public void decrease() throws InterruptedException, ConfigurationError,
+			OutOfRange, NoConnection {
 		double currentValue = this.ramping.getCurrentValue().doubleValue();
 		if ((currentValue - Constants.MOTOR.STEP_SIZE.doubleValue()) < Constants.MOTOR.MIN_VALUE
 				.doubleValue())
 			this.rampTo(Constants.MOTOR.MIN_VALUE);
 		else
 			this.ramping.decrease(Constants.MOTOR.STEP_SIZE);
+	}
+
+	@Override
+	public MDecimal getSpeed() {
+		return ramping.getCurrentValue();
 	}
 
 }
