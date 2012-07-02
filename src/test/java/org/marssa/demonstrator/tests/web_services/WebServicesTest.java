@@ -15,6 +15,7 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.marssa.demonstrator.Main;
@@ -24,6 +25,7 @@ import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.control.rudder.RudderController;
+import org.marssa.demonstrator.tests.control.GPSReceiverTest;
 import org.marssa.demonstrator.tests.control.RudderControllerTest;
 import org.marssa.demonstrator.tests.control.SternDriveMotorControllerTest;
 import org.marssa.demonstrator.tests.control.TestController;
@@ -32,6 +34,10 @@ import org.marssa.demonstrator.web_services.StaticFileServerApplication;
 import org.marssa.demonstrator.web_services.WebServices;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
+import org.marssa.footprint.exceptions.ConfigurationError;
+import org.marssa.footprint.exceptions.NoConnection;
+import org.marssa.footprint.exceptions.OutOfRange;
+import org.marssa.footprint.interfaces.control.rudder.IRudderController;
 import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.marssa.services.navigation.GpsReceiver;
 import org.restlet.Component;
@@ -46,14 +52,16 @@ public class WebServicesTest {
 	private static final Logger logger = (Logger) LoggerFactory
 			.getLogger(WebServicesTest.class);
 	private static final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
-	private static TestController motorController = new TestController();
-	private static SternDriveMotorControllerTest sternMotorController = new SternDriveMotorControllerTest(null);
-	private static PathPlanningControllerTest pathPlanningController = new PathPlanningControllerTest();
+	
+    private static SternDriveMotorController sternMotorController;
+	private static PathPlanningController pathPlanningController;
+	private static GPSReceiverTest gpsReceiver;
+	private static RudderControllerTest rudderController;
+	private static IRudderController rudderControllerPhysical;
+	
 	static LabJackUE9 labJackue9 ;
 	NavigationLightsController navLightsController;
 	UnderwaterLightsController underwaterLightsController;
-	static RudderControllerTest rudderController;
-	GpsReceiver gpsReceiver;
 	WebServices webServices;
 
 	static class LightState {
@@ -83,9 +91,14 @@ public class WebServicesTest {
 	/**
 	 * @param args
 	 *            the args
+	 * @throws NoConnection 
+	 * @throws UnknownHostException 
+	 * @throws OutOfRange 
+	 * @throws ConfigurationError 
+	 * @throws InterruptedException 
 	 */
-	public static void main(java.lang.String[] args) {
-		/*
+	public static void main(java.lang.String[] args) throws UnknownHostException, NoConnection, ConfigurationError, OutOfRange, InterruptedException {
+		
 		logger.info("Initialising LabJack ...");
 		labJackue9 = LabJackUE9.getInstance(Constants.LABJACKUE9.HOST,
 				Constants.LABJACKUE9.PORT);
@@ -93,15 +106,20 @@ public class WebServicesTest {
 				Constants.LABJACKUE9.HOST, Constants.LABJACKUE9.PORT);
 
 		logger.info("Initialising motor controller ... ");
-		motorController = new SternDriveMotorControllerTest(labJackue9);
+		sternMotorController = new SternDriveMotorController(labJackue9);
 		logger.info("Motor controller initialised successfully");
 
 		logger.info("Initialising rudder controller ... ");
-		rudderController = new RudderControllerTest(labJackue9);
+		rudderControllerPhysical = new RudderController(labJackue9);
+		rudderController =  new RudderControllerTest(labJackue9,rudderControllerPhysical);
 		logger.info("Rudder controller initialised successfully");
-        */
+		
+		logger.info("Initialising GPS ... ");
+		gpsReceiver = new GPSReceiverTest(rudderController);
+		logger.info("GPS controller initialised successfully");
+        
 		logger.info("Initialising Path Planning controller ... ");
-		pathPlanningController = new PathPlanningControllerTest();
+		pathPlanningController = new PathPlanningController(sternMotorController,rudderController,gpsReceiver);
 		//pathPlanningController = new PathPlanningController(null, null,null);
 		logger.info("Path Planning controller initialised successfully");
 		

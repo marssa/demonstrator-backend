@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.tests.control.path_planning.PathPlanningControllerTest;
 import org.marssa.demonstrator.tests.control.path_planning.WayPointsResourceTest;
 import org.marssa.demonstrator.web_services.path_planning.WayPointsResource;
@@ -38,11 +39,11 @@ import org.restlet.routing.Router;
 public class PathControllerTestApplication extends Application {
 
 	private ArrayList<CacheDirective> cacheDirectives;
-	private PathPlanningControllerTest pathPlanningController;
+	private PathPlanningController pathPlanningController;
 		private final ConcurrentMap<String, Waypoint> waypoints =   
             new ConcurrentHashMap<String, Waypoint>();  
 	
-	public PathControllerTestApplication(ArrayList<CacheDirective> cacheDirectives, PathPlanningControllerTest pathPlanningController) {
+	public PathControllerTestApplication(ArrayList<CacheDirective> cacheDirectives, PathPlanningController pathPlanningController) {
 		this.cacheDirectives = cacheDirectives;
 		this.pathPlanningController = pathPlanningController;
 	}

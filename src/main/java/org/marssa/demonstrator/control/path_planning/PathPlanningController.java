@@ -32,6 +32,10 @@ import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.NoValue;
 import org.marssa.footprint.exceptions.OutOfRange;
+import org.marssa.footprint.interfaces.control.IController;
+import org.marssa.footprint.interfaces.control.motor.IMotorController;
+import org.marssa.footprint.interfaces.control.rudder.IRudderController;
+import org.marssa.footprint.interfaces.navigation.IGpsReceiver;
 import org.marssa.services.navigation.GpsReceiver;
 import org.marssa.services.scheduling.MTimer;
 import org.marssa.services.scheduling.MTimerTask;
@@ -48,9 +52,9 @@ public class PathPlanningController extends MTimerTask {
 	private static final Logger logger = (Logger) LoggerFactory
 			.getLogger(PathPlanningController.class);
 	
-	private SternDriveMotorController motorController;
-	private RudderController rudderController;
-	private GpsReceiver gpsReceiver;
+	private IMotorController motorController;
+	private IRudderController rudderController;
+	private IGpsReceiver gpsReceiver;
 	
 	private Coordinate currentPositionRead;
 	private double currentHeadingRead;
@@ -67,8 +71,8 @@ public class PathPlanningController extends MTimerTask {
 	 * @throws NoConnection
 	 * 
 	 */	
-	public  PathPlanningController(SternDriveMotorController motorController, 
-			RudderController rudderController, GpsReceiver gpsReceiver)
+	public  PathPlanningController(IMotorController motorController, 
+			IRudderController rudderController, IGpsReceiver gpsReceiver)
 	{
 		this.motorController = motorController;
 		this.rudderController = rudderController;
