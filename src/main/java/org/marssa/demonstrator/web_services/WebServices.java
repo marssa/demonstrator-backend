@@ -24,7 +24,6 @@ import org.marssa.demonstrator.control.lighting.NavigationLightsController;
 import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.control.path_planning.PathPlanningController;
 import org.marssa.demonstrator.control.rudder.RudderController;
-import org.marssa.demonstrator.web_service.rudder.RudderControllerApplication;
 import org.marssa.demonstrator.web_services.GPS_Receiver.GPSReceiverApplication;
 import org.marssa.demonstrator.web_services.lightControlPage.LightControlPageApplication;
 import org.marssa.demonstrator.web_services.lighting.LightControllerApplication;
@@ -32,6 +31,7 @@ import org.marssa.demonstrator.web_services.motionControlPage.MotionControlPageA
 import org.marssa.demonstrator.web_services.motor.AuxilirayMotorControllerApplication;
 import org.marssa.demonstrator.web_services.motor.SternMotorControllerApplication;
 import org.marssa.demonstrator.web_services.path_planning.PathControllerApplication;
+import org.marssa.demonstrator.web_services.rudder.RudderControllerApplication;
 import org.marssa.services.navigation.GpsReceiver;
 import org.restlet.Component;
 import org.restlet.Server;

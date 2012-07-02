@@ -94,33 +94,7 @@ public class PathPlanningController extends MTimerTask {
 	public void setNextHeading(Coordinate nextHeading) {
 		this.nextHeading = nextHeading;
 	}
-	
-	public void setTestCurrent(Coordinate boatPosition, double boatHeading) throws OutOfRange
-	{
-		currentPositionRead = boatPosition;
-		currentHeadingRead = boatHeading;
-	}
-		
-	public void getEstimatedPosition() throws OutOfRange
-	{
-		double dist = 0.003/6371.0;
-		double brng = Math.toRadians(currentHeadingRead);
-		double lat1 = Math.toRadians(currentPositionRead.getLatitude().getDMS().doubleValue());
-		double lon1 = Math.toRadians(currentPositionRead.getLongitude().getDMS().doubleValue());
-
-		double lat2 = Math.asin( Math.sin(lat1)*Math.cos(dist) + Math.cos(lat1)*Math.sin(dist)*Math.cos(brng) );
-		double a = Math.atan2(Math.sin(brng)*Math.sin(dist)*Math.cos(lat1), Math.cos(dist)-Math.sin(lat1)*Math.sin(lat2));
-		//System.out.println("a = " +  a);
-		double lon2 = lon1 + a;
-		lon2 = (lon2+ 3*Math.PI) % (2*Math.PI) - Math.PI;
-        double lat2Degrees = Math.toDegrees(lat2);
-        double lon2Degrees = Math.toDegrees(lon2);
-        currentPositionRead =  new Coordinate(new Latitude(new DegreesDecimal(lat2Degrees)) , new Longitude(new DegreesDecimal(lon2Degrees)));
-	   //logger.info(""+lat2Degrees+","+lon2Degrees);
-        
-        System.out.format("%f,%f%n",lat2Degrees,lon2Degrees);
-	 }
-	
+				
     public void readPosition() throws NoConnection, NoValue, OutOfRange
     {
     	currentPositionRead = gpsReceiver.getCoordinate();
@@ -154,7 +128,7 @@ public class PathPlanningController extends MTimerTask {
 	// This method is called upon to drive the vessel in the right direction
 	public void drive() throws NoConnection, NoValue, OutOfRange, InterruptedException {
 		
-		double currentHeading = currentHeadingRead;
+		double currentHeading = gpsReceiver.getCOG().doubleValue();
 		
 		double targetHeading = determineHeading();
 		double difference =  Math.abs(currentHeading - targetHeading);
@@ -179,11 +153,9 @@ public class PathPlanningController extends MTimerTask {
 	//This method is used to determine the bearing we should be on to reach the next way point
 	public double determineHeading() throws NoConnection, NoValue, OutOfRange
 	{
-		Coordinate currentPosition = currentPositionRead;
-		
-		  double longitude1 = currentPosition.getLongitude().getDMS().doubleValue();
+		  double longitude1 = currentPositionRead.getLongitude().getDMS().doubleValue();
 		  double longitude2 = nextHeading.getLongitude().getDMS().doubleValue();
-		  double latitude1 = Math.toRadians(currentPosition.getLatitude().getDMS().doubleValue());
+		  double latitude1 = Math.toRadians(currentPositionRead.getLatitude().getDMS().doubleValue());
 		  double latitude2 = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue());
 		  double longDiff= Math.toRadians(longitude2-longitude1);
 		  double y= Math.sin(longDiff)*Math.cos(latitude2);
@@ -197,12 +169,11 @@ public class PathPlanningController extends MTimerTask {
 	//the target waypoint is less than 10 meters
 	public boolean arrived() throws NoConnection, NoValue, OutOfRange
 	{
-		Coordinate currentPosition = currentPositionRead;
-        double earthRadius = 3958.75;
-	    double dLat = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue() - currentPosition.getLatitude().getDMS().doubleValue());
-	    double dLng = Math.toRadians(nextHeading.getLongitude().getDMS().doubleValue() - currentPosition.getLongitude().getDMS().doubleValue());
+		double earthRadius = 3958.75;
+	    double dLat = Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue() - currentPositionRead.getLatitude().getDMS().doubleValue());
+	    double dLng = Math.toRadians(nextHeading.getLongitude().getDMS().doubleValue() - currentPositionRead.getLongitude().getDMS().doubleValue());
 	    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-	               Math.cos(Math.toRadians(currentPosition.getLatitude().getDMS().doubleValue())) * Math.cos(Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue())) *
+	               Math.cos(Math.toRadians(currentPositionRead.getLatitude().getDMS().doubleValue())) * Math.cos(Math.toRadians(nextHeading.getLatitude().getDMS().doubleValue())) *
 	               Math.sin(dLng/2) * Math.sin(dLng/2);
 	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 	    double distance = (earthRadius * c);
@@ -253,7 +224,6 @@ public class PathPlanningController extends MTimerTask {
 			}
 			else
 			{
-				getEstimatedPosition();
 				readPosition();
 				drive();//else if we are on our way to the next way point we continue driving the vessel
 			}
