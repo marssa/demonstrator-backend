@@ -72,7 +72,7 @@ public class Constants {
 				(SYSTEM.ENVIRONMENT.getContents() == "production") ? "127.0.0.1"
 						: "localhost");
 		public final static MInteger PORT = new MInteger(8182);
-		public final static MInteger MAX_TOTAL_CONNECTIONS = new MInteger(50);
+		public final static MInteger MAX_TOTAL_CONNECTIONS = new MInteger(150);
 	}
 
 	/**
