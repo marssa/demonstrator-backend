@@ -32,10 +32,10 @@ public class LightControllerTestApplication {
 	private final LightState currentLightState = new LightState();
 
 	@GET
-	@Produces("text/plain")
+	@Produces("application/json")
 	@Path("/navigationLights")
 	public String getNavLights() {
-		return currentLightState.navLightState.toString();
+		return currentLightState.navLightState.toJSON().toString();
 	}
 
 	@POST
@@ -48,10 +48,10 @@ public class LightControllerTestApplication {
 	}
 
 	@GET
-	@Produces("text/plain")
+	@Produces("application/json")
 	@Path("/underwaterLights")
 	public String getUnderwaterLights() {
-		return currentLightState.underwaterLightState.toString();
+		return currentLightState.underwaterLightState.toJSON().toString();
 	}
 
 	@POST
@@ -61,5 +61,16 @@ public class LightControllerTestApplication {
 		boolean value = Boolean.parseBoolean(state);
 		currentLightState.underwaterLightState = new MBoolean(value);
 		return "You entered the following parameter:\n" + value;
+	}
+
+	@GET
+	@Produces("application/json")
+	@Path("statusAll")
+	public String getAllLights() {
+		return "{\"navLights\":"
+				+ WebServicesTest.getLightState().navLightState.toJSON()
+				+ ",\"underwaterLights\":"
+				+ WebServicesTest.getLightState().underwaterLightState.toJSON()
+				+ "}";
 	}
 }

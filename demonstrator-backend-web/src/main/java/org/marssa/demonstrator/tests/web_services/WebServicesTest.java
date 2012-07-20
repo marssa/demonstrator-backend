@@ -145,12 +145,6 @@ public class WebServicesTest {
 		component.getDefaultHost()
 				.attach("", new StaticFileServerApplication());
 
-		/*
-		 * // Attach the light control application
-		 * component.getDefaultHost().attach("/lighting", new
-		 * LightControllerTestApplication(cacheDirectives));
-		 */
-
 		// Attach the Stern control application
 		component.getDefaultHost().attach("/sternMotor",
 				new SternMotorControllerTestApplication(cacheDirectives));
@@ -162,10 +156,6 @@ public class WebServicesTest {
 		// Attach the GPS receiver application
 		component.getDefaultHost().attach("/gps",
 				new GPSReceiverTestApplication(cacheDirectives));
-
-		// Attach the motion control feedback application
-		component.getDefaultHost().attach("/lightControlPage",
-				new LightControlPageTestApplication(cacheDirectives));
 
 		// Attach the path planner application
 		component.getDefaultHost().attach(

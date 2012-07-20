@@ -91,12 +91,6 @@
 //		component.getDefaultHost()
 //				.attach("", new StaticFileServerApplication());
 //
-//		// Attach the light control application
-//		component.getDefaultHost().attach(
-//				"/lighting",
-//				new LightControllerApplication(cacheDirectives,
-//						navLightsController, underwaterLightsController));
-//
 //		// Attach the motor control application
 //		//TODO WebServices shall accept a parameter of auxiliary motor
 //		/* component.getDefaultHost()

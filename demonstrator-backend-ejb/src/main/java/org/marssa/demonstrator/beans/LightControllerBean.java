@@ -70,22 +70,8 @@ public class LightControllerBean {
 		JAXBContext context = JAXBContext
 				.newInstance(new Class[] { Settings.class });
 		Unmarshaller unmarshaller = context.createUnmarshaller();
-		// Settings settings = (Settings) unmarshaller
-		// .unmarshal(new FileInputStream(
-		// "src/main/resources/configuration/settings.xml"));
 		InputStream is = this.getClass().getClassLoader()
 				.getResourceAsStream("configuration/settings.xml");
-
-		// String line = null;
-		// BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		// try {
-		// while ((line = br.readLine()) != null) {
-		// System.out.println(line);
-		// }
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 
 		Settings settings = (Settings) unmarshaller.unmarshal(is);
 		for (LightType light : settings.getLights().getLight()) {
