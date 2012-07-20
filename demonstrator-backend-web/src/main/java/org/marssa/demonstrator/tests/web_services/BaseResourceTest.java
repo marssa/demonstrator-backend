@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.tests.control.path_planning;
+package org.marssa.demonstrator.tests.web_services;
 
 import java.util.concurrent.ConcurrentMap;
 

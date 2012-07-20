@@ -232,7 +232,7 @@
 					<executions>
 						<execution>
 							<id>process-remote-resources</id>
-							<phase>generate-resources</phase>
+							<phase>initialize</phase>
 							<goals>
 								<goal>process</goal>
 							</goals>

@@ -27,7 +27,6 @@ import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.demonstrator.tests.control.GPSReceiverTest;
 import org.marssa.demonstrator.tests.control.RudderControllerTest;
 import org.marssa.demonstrator.web_services.StaticFileServerApplication;
-import org.marssa.demonstrator.web_services.WebServices;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.ConfigurationError;
@@ -56,7 +55,6 @@ public class WebServicesTest {
 	static LabJackUE9 labJackue9;
 	NavigationLightsController navLightsController;
 	UnderwaterLightsController underwaterLightsController;
-	WebServices webServices;
 
 	static class LightState {
 		public MBoolean navLightState = new MBoolean(false);
@@ -147,9 +145,11 @@ public class WebServicesTest {
 		component.getDefaultHost()
 				.attach("", new StaticFileServerApplication());
 
-		// Attach the light control application
-		component.getDefaultHost().attach("/lighting",
-				new LightControllerTestApplication(cacheDirectives));
+		/*
+		 * // Attach the light control application
+		 * component.getDefaultHost().attach("/lighting", new
+		 * LightControllerTestApplication(cacheDirectives));
+		 */
 
 		// Attach the Stern control application
 		component.getDefaultHost().attach("/sternMotor",

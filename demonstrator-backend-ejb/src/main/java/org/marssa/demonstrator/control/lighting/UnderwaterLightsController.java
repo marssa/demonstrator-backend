@@ -22,8 +22,7 @@ import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.interfaces.control.lighting.ILightToggle;
 import org.marssa.footprint.logger.MMarker;
-import org.marssa.services.diagnostics.daq.LabJackU3;
-import org.marssa.services.diagnostics.daq.LabJackUE9;
+import org.marssa.services.diagnostics.daq.LabJack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,29 +32,46 @@ import org.slf4j.LoggerFactory;
  */
 public class UnderwaterLightsController implements ILightToggle {
 
-	static Logger underwaterLightLogger = (Logger) LoggerFactory
+	static Logger logger = LoggerFactory
 			.getLogger("UnderwaterLightsController");
 
 	private boolean lightState;
-	private LabJackUE9 lj;
-	private String switched;
+	private LabJack lj;
 	private MInteger underLights;
-	private final Object[] poho = { lj.getHost(), lj.getPort() };
+	private String address = "";
 
-	public UnderwaterLightsController(LabJackU3 lj, MInteger underLights)
+	/**
+	 * 
+	 * @param lj
+	 * @param underLights
+	 * @throws UnknownHostException
+	 * @throws NoConnection
+	 */
+	public UnderwaterLightsController(LabJack lj, MInteger underLights)
 			throws UnknownHostException, NoConnection {
-		underwaterLightLogger
-				.info("An instance of Navigation light controller was instantiated with labjack host {}, and port {}.",
-						lj.getHost(), lj.getPort());
+		address = lj.getHost().getContents() + ":" + lj.getPort().intValue();
+		logger.info(
+				"An instance of underwater lights controller was instantiated with LabJack connected at {}",
+				address);
+		this.lj = lj;
 		this.lightState = false;
 		this.underLights = underLights;
 	}
 
-	public UnderwaterLightsController(LabJackU3 lj, MInteger navLights,
+	/**
+	 * 
+	 * @param lj
+	 * @param navLights
+	 * @param newState
+	 * @throws NoConnection
+	 * @throws UnknownHostException
+	 */
+	public UnderwaterLightsController(LabJack lj, MInteger navLights,
 			MBoolean newState) throws NoConnection, UnknownHostException {
-		underwaterLightLogger
-				.info("An instance of UnderWater light controller was instantiated with labjack host: {}, and port: {}, with state set to: {}",
-						poho, newState.getValue());
+		address = lj.getHost().getContents() + ":" + lj.getPort().intValue();
+		logger.info(
+				"An instance of underwater lights controller was instantiated with LabJack connected at {} with light state set to {}",
+				new Object[] { address, newState.getValue() });
 		lightState = newState.getValue();
 		lj.write(navLights, newState);
 	}
@@ -63,34 +79,27 @@ public class UnderwaterLightsController implements ILightToggle {
 	@Override
 	public void toggleLight() throws NoConnection {
 		lightState = !lightState;
-		if (lightState)
-			switched = "ON";
-		else
-			switched = "OFF";
-		underwaterLightLogger
-				.trace("UnderwaterLights from labjack with host: {} and port: {} have been switched {} .",
-						poho, switched);
+		logger.trace(
+				MMarker.SETTER,
+				"Underwater lights from LabJack connected at {} have been switched to {}",
+				address, lightState ? "ON" : "OFF");
 		lj.write(underLights, new MBoolean(lightState));
 	}
 
 	public MBoolean getUnderwaterLightState() {
-		underwaterLightLogger
-				.trace(MMarker.GETTER,
-						"Returning LightState {}, from labjack with host: {} and port: {} .",
-						new MBoolean(lightState), poho);
+		logger.trace(
+				MMarker.GETTER,
+				"Returning light state {}, from LabJack with host: {} and port: {} .",
+				new MBoolean(lightState), address);
 		return new MBoolean(lightState);
 	}
 
 	public void setUnderwaterLightState(MBoolean newState) throws NoConnection {
 		this.lightState = newState.getValue();
-		if (newState.getValue())
-			switched = "ON";
-		else
-			switched = "OFF";
-		underwaterLightLogger
-				.trace(MMarker.SETTER,
-						"Switching UnderWaterlight: {} ,from labjack with host: {} and port: {}",
-						switched, poho);
+		logger.trace(
+				MMarker.SETTER,
+				"Underwater lights from LabJack connected at {} have been switched to {}",
+				address, lightState ? "ON" : "OFF");
 		lj.write(underLights, newState);
 	}
 }

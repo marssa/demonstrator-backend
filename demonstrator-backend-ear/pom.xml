@@ -27,7 +27,6 @@
          <type>ejb</type>
       </dependency>
    </dependencies>
-
    <build>
       <finalName>demonstrator-backend</finalName>
       <plugins>
@@ -54,9 +53,6 @@
             <artifactId>jboss-as-maven-plugin</artifactId>
             <configuration>
                <skip>false</skip>
-               <hostname>192.168.2.54</hostname>
-               <username>admin</username>
-               <password>Marsec-XLAdmin1359</password>
             </configuration>
          </plugin>
       </plugins>

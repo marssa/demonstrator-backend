@@ -18,13 +18,13 @@
 -->
 <?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="org.marssa.demonstrator.network" xmlns="org.marssa.demonstrator.network"
-	xmlns:marssa="org.marssa.footprint.datatypes" xmlns:marssa-int="org.marssa.footprint.datatypes.integer"
+	targetNamespace="network.demonstrator.marssa.org" xmlns="network.demonstrator.marssa.org"
+	xmlns:marssa="datatypes.footprint.marssa.org" xmlns:marssa-int="integer.datatypes.footprint.marssa.org"
 	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="2.0">
 
-	<xsd:import namespace="org.marssa.footprint.datatypes"
+	<xsd:import namespace="datatypes.footprint.marssa.org"
 		schemaLocation="../generated/schemas/datatypes.xsd" />
-	<xsd:import namespace="org.marssa.footprint.datatypes.integer"
+	<xsd:import namespace="integer.datatypes.footprint.marssa.org"
 		schemaLocation="../generated/schemas/datatypes.integer.xsd" />
 
 	<xsd:complexType name="AddressType">

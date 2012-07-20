@@ -113,9 +113,16 @@
 				</configuration>
 			</plugin>
 
+			<!-- Add target/generated-sources/src/main/java to the build path -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Process external resources -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-remote-resources-plugin</artifactId>
 			</plugin>
 
 			<!-- Generate Java classes from xsd file during generate-sources phase -->
@@ -140,8 +147,6 @@
 							<xsdOptions>
 								<xsdOption>
 									<xsd>${basedir}/src/main/resources/schemas/settings.xsd</xsd>
-
-									<bindingFile>${basedir}/src/main/resources/configuration/jaxb/settings.xjb</bindingFile>
 
 									<deleteDirs>
 										<deleteDir>${basedir}/target/generated-sources/src/main/java/org/marssa/footprint</deleteDir>

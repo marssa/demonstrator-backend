@@ -22,8 +22,7 @@ import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.interfaces.control.lighting.ILightToggle;
 import org.marssa.footprint.logger.MMarker;
-import org.marssa.services.diagnostics.daq.LabJackU3;
-import org.marssa.services.diagnostics.daq.LabJackUE9;
+import org.marssa.services.diagnostics.daq.LabJack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,53 +32,61 @@ public class NavigationLightsController implements ILightToggle {
 			.getLogger(NavigationLightsController.class.getName());
 
 	private boolean lightState;
-	private LabJackUE9 lj;
-	private String switched;
+	private LabJack lj;
 	private MInteger navLights;
-	private final Object[] poho = { lj.getHost().getContents(),
-			lj.getPort().intValue() };
+	private String address = "";
 
 	/**
 	 * 
-	 * @param host
-	 * @param port
+	 * @param lj
 	 * @param navLights
 	 * @throws UnknownHostException
 	 * @throws NoConnection
 	 */
-	public NavigationLightsController(LabJackU3 lj, MInteger navLights)
+	public NavigationLightsController(LabJack lj, MInteger navLights)
 			throws UnknownHostException, NoConnection {
-		// TODO There must be something wrong here. FIO4 is operating in output
-		// mode, regardless of FIO4-dir
-		// Set direction for FIO4 port
-		// lj.write(LabJack.FIO4_DIR_ADDR, new MBoolean(true));
+		address = lj.getHost().getContents() + ":" + lj.getPort().intValue();
 		logger.info(
-				"An instance of Navigation light controller was instantiated with labjack host {}, and port {}.",
-				poho);
+				"An instance of navigation lights controller was instantiated with LabJack connected at {}",
+				address);
+		this.lj = lj;
 		this.lightState = false;
 		this.navLights = navLights;
+
+		// TODO There must be something wrong here. FIO4 is operating in output
+		// mode, regardless of FIO4-dir
+
+		// Set direction for FIO4 port
+		// lj.write(LabJack.FIO4_DIR_ADDR, new MBoolean(true));
+
+		// Set output to false
+		lj.write(navLights, new MBoolean(false));
 
 	}
 
 	/**
 	 * 
-	 * @param host
-	 * @param port
+	 * @param lj
 	 * @param navLights
 	 * @param newState
 	 * @throws NoConnection
 	 * @throws UnknownHostException
 	 */
-	public NavigationLightsController(LabJackU3 lj, MInteger navLights,
+	public NavigationLightsController(LabJack lj, MInteger navLights,
 			MBoolean newState) throws NoConnection, UnknownHostException {
+		address = lj.getHost().getContents() + ":" + lj.getPort().intValue();
+		logger.info(
+				"An instance of navigation lights controller was instantiated with LabJack connected at {} with light state set to {}",
+				new Object[] { address, newState.getValue() });
+		this.lightState = newState.getValue();
+
 		// TODO There must be something wrong here. FIO4 is operating in output
 		// mode, regardless of FIO4-dir
+
 		// Set direction for FIO4 port
 		// lj.write(LabJack.FIO4_DIR_ADDR, new MBoolean(true));
-		logger.info(
-				"An instance of Navigation light controller was instantiated with labjack host: {}, and port: {}, with state set to: {}",
-				poho, newState.getValue());
-		lightState = newState.getValue();
+
+		// Set outout to new state
 		lj.write(navLights, newState);
 	}
 
@@ -87,35 +94,26 @@ public class NavigationLightsController implements ILightToggle {
 	public void toggleLight() throws NoConnection {
 
 		lightState = !lightState;
-		if (lightState)
-			switched = "ON";
-		else
-			switched = "OFF";
-
 		logger.trace(
-				"NavigationLights from labjack with host: {} and port: {} have been switched {} .",
-				poho, switched);
+				MMarker.SETTER,
+				"Navigation lights from LabJack connected at {} have been switched to {}",
+				address, lightState ? "ON" : "OFF");
 		lj.write(navLights, new MBoolean(lightState));
 	}
 
 	public MBoolean getNavigationLightState() {
-		logger.trace(
-				MMarker.GETTER,
-				"Returning LightState {}, from labjack with host: {} and port: {} .",
-				new MBoolean(lightState), poho);
+		logger.trace(MMarker.GETTER,
+				"Returning light state {}, from LabJack connected at {}",
+				new MBoolean(lightState), address);
 		return new MBoolean(lightState);
 	}
 
 	public void setNavigationLightState(MBoolean newState) throws NoConnection {
 		this.lightState = newState.getValue();
-		if (newState.getValue())
-			switched = "ON";
-		else
-			switched = "OFF";
 		logger.trace(
 				MMarker.SETTER,
-				"Switching Navigationlight : {} ,from labjack with host: {} and port: {}",
-				switched, poho);
+				"Navigation lights from LabJack connected at {} have been switched to {}",
+				address, lightState ? "ON" : "OFF");
 		lj.write(navLights, newState);
 	}
 }

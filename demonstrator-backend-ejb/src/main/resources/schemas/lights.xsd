@@ -16,41 +16,41 @@
     limitations under the License.
 
 -->
+
 <?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="daq.demonstrator.marssa.org" xmlns="daq.demonstrator.marssa.org"
-	xmlns:network="network.demonstrator.marssa.org" xmlns:marssa="datatypes.footprint.marssa.org"
-	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="2.0">
+	targetNamespace="lights.demonstrator.marssa.org" xmlns="lights.demonstrator.marssa.org"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" xmlns:power="ri.projects.realpromise.power"
+	xmlns:marssa="datatypes.footprint.marssa.org" xmlns:marssa-integer="integer.datatypes.footprint.marssa.org"
+	jxb:version="2.0">
 
-	<xsd:import namespace="network.demonstrator.marssa.org"
-		schemaLocation="network.xsd" />
 	<xsd:import namespace="datatypes.footprint.marssa.org"
 		schemaLocation="../generated/schemas/datatypes.xsd" />
+	<xsd:import namespace="integer.datatypes.footprint.marssa.org"
+		schemaLocation="../generated/schemas/datatypes.integer.xsd" />
 
-	<xsd:complexType name="DAQsType">
+	<xsd:complexType name="LightsType">
 		<xsd:sequence>
-			<xsd:element name="daq" type="DAQType" minOccurs="1"
+			<xsd:element name="light" type="LightType" minOccurs="1"
 				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 
-	<xsd:complexType name="DAQType">
+	<xsd:complexType name="LightType">
 		<xsd:sequence>
-			<xsd:element name="daqID" type="xsd:ID" />
-			<xsd:element name="DAQname" type="marssa:MString" />
-			<xsd:choice>
-				<xsd:element name="socket" type="network:AddressType" />
-				<!-- <xsd:element name="serial" type="serial:AddressType" /> -->
-			</xsd:choice>
-			<xsd:element name="type" type="DAQCategory"/>
-			<xsd:element name="roomID" type="xsd:IDREF" minOccurs="0" />
+			<xsd:element name="lightID" type="xsd:ID" />
+			<xsd:element name="name" type="marssa:MString" />
+			<xsd:element name="type" type="ControllerCategory" />
+			<xsd:element name="daqID" type="xsd:IDREF" />
+			<xsd:element name="daqPort" type="marssa-integer:MInteger" />
 		</xsd:sequence>
 	</xsd:complexType>
-
-	<xsd:simpleType name="DAQCategory">
+	
+	<xsd:simpleType name="ControllerCategory">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="LabJack U3"></xsd:enumeration>
-			<xsd:enumeration value="LabJack UE9"></xsd:enumeration>
+			<xsd:enumeration value="Navigation Lights"></xsd:enumeration>
+			<xsd:enumeration value="Underwater Lights"></xsd:enumeration>
 		</xsd:restriction>
 	</xsd:simpleType>
+
 </xsd:schema>
