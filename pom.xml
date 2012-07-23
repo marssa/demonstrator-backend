@@ -91,6 +91,16 @@
 		<url>http://www.marsec-xl-projects.org/projects/demonstrator-backend</url>
 	</issueManagement>
 
+	<repositories>
+		<!-- Temporary repository containing MARSSA artifacts -->
+		<repository>
+			<snapshots />
+			<id>sonatype-nexus-snapshots</id>
+			<name>Sonatype Nexus Snapshots</name>
+			<url> https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
+	
 	<dependencyManagement>
 		<dependencies>
 

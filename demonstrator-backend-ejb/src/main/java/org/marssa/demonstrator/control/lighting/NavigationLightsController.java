@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class NavigationLightsController implements ILightToggle {
 
-	static Logger logger = LoggerFactory
+	private static final Logger logger = LoggerFactory
 			.getLogger(NavigationLightsController.class.getName());
 
 	private boolean lightState;

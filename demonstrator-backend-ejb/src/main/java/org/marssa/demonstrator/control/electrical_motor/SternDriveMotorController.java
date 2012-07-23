@@ -15,6 +15,9 @@
  */
 package org.marssa.demonstrator.control.electrical_motor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.datatypes.integer.MInteger;
@@ -22,7 +25,7 @@ import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
-import org.marssa.services.diagnostics.daq.LabJackUE9;
+import org.marssa.services.diagnostics.daq.LabJack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +35,14 @@ import org.slf4j.LoggerFactory;
  */
 public class SternDriveMotorController implements IMotorController {
 
-	private final LabJackUE9 lj;
-	int ordinal;
-	// ------------ - - - - - + + + + +
-	int[] speed = { -16, -9, -8, -6, -4, 0, 4, 6, 8, 9, 16 };
-	private int arrayValue;
 	private static final Logger logger = LoggerFactory
 			.getLogger(SternDriveMotorController.class);
+	// ------------ - - - - - + + + + +
+	private static final int[] speed = { -16, -9, -8, -6, -4, 0, 4, 6, 8, 9, 16 };
+
+	private final LabJack lj;
+	private final ArrayList<MInteger> ports = new ArrayList<MInteger>();
+	private int arrayValue;
 
 	/**
 	 * @throws ConfigurationError
@@ -46,9 +50,10 @@ public class SternDriveMotorController implements IMotorController {
 	 * @throws NoConnection
 	 * 
 	 */
-	public SternDriveMotorController(LabJackUE9 lj) throws ConfigurationError,
-			OutOfRange, NoConnection {
+	public SternDriveMotorController(LabJack lj, List<MInteger> ports)
+			throws ConfigurationError, OutOfRange, NoConnection {
 		this.lj = lj;
+		this.ports.addAll(ports);
 		arrayValue = 5;
 		labJackOutput(speed[arrayValue]);
 	}
@@ -63,8 +68,8 @@ public class SternDriveMotorController implements IMotorController {
 			if (r > 0) {
 				m = true;
 			}
-			logger.info("Port: " + (6008 + p) + " " + (m ? true : false));
-			lj.write(new MInteger(6008 + p), new MBoolean(m ? true : false));
+			logger.info("Port: " + ports.get(p) + " " + m);
+			lj.write(ports.get(p), new MBoolean(m));
 			m = false;
 			p++;
 		}
@@ -91,7 +96,8 @@ public class SternDriveMotorController implements IMotorController {
 			OutOfRange, NoConnection {
 		if (arrayValue == 5) {
 			lj.write(new MInteger(6000), new MBoolean(false));
-			logger.info("DPDT relay1----60013 " + " false ------ increase");
+			logger.info("DPDT relay1----" + ports.get(ports.size() - 1)
+					+ " false ------ increase");
 			Thread.sleep(1000);
 		}
 		if (arrayValue == 10) {
@@ -108,7 +114,8 @@ public class SternDriveMotorController implements IMotorController {
 			OutOfRange, NoConnection {
 		if (arrayValue == 5) {
 			lj.write(new MInteger(6000), new MBoolean(false));
-			logger.info("DPDT relay2----6013 " + " true ------ decrease");
+			logger.info("DPDT relay2----" + ports.get(ports.size() - 1)
+					+ " true ------ decrease");
 			Thread.sleep(1000);
 		}
 		if (arrayValue == 0) {
@@ -118,5 +125,4 @@ public class SternDriveMotorController implements IMotorController {
 			labJackOutput(speed[arrayValue]);
 		}
 	}
-
 }

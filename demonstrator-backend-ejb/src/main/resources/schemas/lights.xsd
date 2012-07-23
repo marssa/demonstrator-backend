@@ -40,13 +40,13 @@
 		<xsd:sequence>
 			<xsd:element name="lightID" type="xsd:ID" />
 			<xsd:element name="name" type="marssa:MString" />
-			<xsd:element name="type" type="ControllerCategory" />
+			<xsd:element name="type" type="LightControllerCategory" />
 			<xsd:element name="daqID" type="xsd:IDREF" />
 			<xsd:element name="daqPort" type="marssa-integer:MInteger" />
 		</xsd:sequence>
 	</xsd:complexType>
 	
-	<xsd:simpleType name="ControllerCategory">
+	<xsd:simpleType name="LightControllerCategory">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Navigation Lights"></xsd:enumeration>
 			<xsd:enumeration value="Underwater Lights"></xsd:enumeration>

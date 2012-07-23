@@ -43,15 +43,15 @@ import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Clayton Tabone
+ * 
+ */
 @Singleton
 @Startup
-/**
- * @author clayton
- *
- */
 public class LightControllerBean {
 
-	private static Logger logger = LoggerFactory
+	private static final Logger logger = LoggerFactory
 			.getLogger(LightControllerBean.class.getName());
 
 	private NavigationLightsController navLightsController;

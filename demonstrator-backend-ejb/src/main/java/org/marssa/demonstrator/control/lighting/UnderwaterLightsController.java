@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
  */
 public class UnderwaterLightsController implements ILightToggle {
 
-	static Logger logger = LoggerFactory
-			.getLogger("UnderwaterLightsController");
+	private static final Logger logger = LoggerFactory
+			.getLogger(UnderwaterLightsController.class.getName());
 
 	private boolean lightState;
 	private LabJack lj;
