@@ -17,7 +17,10 @@ package org.marssa.demonstrator.beans;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -28,17 +31,20 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.marssa.demonstrator.control.lighting.NavigationLightsController;
-import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
+import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
+import org.marssa.demonstrator.daq.DAQCategory;
 import org.marssa.demonstrator.daq.DAQType;
-import org.marssa.demonstrator.lights.LightType;
+import org.marssa.demonstrator.motors.MotorType;
 import org.marssa.demonstrator.network.AddressType;
 import org.marssa.demonstrator.settings.Settings;
 import org.marssa.footprint.datatypes.MString;
 import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
+import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.services.diagnostics.daq.LabJack;
+import org.marssa.services.diagnostics.daq.LabJackU3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,28 +54,29 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 @Startup
-public class LightControllerBean {
+public class MotorControllerBean {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(LightControllerBean.class.getName());
+			.getLogger(MotorControllerBean.class.getName());
 
 	@Inject
 	DAQBean daqBean;
 
-	private NavigationLightsController navLightsController;
-	private UnderwaterLightsController underwaterLightsController;
+	private AuxiliaryMotorsController auxMotorsController;
+	private SternDriveMotorController sternDriveMotorController;
 
 	/**
 	 * 
 	 */
-	public LightControllerBean() {
+	public MotorControllerBean() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@PostConstruct
 	private void init() throws ConfigurationError, NoConnection,
-			UnknownHostException, JAXBException, FileNotFoundException {
-		logger.info("Initializing LightControllerBean");
+			UnknownHostException, JAXBException, FileNotFoundException,
+			OutOfRange {
+		logger.info("Initializing Motor Controller Bean");
 		JAXBContext context = JAXBContext
 				.newInstance(new Class[] { Settings.class });
 		Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -77,14 +84,12 @@ public class LightControllerBean {
 				.getResourceAsStream("configuration/settings.xml");
 
 		Settings settings = (Settings) unmarshaller.unmarshal(is);
-		for (LightType light : settings.getLights().getLight()) {
-			DAQType daq = (DAQType) (light.getDaqID());
+		for (MotorType motor : settings.getMotors().getMotor()) {
+			DAQType daq = (DAQType) (motor.getConfiguration().getDaqID());
 			AddressType addressElement = daq.getSocket();
 			LabJack lj;
-			logger.info(
-					"Found configuration for {} connected to {}, port {}",
-					new Object[] { light.getName(), daq.getDAQname(),
-							light.getDaqPort() });
+			logger.info("Found configuration for {} connected to {}",
+					motor.getName(), daq.getDAQname());
 			if (addressElement.getHost().getIp() == null
 					|| addressElement.getHost().getIp().isEmpty()) {
 				String hostname = addressElement.getHost().getHostname();
@@ -95,35 +100,40 @@ public class LightControllerBean {
 				lj = daqBean.getLabJackByIP(new MString(ip), new MInteger(
 						addressElement.getPort()));
 			}
-			switch (light.getType()) {
-			case NAVIGATION_LIGHTS:
-				navLightsController = new NavigationLightsController(lj,
-						new MInteger(light.getDaqPort().intValue()));
-				break;
-			case UNDERWATER_LIGHTS:
-				underwaterLightsController = new UnderwaterLightsController(lj,
-						new MInteger(light.getDaqPort().intValue()));
-				break;
-			default:
-				throw new ConfigurationError("Unknown Light Controller type: "
-						+ light.getType());
+			if (motor.getConfiguration().getAuxiliaryMotor() != null) {
+				if (daq.getType() == DAQCategory.LAB_JACK_U_3)
+					auxMotorsController = new AuxiliaryMotorsController(
+							(LabJackU3) lj);
+				else
+					throw new ConfigurationError(
+							"Auxiliary Motor Controller has to be connected to a LabJack U3");
+			} else if (motor.getConfiguration().getSternDriveMotor() != null) {
+				List<MInteger> ports = new ArrayList<MInteger>();
+				for (BigInteger port : motor.getConfiguration()
+						.getSternDriveMotor().getDaqPorts().getDaqPort()) {
+					ports.add(new MInteger(port.intValue()));
+				}
+				sternDriveMotorController = new SternDriveMotorController(lj,
+						ports);
+			} else {
+				throw new ConfigurationError("Unknown Motor Controller type");
 			}
 		}
-		logger.info("Initialized LightControllerBean");
+		logger.info("Initialized Motor Controller Bean");
 	}
 
 	@PreDestroy
 	private void destroy() {
-		logger.info("Destroying LightControllerBean");
+		logger.info("Destroying Motor Controller Bean");
 		// TODO Add unimplemented method
-		logger.info("Destroyed LightControllerBean");
+		logger.info("Destroyed Motor Controller Bean");
 	}
 
-	public UnderwaterLightsController getUnderWaterLightsController() {
-		return underwaterLightsController;
+	public AuxiliaryMotorsController getAuxMotorsController() {
+		return auxMotorsController;
 	}
 
-	public NavigationLightsController getNavigationLightsController() {
-		return navLightsController;
+	public SternDriveMotorController getSternDriveMotorController() {
+		return sternDriveMotorController;
 	}
 }

@@ -16,7 +16,7 @@
     limitations under the License.
 
 -->
-<p:settings xmlns:p="settings.demonstrator.marssa.org" xmlns:p1="rooms.demonstrator.marssa.org" xmlns:p2="datatypes.footprint.marssa.org" xmlns:p3="daq.demonstrator.marssa.org" xmlns:p4="network.demonstrator.marssa.org" xmlns:p5="lights.demonstrator.marssa.org" xmlns:tns="integer.datatypes.footprint.marssa.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="settings.demonstrator.marssa.org ../schemas/settings.xsd ">
+<p:settings xmlns:p="settings.demonstrator.marssa.org" xmlns:p1="rooms.demonstrator.marssa.org" xmlns:p2="datatypes.footprint.marssa.org" xmlns:p3="daq.demonstrator.marssa.org" xmlns:p4="network.demonstrator.marssa.org" xmlns:p5="lights.demonstrator.marssa.org" xmlns:p6="gps.demonstrator.marssa.org" xmlns:tns="integer.datatypes.footprint.marssa.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="settings.demonstrator.marssa.org ../schemas/settings.xsd ">
   <rooms>
     <room>
       <roomID>room0</roomID>
@@ -56,4 +56,34 @@
     	<daqPort>6001</daqPort>
     </light>
   </lights>
+  <motors>
+    <motor>
+      <motorID>motor0</motorID>
+      <name>Stern Drive Motor</name>
+      <configuration>
+        <daqID>daq0</daqID>
+        <sternDriveMotor>
+        	<type>Stern Drive Motor</type>
+        	<daqPorts>
+        		<daqPort>6008</daqPort>
+        		<daqPort>6009</daqPort>
+        		<daqPort>6010</daqPort>
+        		<daqPort>6011</daqPort>
+        		<daqPort>6012</daqPort>
+        		<daqPort>6013</daqPort>
+        	</daqPorts>
+        </sternDriveMotor>
+      </configuration>
+    </motor>
+  </motors>
+  <gps>
+    <gpsID>GPS</gpsID>
+    <GPSname>GPSname</GPSname>
+    <socket>
+      <host>
+        <ip>192.168.1.1</ip>
+      </host>
+      <port>2947</port>
+    </socket>
+  </gps>
 </p:settings>

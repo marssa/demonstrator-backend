@@ -82,6 +82,20 @@ public class AuxiliaryMotorsController implements IMotorController, IController 
 
 	@Override
 	public void stop() {
+		// TODO FIX NOW
+		try {
+			lj.setTimerValue(LabJackU3.TimerU3.TIMER_0, new MInteger(0));
+			lj.setTimerValue(LabJackU3.TimerU3.TIMER_1, new MInteger(0));
+		} catch (NoConnection e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OutOfRange e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ConfigurationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

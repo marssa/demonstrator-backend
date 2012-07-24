@@ -17,21 +17,20 @@ package org.marssa.demonstrator.beans;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.marssa.demonstrator.control.lighting.NavigationLightsController;
-import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
 import org.marssa.demonstrator.daq.DAQType;
-import org.marssa.demonstrator.lights.LightType;
 import org.marssa.demonstrator.network.AddressType;
 import org.marssa.demonstrator.settings.Settings;
 import org.marssa.footprint.datatypes.MString;
@@ -39,6 +38,8 @@ import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.services.diagnostics.daq.LabJack;
+import org.marssa.services.diagnostics.daq.LabJackU3;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,28 +49,24 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 @Startup
-public class LightControllerBean {
+public class DAQBean {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(LightControllerBean.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(DAQBean.class
+			.getName());
 
-	@Inject
-	DAQBean daqBean;
-
-	private NavigationLightsController navLightsController;
-	private UnderwaterLightsController underwaterLightsController;
+	private HashMap<String, LabJack> daqs;
 
 	/**
 	 * 
 	 */
-	public LightControllerBean() {
+	public DAQBean() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@PostConstruct
 	private void init() throws ConfigurationError, NoConnection,
 			UnknownHostException, JAXBException, FileNotFoundException {
-		logger.info("Initializing LightControllerBean");
+		logger.info("Initializing DAQ Bean");
 		JAXBContext context = JAXBContext
 				.newInstance(new Class[] { Settings.class });
 		Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -77,53 +74,70 @@ public class LightControllerBean {
 				.getResourceAsStream("configuration/settings.xml");
 
 		Settings settings = (Settings) unmarshaller.unmarshal(is);
-		for (LightType light : settings.getLights().getLight()) {
-			DAQType daq = (DAQType) (light.getDaqID());
+		for (DAQType daq : settings.getDaqs().getDaq()) {
 			AddressType addressElement = daq.getSocket();
-			LabJack lj;
-			logger.info(
-					"Found configuration for {} connected to {}, port {}",
-					new Object[] { light.getName(), daq.getDAQname(),
-							light.getDaqPort() });
+			MString address;
 			if (addressElement.getHost().getIp() == null
 					|| addressElement.getHost().getIp().isEmpty()) {
-				String hostname = addressElement.getHost().getHostname();
-				lj = daqBean.getLabJackByHostname(new MString(hostname),
-						new MInteger(addressElement.getPort()));
+				String ip = addressElement.getHost().getHostname();
+				address = new MString(Inet4Address.getByName(ip).getAddress()
+						.toString());
 			} else {
-				String ip = addressElement.getHost().getIp();
-				lj = daqBean.getLabJackByIP(new MString(ip), new MInteger(
-						addressElement.getPort()));
+				address = new MString(addressElement.getHost().getIp());
 			}
-			switch (light.getType()) {
-			case NAVIGATION_LIGHTS:
-				navLightsController = new NavigationLightsController(lj,
-						new MInteger(light.getDaqPort().intValue()));
+			logger.info(
+					"Found configuration for {} connected to {}, port {}",
+					new Object[] { daq.getDAQname(), address,
+							addressElement.getPort() });
+			LabJack lj;
+			switch (daq.getType()) {
+			case LAB_JACK_U_3:
+				lj = LabJackU3.getInstance(address, new MInteger(daq
+						.getSocket().getPort()));
 				break;
-			case UNDERWATER_LIGHTS:
-				underwaterLightsController = new UnderwaterLightsController(lj,
-						new MInteger(light.getDaqPort().intValue()));
+			case LAB_JACK_UE_9:
+				lj = LabJackUE9.getInstance(address, new MInteger(daq
+						.getSocket().getPort()));
 				break;
 			default:
-				throw new ConfigurationError("Unknown Light Controller type: "
-						+ light.getType());
+				throw new ConfigurationError("Unknown DAQ type: "
+						+ daq.getType());
 			}
+			daqs.put(address.toString() + ":" + addressElement.getPort(), lj);
 		}
-		logger.info("Initialized LightControllerBean");
+		logger.info("Initialized DAQ Bean");
 	}
 
 	@PreDestroy
 	private void destroy() {
-		logger.info("Destroying LightControllerBean");
-		// TODO Add unimplemented method
-		logger.info("Destroyed LightControllerBean");
+		logger.info("Destroying DAQ Bean");
+		for (Map.Entry<String, LabJack> daq : daqs.entrySet()) {
+			// TODO disconnect all LabJack instances
+			// daq.getValue().disconnect();
+		}
+		daqs.clear();
+		logger.info("Destroyed DAQ Bean");
 	}
 
-	public UnderwaterLightsController getUnderWaterLightsController() {
-		return underwaterLightsController;
+	public LabJack getLabJackByIP(MString ip, MInteger port)
+			throws ConfigurationError {
+		LabJack lj = daqs.get(ip.toString() + ":" + port.intValue());
+		if (lj == null)
+			throw new ConfigurationError(
+					"No LabJack configuration has been found for " + ip + ":"
+							+ port);
+		return lj;
 	}
 
-	public NavigationLightsController getNavigationLightsController() {
-		return navLightsController;
+	public LabJack getLabJackByHostname(MString hostname, MInteger port)
+			throws ConfigurationError, UnknownHostException {
+		String ip = Inet4Address.getByName(hostname.toString()).getAddress()
+				.toString();
+		LabJack lj = daqs.get(ip + ":" + port.intValue());
+		if (lj == null)
+			throw new ConfigurationError(
+					"No LabJack configuration has been found for " + ip + ":"
+							+ port);
+		return lj;
 	}
 }
