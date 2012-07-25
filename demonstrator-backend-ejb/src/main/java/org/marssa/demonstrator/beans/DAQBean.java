@@ -54,7 +54,7 @@ public class DAQBean {
 	private static final Logger logger = LoggerFactory.getLogger(DAQBean.class
 			.getName());
 
-	private HashMap<String, LabJack> daqs;
+	private final HashMap<String, LabJack> daqs = new HashMap<String, LabJack>();
 
 	/**
 	 * 
@@ -79,9 +79,9 @@ public class DAQBean {
 			MString address;
 			if (addressElement.getHost().getIp() == null
 					|| addressElement.getHost().getIp().isEmpty()) {
-				String ip = addressElement.getHost().getHostname();
-				address = new MString(Inet4Address.getByName(ip).getAddress()
-						.toString());
+				String hostname = addressElement.getHost().getHostname();
+				address = new MString(Inet4Address.getByName(hostname)
+						.getAddress().toString());
 			} else {
 				address = new MString(addressElement.getHost().getIp());
 			}

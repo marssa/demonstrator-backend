@@ -21,7 +21,7 @@
 
 	<xsd:complexType name="MotorsType">
 		<xsd:sequence>
-			<xsd:element name="motor" type="MotorType" minOccurs="1"
+			<xsd:element name="motor" type="MotorType" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>

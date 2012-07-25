@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2012 MARSEC-XL International Limited
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<p:settings xmlns:p="settings.demonstrator.marssa.org" xmlns:p1="rooms.demonstrator.marssa.org" xmlns:p2="daq.demonstrator.marssa.org" xmlns:p3="datatypes.footprint.marssa.org" xmlns:p4="network.demonstrator.marssa.org" xmlns:p5="lights.demonstrator.marssa.org" xmlns:p6="gps.demonstrator.marssa.org" xmlns:tns="integer.datatypes.footprint.marssa.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="settings.demonstrator.marssa.org ../schemas/settings.xsd ">
+  <rooms>
+    <room>
+      <roomID>room0</roomID>
+      <name>Bridge</name>
+      <level>Upper Deck</level>
+      <section>Bow</section>
+      <side>Port</side>
+    </room>
+  </rooms>
+  <daqs>
+    <daq>
+      <daqID>daq0</daqID>
+      <DAQname>LabJack UE9</DAQname>
+      <socket>
+        <host>
+          <ip>192.168.2.105</ip>
+        </host>
+        <port>502</port>
+      </socket>
+      <type>LabJack UE9</type>
+      <roomID>room0</roomID>
+    </daq>
+  </daqs>
+  <lights>
+    <light>
+      <lightID>light0</lightID>
+      <name>Navigation Lights</name>
+      <type>Navigation Lights</type>
+      <daqID>daq0</daqID>
+      <daqPort>6000</daqPort>
+    </light>
+    <light>
+    	<lightID>light1</lightID>
+    	<name>Underwater Lights</name>
+    	<type>Underwater Lights</type>
+    	<daqID>daq0</daqID>
+    	<daqPort>6001</daqPort>
+    </light>
+  </lights>
+  <motors>
+    <motor>
+      <motorID>motor0</motorID>
+      <name>Stern Drive Motor</name>
+      <configuration>
+        <daqID>daq0</daqID>
+        <sternDriveMotor>
+        	<type>Stern Drive Motor</type>
+        	<daqPorts>
+        		<daqPort>6008</daqPort>
+        		<daqPort>6009</daqPort>
+        		<daqPort>6010</daqPort>
+        		<daqPort>6011</daqPort>
+        		<daqPort>6012</daqPort>
+        		<daqPort>6013</daqPort>
+        	</daqPorts>
+        </sternDriveMotor>
+      </configuration>
+    </motor>
+  </motors>
+  <gps-receivers>
+    <gps>
+      <gpsID>gps0</gpsID>
+      <name>BU-353 on GPSd</name>
+      <socket>
+        <host>
+          <ip>192.168.2.104</ip>
+        </host>
+        <port>2947</port>
+      </socket>
+    </gps>
+  </gps-receivers>
+</p:settings>

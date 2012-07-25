@@ -25,7 +25,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -53,7 +52,6 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Singleton
-@Startup
 public class MotorControllerBean {
 
 	private static final Logger logger = LoggerFactory
