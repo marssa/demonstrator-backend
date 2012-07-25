@@ -15,92 +15,80 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import java.util.ArrayList;
+import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.restlet.Application;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.Restlet;
-import org.restlet.data.CacheDirective;
-import org.restlet.data.MediaType;
-import org.restlet.routing.Router;
 
+@Path("/test/rudder")
+@RequestScoped
 public class RudderControllerTestApplication extends Application {
-	
-	private final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
-	
-	public RudderControllerTestApplication(ArrayList<CacheDirective> cacheDirectives) {
-		this.cacheDirectives.addAll(cacheDirectives);
+
+	@GET
+	@Produces("application/json")
+	public String getAngle() {
+		return WebServicesTest.getRudderAngle().toString();
 	}
-	
-	/**
-     * Creates a root Restlet that will receive all incoming calls.
-     */
-    @Override
-    public synchronized Restlet createInboundRoot() {
-        Router router = new Router(getContext());
-        
-        // Create the rotation handler
-        Restlet rotate = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-    			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-    			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
-    			if(direction)
-    				WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest.getRudderAngle().doubleValue() + 1.0));
-				else
-					WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest.getRudderAngle().doubleValue() - 1.0));
-				response.setCacheDirectives(cacheDirectives);
-    			response.setEntity("Rotating the rudder in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
-            }
-        };
-        
-        // Create the rotation handler
-        Restlet rotateMore = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-    			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-    			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
-    			if(direction)
-    			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest.getRudderAngle().doubleValue() + 5.0));
-				else
-					WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest.getRudderAngle().doubleValue() - 5.0));
-    			response.setCacheDirectives(cacheDirectives);
-    			response.setEntity("Rotating the rudder MORE in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
-            }
-        };
-        
-        // Create the rotation handler
-        //TODO Change this to a Resource
-        Restlet angle = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		response.setCacheDirectives(cacheDirectives);
-    			response.setEntity(WebServicesTest.getRudderAngle().toString(), MediaType.TEXT_PLAIN);
-            }
-        };
-        
-        // Create the rotation handler to rotate to the extremes
-        Restlet rotateFull = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-    			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-    			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
-    			if(direction)
-    				WebServicesTest.setRudderAngle(new MDecimal(30.0));
-				else
-    				WebServicesTest.setRudderAngle(new MDecimal(-30.0));
-    			response.setCacheDirectives(cacheDirectives);
-    			response.setEntity("Rotating the rudder to the extreme = " + direction, MediaType.TEXT_PLAIN);
-            }
-        };
-        
-        router.attach("/angle", angle);
-        router.attach("/rotate/{direction}", rotate);
-        router.attach("/rotateMore/{direction}", rotateMore);
-        router.attach("/rotateFull/{direction}", rotateFull);
-        
-        return router;
-    }
+
+	@POST
+	@Produces("text/plain")
+	@Path("/rotate/{direction}")
+	public String rotate(@PathParam("direction") boolean direction) {
+		if (direction)
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() + 1.0));
+		else
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() - 1.0));
+		return "Rotating the rudder in the direction set by direction = "
+				+ direction;
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/rotateMore/{direction}")
+	public String rotateMore(@PathParam("direction") boolean direction) {
+		if (direction)
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() + 5.0));
+		else
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() - 5.0));
+		return "Rotating the rudder more in the direction set by = "
+				+ direction;
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/rotateFull/{direction}")
+	public String rotateFull(@PathParam("direction") boolean direction) {
+		if (direction)
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() + 30.0));
+		else
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() - 30.0));
+		return "Rotating the rudder to the extreme in the direction set by = "
+				+ direction;
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/rotate/{direction}/{amount}")
+	public String rotate(@PathParam("direction") boolean direction,
+			@PathParam("amount") double amount) {
+		if (direction)
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() + amount));
+		else
+			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+					.getRudderAngle().doubleValue() - amount));
+		return "Rotating the rudder by " + amount
+				+ " in the direction set by direction = " + direction;
+	}
 }

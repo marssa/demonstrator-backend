@@ -25,7 +25,7 @@ import javax.ws.rs.Produces;
 import org.marssa.demonstrator.tests.web_services.WebServicesTest.LightState;
 import org.marssa.footprint.datatypes.MBoolean;
 
-@Path("/test/lighting")
+@Path("/test/lights")
 @RequestScoped
 public class LightControllerTestApplication {
 
@@ -33,14 +33,14 @@ public class LightControllerTestApplication {
 
 	@GET
 	@Produces("application/json")
-	@Path("/navigationLights")
+	@Path("/navigation")
 	public String getNavLights() {
 		return currentLightState.navLightState.toJSON().toString();
 	}
 
 	@POST
 	@Produces("text/plain")
-	@Path("/navigationLights/{state}")
+	@Path("/navigation/{state}")
 	public String setNavLights(@PathParam("state") String state) {
 		boolean value = Boolean.parseBoolean(state);
 		currentLightState.navLightState = new MBoolean(value);
@@ -49,14 +49,14 @@ public class LightControllerTestApplication {
 
 	@GET
 	@Produces("application/json")
-	@Path("/underwaterLights")
+	@Path("/underwater")
 	public String getUnderwaterLights() {
 		return currentLightState.underwaterLightState.toJSON().toString();
 	}
 
 	@POST
 	@Produces("text/plain")
-	@Path("/underwaterLights/{state}")
+	@Path("/underwater/{state}")
 	public String setUnderwaterLights(@PathParam("state") String state) {
 		boolean value = Boolean.parseBoolean(state);
 		currentLightState.underwaterLightState = new MBoolean(value);
@@ -65,12 +65,11 @@ public class LightControllerTestApplication {
 
 	@GET
 	@Produces("application/json")
-	@Path("statusAll")
 	public String getAllLights() {
-		return "{\"navLights\":"
+		return "{\"lights\":{" + "\"navigation\":"
 				+ WebServicesTest.getLightState().navLightState.toJSON()
-				+ ",\"underwaterLights\":"
+				+ ",\"underwater\":"
 				+ WebServicesTest.getLightState().underwaterLightState.toJSON()
-				+ "}";
+				+ "}}";
 	}
 }

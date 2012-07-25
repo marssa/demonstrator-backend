@@ -29,7 +29,7 @@ import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
 import org.marssa.footprint.interfaces.control.rudder.IRudderController;
 import org.marssa.footprint.interfaces.navigation.IGpsReceiver;
-import org.marssa.services.scheduling.MTimer;
+import org.marssa.services.scheduling.MTimerService;
 import org.marssa.services.scheduling.MTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class PathPlanningController extends MTimerTask {
 	private Coordinate nextHeading;
 	private int count = 0;
 	ArrayList<Waypoint> wayPointList;
-	MTimer timer;
+	MTimerService timer;
 	boolean routeReverse = false;
 
 	/**
@@ -67,7 +67,7 @@ public class PathPlanningController extends MTimerTask {
 		this.motorController = motorController;
 		this.rudderController = rudderController;
 		this.gpsReceiver = gpsReceiver;
-		timer = MTimer.getInstance();
+		timer = MTimerService.getInstance();
 		wayPointList = new ArrayList<Waypoint>();
 	}
 

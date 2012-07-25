@@ -119,12 +119,6 @@
 //				new MotionControlPageApplication(cacheDirectives,
 //						sternMotorController, rudderController));
 //
-//		// Attach the motion control feedback application
-//		component.getDefaultHost().attach(
-//				"/lightControlPage",
-//				new LightControlPageApplication(cacheDirectives,
-//						navLightsController, underwaterLightsController));
-//		
 //		// Attach the Path Planner (Autopilot) application
 //				component.getDefaultHost().attach(
 //						"/pathPlanner",

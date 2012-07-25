@@ -75,4 +75,16 @@ public class LightControllerApplication {
 				.setUnderwaterLightState(new MBoolean(value));
 		return "Set underwater lights state to " + (value ? "on" : "off");
 	}
+
+	@GET
+	@Produces("application/json")
+	public String getAllLights() {
+		return "{\"lights\":{"
+				+ "\"navigation\":"
+				+ lightControllerBean.getNavigationLightsController()
+						.getNavigationLightState().toJSON()
+				+ ",\"underwater\":"
+				+ lightControllerBean.getUnderWaterLightsController()
+						.getUnderwaterLightState().toJSON() + "}}";
+	}
 }
