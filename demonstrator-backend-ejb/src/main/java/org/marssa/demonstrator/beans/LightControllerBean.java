@@ -38,6 +38,8 @@ import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.services.diagnostics.daq.LabJack;
+import org.marssa.services.diagnostics.daq.LabJackU3;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +52,6 @@ public class LightControllerBean {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(LightControllerBean.class.getName());
-
-	@Inject
-	DAQBean daqBean;
 
 	private NavigationLightsController navLightsController;
 	private UnderwaterLightsController underwaterLightsController;
@@ -67,7 +66,6 @@ public class LightControllerBean {
 	@PostConstruct
 	private void init() throws ConfigurationError, NoConnection,
 			UnknownHostException, JAXBException, FileNotFoundException {
-		logger.info("Initializing LightControllerBean");
 		JAXBContext context = JAXBContext
 				.newInstance(new Class[] { Settings.class });
 		Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -83,15 +81,26 @@ public class LightControllerBean {
 					"Found configuration for {} connected to {}, port {}",
 					new Object[] { light.getName(), daq.getDAQname(),
 							light.getDaqPort() });
+			MString address;
 			if (addressElement.getHost().getIp() == null
 					|| addressElement.getHost().getIp().isEmpty()) {
-				String hostname = addressElement.getHost().getHostname();
-				lj = daqBean.getLabJackByHostname(new MString(hostname),
-						new MInteger(addressElement.getPort()));
+				address = new MString(addressElement.getHost().getHostname());
+
 			} else {
-				String ip = addressElement.getHost().getIp();
-				lj = daqBean.getLabJackByIP(new MString(ip), new MInteger(
-						addressElement.getPort()));
+				address = new MString(addressElement.getHost().getIp());
+			}
+			switch (daq.getType()) {
+			case LAB_JACK_U_3:
+				lj = LabJackU3.getInstance(address, new MInteger(daq
+						.getSocket().getPort()));
+				break;
+			case LAB_JACK_UE_9:
+				lj = LabJackUE9.getInstance(address, new MInteger(daq
+						.getSocket().getPort()));
+				break;
+			default:
+				throw new ConfigurationError("Unknown DAQ type: "
+						+ daq.getType());
 			}
 			switch (light.getType()) {
 			case NAVIGATION_LIGHTS:
@@ -107,14 +116,11 @@ public class LightControllerBean {
 						+ light.getType());
 			}
 		}
-		logger.info("Initialized LightControllerBean");
 	}
 
 	@PreDestroy
 	private void destroy() {
-		logger.info("Destroying LightControllerBean");
 		// TODO Add unimplemented method
-		logger.info("Destroyed LightControllerBean");
 	}
 
 	public UnderwaterLightsController getUnderWaterLightsController() {
