@@ -27,7 +27,7 @@ import org.marssa.demonstrator.beans.LightControllerBean;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.exceptions.NoConnection;
 
-@Path("/lighting")
+@Path("/lights")
 @RequestScoped
 public class LightControllerApplication {
 
@@ -36,7 +36,7 @@ public class LightControllerApplication {
 
 	@GET
 	@Produces("application/json")
-	@Path("/navigationLights")
+	@Path("/navigation")
 	public String getNavLights() {
 		return lightControllerBean.getNavigationLightsController()
 				.getNavigationLightState().toJSON().toString();
@@ -44,7 +44,7 @@ public class LightControllerApplication {
 
 	@POST
 	@Produces("text/plain")
-	@Path("/navigationLights/{state}")
+	@Path("/navigation/{state}")
 	public String setNavLights(@PathParam("state") String state)
 			throws NoConnection {
 		// TODO Handle parseException
@@ -52,12 +52,12 @@ public class LightControllerApplication {
 		boolean value = Boolean.parseBoolean(state);
 		lightControllerBean.getNavigationLightsController()
 				.setNavigationLightState(new MBoolean(value));
-		return "Setting navigation lights state to " + (value ? "on" : "off");
+		return "Set navigation lights state to " + (value ? "on" : "off");
 	}
 
 	@GET
 	@Produces("application/json")
-	@Path("/underwaterLights")
+	@Path("/underwater")
 	public String getUnderwaterLights() {
 		return lightControllerBean.getUnderWaterLightsController()
 				.getUnderwaterLightState().toJSON().toString();
@@ -65,7 +65,7 @@ public class LightControllerApplication {
 
 	@POST
 	@Produces("text/plain")
-	@Path("/underwaterLights/{state}")
+	@Path("/underwater/{state}")
 	public String setUnderwaterLights(@PathParam("state") String state)
 			throws NoConnection {
 		// TODO Handle parseException
@@ -73,6 +73,6 @@ public class LightControllerApplication {
 		boolean value = Boolean.parseBoolean(state);
 		lightControllerBean.getUnderWaterLightsController()
 				.setUnderwaterLightState(new MBoolean(value));
-		return "Setting underwater lights state to " + (value ? "on" : "off");
+		return "Set underwater lights state to " + (value ? "on" : "off");
 	}
 }

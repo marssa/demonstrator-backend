@@ -15,21 +15,21 @@
  */
 package org.marssa.demonstrator.web_services.motor;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.marssa.demonstrator.beans.MotorControllerBean;
+import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
 
-@Path("/motors/stern")
-@RequestScoped
-public class SternMotorControllerApplication {
+@Path("/motors/auxiliary")
+public class AuxiliaryMotorControllerApplication {
 
 	@Inject
 	private MotorControllerBean motorControllerBean;
@@ -39,16 +39,16 @@ public class SternMotorControllerApplication {
 	@Path("/speed")
 	public String getSpeed() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
-		return motorControllerBean.getSternDriveMotorController().getSpeed()
-				.toJSON().toString();
+		return motorControllerBean.getAuxMotorsController().getSpeed().toJSON()
+				.toString();
 	}
 
 	@POST
 	@Produces("text/plain")
 	@Path("/stop")
 	public String stop() throws NoConnection {
-		motorControllerBean.getSternDriveMotorController().stop();
-		return "Stopped stern drive motor";
+		motorControllerBean.getAuxMotorsController().stop();
+		return "Stopped auxiliary motor";
 	}
 
 	@POST
@@ -57,7 +57,7 @@ public class SternMotorControllerApplication {
 	public String increaseSpeed() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
 		motorControllerBean.getSternDriveMotorController().increase();
-		return "Increased stern drive motor speed";
+		return "Increased auxiliary motor speed";
 	}
 
 	@POST
@@ -66,6 +66,18 @@ public class SternMotorControllerApplication {
 	public String decreaseSpeed() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
 		motorControllerBean.getSternDriveMotorController().decrease();
-		return "Decreased stern drive motor speed";
+		return "Decreased auxiliary motor speed";
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/speed/{speed}")
+	public String setSpeed(@PathParam("speed") String speed)
+			throws NoConnection, InterruptedException, ConfigurationError,
+			OutOfRange {
+		double value = Double.parseDouble(speed);
+		motorControllerBean.getAuxMotorsController()
+				.rampTo(new MDecimal(value));
+		return "Set auxiliary motor speed to " + speed + "%";
 	}
 }

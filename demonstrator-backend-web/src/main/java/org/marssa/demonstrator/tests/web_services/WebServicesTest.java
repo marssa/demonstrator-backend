@@ -29,6 +29,7 @@ import org.marssa.demonstrator.tests.control.RudderControllerTest;
 import org.marssa.demonstrator.web_services.StaticFileServerApplication;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
+import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
@@ -100,7 +101,14 @@ public class WebServicesTest {
 				Constants.LABJACKUE9.HOST, Constants.LABJACKUE9.PORT);
 
 		logger.info("Initialising motor controller ... ");
-		sternMotorController = new SternDriveMotorController(labJackue9);
+		ArrayList<MInteger> ports = new ArrayList<MInteger>();
+		ports.add(new MInteger(6008));
+		ports.add(new MInteger(6009));
+		ports.add(new MInteger(6010));
+		ports.add(new MInteger(6011));
+		ports.add(new MInteger(6012));
+		ports.add(new MInteger(6013));
+		sternMotorController = new SternDriveMotorController(labJackue9, ports);
 		logger.info("Motor controller initialised successfully");
 
 		logger.info("Initialising rudder controller ... ");
