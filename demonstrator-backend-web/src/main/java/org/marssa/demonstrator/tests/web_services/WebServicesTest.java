@@ -101,18 +101,24 @@ public class WebServicesTest {
 				Constants.LABJACKUE9.HOST, Constants.LABJACKUE9.PORT);
 
 		logger.info("Initialising motor controller ... ");
-		ArrayList<MInteger> ports = new ArrayList<MInteger>();
-		ports.add(new MInteger(6008));
-		ports.add(new MInteger(6009));
-		ports.add(new MInteger(6010));
-		ports.add(new MInteger(6011));
-		ports.add(new MInteger(6012));
-		ports.add(new MInteger(6013));
-		sternMotorController = new SternDriveMotorController(labJackue9, ports);
+		ArrayList<MInteger> portsSternDriveMotor = new ArrayList<MInteger>();
+		portsSternDriveMotor.add(new MInteger(6008));
+		portsSternDriveMotor.add(new MInteger(6009));
+		portsSternDriveMotor.add(new MInteger(6010));
+		portsSternDriveMotor.add(new MInteger(6011));
+		portsSternDriveMotor.add(new MInteger(6012));
+		portsSternDriveMotor.add(new MInteger(6013));
+		ArrayList<MInteger> portsRudder = new ArrayList<MInteger>();
+		portsRudder.add(new MInteger(6000));
+		portsRudder.add(new MInteger(6001));
+		portsRudder.add(new MInteger(6002));
+		portsRudder.add(new MInteger(6003));
+		sternMotorController = new SternDriveMotorController(labJackue9,
+				portsSternDriveMotor);
 		logger.info("Motor controller initialised successfully");
 
 		logger.info("Initialising rudder controller ... ");
-		rudderControllerPhysical = new RudderController(labJackue9);
+		rudderControllerPhysical = new RudderController(labJackue9, portsRudder);
 		rudderController = new RudderControllerTest(labJackue9,
 				rudderControllerPhysical);
 		logger.info("Rudder controller initialised successfully");

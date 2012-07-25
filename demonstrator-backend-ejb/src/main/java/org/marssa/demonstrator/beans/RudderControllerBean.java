@@ -16,7 +16,6 @@ package org.marssa.demonstrator.beans;
  * limitations under the License.
  */
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
@@ -32,21 +31,17 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
-import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
 import org.marssa.demonstrator.control.rudder.RudderController;
-import org.marssa.demonstrator.daq.DAQCategory;
 import org.marssa.demonstrator.daq.DAQType;
-import org.marssa.demonstrator.motors.MotorType;
 import org.marssa.demonstrator.network.AddressType;
+import org.marssa.demonstrator.rudder.RudderType;
 import org.marssa.demonstrator.settings.Settings;
 import org.marssa.footprint.datatypes.MString;
 import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
-import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.services.diagnostics.daq.LabJack;
-import org.marssa.services.diagnostics.daq.LabJackU3;
+import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,53 +64,44 @@ public class RudderControllerBean {
 	}
 
 	@PostConstruct
-	private void init() throws ConfigurationError, NoConnection,
-			UnknownHostException, JAXBException, FileNotFoundException,
-			OutOfRange {
-//		logger.info("Initializing Rudder Controller Bean");
-//		JAXBContext context = JAXBContext
-//				.newInstance(new Class[] { Settings.class });
-//		Unmarshaller unmarshaller = context.createUnmarshaller();
-//		InputStream is = this.getClass().getClassLoader()
-//				.getResourceAsStream("configuration/settings.xml");
-//
-//		Settings settings = (Settings) unmarshaller.unmarshal(is);
-//		for (MotorType motor : settings.getMotors().getMotor()) {
-//			DAQType daq = (DAQType) (motor.getConfiguration().getDaqID());
-//			AddressType addressElement = daq.getSocket();
-//			LabJack lj;
-//			logger.info("Found configuration for {} connected to {}",
-//					motor.getName(), daq.getDAQname());
-//			if (addressElement.getHost().getIp() == null
-//					|| addressElement.getHost().getIp().isEmpty()) {
-//				String hostname = addressElement.getHost().getHostname();
-//				lj = daqBean.getLabJackByHostname(new MString(hostname),
-//						new MInteger(addressElement.getPort()));
-//			} else {
-//				String ip = addressElement.getHost().getIp();
-//				lj = daqBean.getLabJackByIP(new MString(ip), new MInteger(
-//						addressElement.getPort()));
-//			}
-//			if (motor.getConfiguration().getAuxiliaryMotor() != null) {
-//				if (daq.getType() == DAQCategory.LAB_JACK_U_3)
-//					auxMotorsController = new AuxiliaryMotorsController(
-//							(LabJackU3) lj);
-//				else
-//					throw new ConfigurationError(
-//							"Auxiliary Motor Controller has to be connected to a LabJack U3");
-//			} else if (motor.getConfiguration().getSternDriveMotor() != null) {
-//				List<MInteger> ports = new ArrayList<MInteger>();
-//				for (BigInteger port : motor.getConfiguration()
-//						.getSternDriveMotor().getDaqPorts().getDaqPort()) {
-//					ports.add(new MInteger(port.intValue()));
-//				}
-//				sternDriveMotorController = new SternDriveMotorController(lj,
-//						ports);
-//			} else {
-//				throw new ConfigurationError("Unknown Motor Controller type");
-//			}
-//		}
-//		logger.info("Initialized Motor Controller Bean");
+	private void init() throws InterruptedException, JAXBException,
+			UnknownHostException, ConfigurationError, NoConnection {
+		logger.info("Initializing Motor Controller Bean");
+		JAXBContext context = JAXBContext
+				.newInstance(new Class[] { Settings.class });
+		Unmarshaller unmarshaller = context.createUnmarshaller();
+		InputStream is = this.getClass().getClassLoader()
+				.getResourceAsStream("configuration/settings.xml");
+
+		Settings settings = (Settings) unmarshaller.unmarshal(is);
+		RudderType rudder = settings.getRudder();
+		DAQType daq = (DAQType) (rudder.getConfiguration().getDaqID());
+		AddressType addressElement = daq.getSocket();
+		LabJack lj;
+		logger.info("Found configuration for {} connected to {}",
+				rudder.getName(), daq.getDAQname());
+		if (addressElement.getHost().getIp() == null
+				|| addressElement.getHost().getIp().isEmpty()) {
+			String hostname = addressElement.getHost().getHostname();
+			lj = daqBean.getLabJackByHostname(new MString(hostname),
+					new MInteger(addressElement.getPort()));
+		} else {
+			String ip = addressElement.getHost().getIp();
+			lj = daqBean.getLabJackByIP(new MString(ip), new MInteger(
+					addressElement.getPort()));
+		}
+		if (rudder.getConfiguration().getType() != null) {
+			List<MInteger> ports = new ArrayList<MInteger>();
+			for (BigInteger port : rudder.getConfiguration().getDaqPorts()
+					.getDaqPort()) {
+				ports.add(new MInteger(port.intValue()));
+			}
+			rudderController = new RudderController((LabJackUE9) lj, ports);
+		} else {
+			throw new ConfigurationError("Unknown Motor Controller type");
+		}
+
+		logger.info("Initialized Motor Controller Bean");
 	}
 
 	@PreDestroy
