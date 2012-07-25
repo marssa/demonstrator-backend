@@ -11,18 +11,23 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="settings.demonstrator.marssa.org" xmlns="settings.demonstrator.marssa.org"
 	xmlns:daq="daq.demonstrator.marssa.org" xmlns:room="rooms.demonstrator.marssa.org"
-	xmlns:lights="lights.demonstrator.marssa.org" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
-	xmlns:gps="gps.demonstrator.marssa.org"
+	xmlns:lights="lights.demonstrator.marssa.org" xmlns:motors="motors.demonstrator.marssa.org"
+	xmlns:gps="gps.demonstrator.marssa.org" xmlns:rudder="rudder.demonstrator.marssa.org"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
 	jxb:version="2.0">
-	
+
 	<xsd:import namespace="rooms.demonstrator.marssa.org"
 		schemaLocation="rooms.xsd" />
 	<xsd:import namespace="daq.demonstrator.marssa.org"
 		schemaLocation="daq.xsd" />
 	<xsd:import namespace="lights.demonstrator.marssa.org"
 		schemaLocation="lights.xsd" />
+	<xsd:import namespace="motors.demonstrator.marssa.org"
+		schemaLocation="motors.xsd" />
 	<xsd:import namespace="gps.demonstrator.marssa.org"
-		schemaLocation="gps.xsd" />	
+		schemaLocation="gps.xsd" />
+	<xsd:import namespace="rudder.demonstrator.marssa.org"
+		schemaLocation="rudder.xsd" />
 
 	<xsd:element name="settings">
 		<xsd:complexType>
@@ -31,9 +36,10 @@
 				<xsd:element name="rooms" type="room:RoomsType" />
 				<xsd:element name="daqs" type="daq:DAQsType" />
 				<xsd:element name="lights" type="lights:LightsType" />
+				<xsd:element name="motors" type="motors:MotorsType" />
 				<xsd:element name="gps" type="gps:GPSType" />
+				<xsd:element name="rudder" type="rudder:RudderType" />
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-
 </xsd:schema>
