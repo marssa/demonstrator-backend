@@ -16,8 +16,9 @@
     limitations under the License.
 
 -->
+
 <p:settings xmlns:p="settings.demonstrator.marssa.org" xmlns:p1="rooms.demonstrator.marssa.org" xmlns:p2="daq.demonstrator.marssa.org" xmlns:p3="datatypes.footprint.marssa.org" xmlns:p4="network.demonstrator.marssa.org" xmlns:p5="lights.demonstrator.marssa.org" xmlns:p6="motors.demonstrator.marssa.org" xmlns:p7="gps.demonstrator.marssa.org" xmlns:p8="rudder.demonstrator.marssa.org" xmlns:tns="integer.datatypes.footprint.marssa.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="settings.demonstrator.marssa.org ../schemas/settings.xsd ">
-  <rooms>
+ <rooms>
     <room>
       <roomID>room0</roomID>
       <name>Bridge</name>
@@ -93,7 +94,7 @@
     <name>name</name>
     <configuration>
       <type>Rudder</type>
-      <daqID>idvalue0</daqID>
+      <daqID>daq0</daqID>
       <daqPorts>
         <daqPort>0</daqPort>
         <daqPort>0</daqPort>
