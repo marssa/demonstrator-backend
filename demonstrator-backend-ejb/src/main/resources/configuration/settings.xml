@@ -76,14 +76,16 @@
       </configuration>
     </motor>
   </motors>
-  <gps>
-    <gpsID>gps0</gpsID>
-    <GPSname>BU-353</GPSname>
-    <socket>
-      <host>
-        <ip>192.168.2.104</ip>
-      </host>
-      <port>2947</port>
-    </socket>
-  </gps>
+  <gps-receivers>
+    <gps>
+      <gpsID>gps0</gpsID>
+      <name>BU-353 on GPSd</name>
+      <socket>
+        <host>
+          <ip>192.168.2.104</ip>
+        </host>
+        <port>2947</port>
+      </socket>
+    </gps>
+  </gps-receivers>
 </p:settings>

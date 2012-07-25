@@ -44,7 +44,7 @@
 				<xsd:element name="daqs" type="daq:DAQsType" />
 				<xsd:element name="lights" type="lights:LightsType" />
 				<xsd:element name="motors" type="motors:MotorsType" />
-				<xsd:element name="gps" type="gps:GPSType" />
+				<xsd:element name="gps-receivers" type="gps:GPSReceiversType" />
 
 			</xsd:sequence>
 		</xsd:complexType>

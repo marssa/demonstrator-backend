@@ -29,9 +29,9 @@
 	<xsd:import namespace="network.demonstrator.marssa.org"
 		schemaLocation="network.xsd" />
 
-	<xsd:complexType name="LightsType">
+	<xsd:complexType name="GPSReceiversType">
 		<xsd:sequence>
-			<xsd:element name="light" type="GPSType" minOccurs="1"
+			<xsd:element name="gps" type="GPSType" minOccurs="0"
 				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
@@ -39,14 +39,12 @@
 	<xsd:complexType name="GPSType">
 		<xsd:sequence>
 			<xsd:element name="gpsID" type="xsd:ID" />
-			<xsd:element name="GPSname" type="marssa:MString" />
+			<xsd:element name="name" type="marssa:MString" />
 			<xsd:choice>
 				<xsd:element name="socket" type="network:AddressType" />
 				<!-- <xsd:element name="serial" type="serial:AddressType" /> -->
 			</xsd:choice>
 		</xsd:sequence>
 	</xsd:complexType>
-	
-	
 
 </xsd:schema>
