@@ -163,10 +163,6 @@ public class WebServicesTest {
 		component.getDefaultHost().attach("/sternMotor",
 				new SternMotorControllerTestApplication(cacheDirectives));
 
-		// Attach the rudder control application
-		component.getDefaultHost().attach("/rudder",
-				new RudderControllerTestApplication(cacheDirectives));
-
 		// Attach the GPS receiver application
 		component.getDefaultHost().attach("/gps",
 				new GPSReceiverTestApplication(cacheDirectives));
