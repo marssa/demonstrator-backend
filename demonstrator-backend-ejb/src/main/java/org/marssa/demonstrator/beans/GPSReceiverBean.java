@@ -72,7 +72,7 @@ public class GPSReceiverBean {
 				.getResourceAsStream("configuration/settings.xml");
 
 		Settings settings = (Settings) unmarshaller.unmarshal(is);
-		GPSType gpsEntry = settings.getGpsReceivers().getGps();
+		GPSType gpsEntry = (GPSType) settings.getGpsReceivers().getGps();
 		AddressType addressElement = gpsEntry.getSocket();
 		MString ip;
 		if (addressElement.getHost().getIp() == null

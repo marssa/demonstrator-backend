@@ -32,7 +32,7 @@
 	<xsd:complexType name="GPSReceiversType">
 		<xsd:sequence>
 			<xsd:element name="gps" type="GPSType" minOccurs="0"
-				maxOccurs="1" />
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 

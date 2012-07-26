@@ -159,6 +159,14 @@ public class WebServicesTest {
 		component.getDefaultHost()
 				.attach("", new StaticFileServerApplication());
 
+		// Attach the Stern control application
+		component.getDefaultHost().attach("/sternMotor",
+				new SternMotorControllerTestApplication(cacheDirectives));
+
+		// Attach the GPS receiver application
+		component.getDefaultHost().attach("/gps",
+				new GPSReceiverTestApplication(cacheDirectives));
+
 		// Attach the path planner application
 		component.getDefaultHost().attach(
 				"/pathPlanner",

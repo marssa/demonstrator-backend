@@ -90,16 +90,16 @@
     </gps>
   </gps-receivers>
   <rudder>
-    <rudderID>rudder0</rudderID>
+    <rudderID>idvalue5</rudderID>
     <name>name</name>
     <configuration>
       <type>Rudder</type>
       <daqID>daq0</daqID>
       <daqPorts>
-        <daqPort>6002</daqPort>
-        <daqPort>6003</daqPort>
-        <daqPort>6004</daqPort>
-        <daqPort>6005</daqPort>
+        <daqPort>0</daqPort>
+        <daqPort>0</daqPort>
+        <daqPort>0</daqPort>
+        <daqPort>0</daqPort>
       </daqPorts>
     </configuration>
   </rudder>
