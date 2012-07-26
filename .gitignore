@@ -24,24 +24,3 @@ local.properties
 
 # PDT-specific
 .buildpath
-
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.composite.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.distance.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.electrical.charge.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.electrical.current.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.electrical.energy.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.electrical.impedance.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.electrical.power.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.electrical.voltage.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.flow.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.frequency.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.pressure.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.speed.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.temperature.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.volume.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.decimal.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.integer.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.time.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/datatypes.xsd
-/demonstrator-backend-ejb/src/main/resources/generated/schemas/quantities.xsd
-/demonstrator-backend-ejb/src/main/resources/schemas/rudder.xsd
