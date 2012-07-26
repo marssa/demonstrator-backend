@@ -100,18 +100,12 @@
 //		
 //		// Attach the motor control application
 //		component.getDefaultHost()
-//		.attach("/sternMotor",
-//				new SternMotorControllerApplication(cacheDirectives,
-//						sternMotorController));
+//		
 //		// Attach the rudder control application
 //		component.getDefaultHost().attach(
 //				"/rudder",
 //				new RudderControllerApplication(cacheDirectives,
 //						rudderController));
-//
-//		// Attach the GPS receiver application
-//		component.getDefaultHost().attach("/gps",
-//				new GPSReceiverApplication(cacheDirectives, gpsReceiver));
 //
 //		// Attach the motion control feedback application
 //		component.getDefaultHost().attach(

@@ -15,56 +15,27 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import java.util.ArrayList;
+import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import org.marssa.footprint.datatypes.composite.Coordinate;
 import org.marssa.footprint.datatypes.composite.Latitude;
 import org.marssa.footprint.datatypes.composite.Longitude;
 import org.marssa.footprint.datatypes.decimal.DegreesDecimal;
 import org.marssa.footprint.exceptions.OutOfRange;
-import org.restlet.Application;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.Restlet;
-import org.restlet.data.CacheDirective;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.restlet.routing.Router;
 
-public class GPSReceiverTestApplication extends Application {
-	
-	private final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
-	
-	public GPSReceiverTestApplication(ArrayList<CacheDirective> cacheDirectives) {
-		this.cacheDirectives.addAll(cacheDirectives);
+@Path("/test/gps")
+@RequestScoped
+public class GPSReceiverTestApplication {
+
+	@GET
+	@Produces("application/json")
+	@Path("/coordinates")
+	public String getCoordinate() throws OutOfRange {
+		Coordinate coordinate = new Coordinate(new Latitude(new DegreesDecimal(
+				20.5)), new Longitude(new DegreesDecimal(129.8)));
+		return coordinate.toJSON().getContents();
 	}
-	
-	/**
-     * Creates a root Restlet that will receive all incoming calls.
-     */
-    @Override
-    public synchronized Restlet createInboundRoot() {
-        Router router = new Router(getContext());
-        
-        // Create the navigation lights state handler
-        Restlet coordinates = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        		try {
-        			Coordinate coordinate = new Coordinate(new Latitude(new DegreesDecimal(20.5)), new Longitude(new DegreesDecimal(129.8)));
-        			response.setCacheDirectives(cacheDirectives);
-					response.setEntity( coordinate.toJSON().getContents() , MediaType.APPLICATION_JSON);
-				} catch (OutOfRange e) {
-					response.setCacheDirectives(cacheDirectives);
-					response.setStatus(Status.CLIENT_ERROR_REQUESTED_RANGE_NOT_SATISFIABLE, "No connection error has been returned");
-					e.printStackTrace();
-				}
-            }
-        };
-        
-        router.attach("/coordinates",coordinates);
-        
-        return router;
-    }
 }

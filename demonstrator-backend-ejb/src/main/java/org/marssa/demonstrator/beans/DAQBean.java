@@ -76,34 +76,34 @@ public class DAQBean {
 		Settings settings = (Settings) unmarshaller.unmarshal(is);
 		for (DAQType daq : settings.getDaqs().getDaq()) {
 			AddressType addressElement = daq.getSocket();
-			MString address;
+			MString ip;
 			if (addressElement.getHost().getIp() == null
 					|| addressElement.getHost().getIp().isEmpty()) {
 				String hostname = addressElement.getHost().getHostname();
-				address = new MString(Inet4Address.getByName(hostname)
+				ip = new MString(Inet4Address.getByName(hostname)
 						.getAddress().toString());
 			} else {
-				address = new MString(addressElement.getHost().getIp());
+				ip = new MString(addressElement.getHost().getIp());
 			}
 			logger.info(
 					"Found configuration for {} connected to {}, port {}",
-					new Object[] { daq.getDAQname(), address,
+					new Object[] { daq.getDAQname(), ip,
 							addressElement.getPort() });
 			LabJack lj;
 			switch (daq.getType()) {
 			case LAB_JACK_U_3:
-				lj = LabJackU3.getInstance(address, new MInteger(daq
+				lj = LabJackU3.getInstance(ip, new MInteger(daq
 						.getSocket().getPort()));
 				break;
 			case LAB_JACK_UE_9:
-				lj = LabJackUE9.getInstance(address, new MInteger(daq
+				lj = LabJackUE9.getInstance(ip, new MInteger(daq
 						.getSocket().getPort()));
 				break;
 			default:
 				throw new ConfigurationError("Unknown DAQ type: "
 						+ daq.getType());
 			}
-			daqs.put(address.toString() + ":" + addressElement.getPort(), lj);
+			daqs.put(ip.toString() + ":" + addressElement.getPort(), lj);
 		}
 		logger.info("Initialized DAQ Bean");
 	}
