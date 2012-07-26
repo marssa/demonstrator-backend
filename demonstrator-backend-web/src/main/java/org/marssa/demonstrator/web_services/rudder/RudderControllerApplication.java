@@ -15,121 +15,69 @@
  */
 package org.marssa.demonstrator.web_services.rudder;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
+import org.marssa.demonstrator.beans.RudderControllerBean;
 import org.marssa.demonstrator.constants.Constants;
-import org.marssa.demonstrator.control.rudder.RudderController;
 import org.marssa.footprint.datatypes.MBoolean;
-import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.NoConnection;
-import org.restlet.Application;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.Restlet;
-import org.restlet.data.CacheDirective;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.restlet.routing.Router;
 
-public class RudderControllerApplication extends Application {
-	
-	private ArrayList<CacheDirective> cacheDirectives;
-	private RudderController rudderController = null;
-	
-	public RudderControllerApplication(ArrayList<CacheDirective> cacheDirectives, RudderController rudderController) {
-		this.cacheDirectives = cacheDirectives;
-		this.rudderController = rudderController;
+@Path("/rudder")
+public class RudderControllerApplication {
+
+	@Inject
+	RudderControllerBean rudderControllerBean;
+
+	@GET
+	@Produces("application/json")
+	public String getAngle() throws NoConnection {
+		return rudderControllerBean.getRudderController().getAngle().toJSON()
+				.toString();
 	}
 
-    /**
-     * Creates a root Restlet that will receive all incoming calls.
-     */
-    @Override
-    public synchronized Restlet createInboundRoot() {
-        Router router = new Router(getContext());
-        
-        // Create the rotation handler
-        Restlet rotate = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		response.setCacheDirectives(cacheDirectives);
-        		try {
-        			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
-        			rudderController.rotate(new MBoolean(direction));
-        			response.setEntity("Rotating the rudder in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
-        		} catch (InterruptedException e) {
-        			response.setStatus(Status.SERVER_ERROR_INTERNAL, "This request has been interrupted by a more recent request");
-        			e.printStackTrace();
-				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The transaction has failed");
-					e.printStackTrace();
-				}
-            }
-        };
-        
-        // Create the rotation handler
-        Restlet rotateMore = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		response.setCacheDirectives(cacheDirectives);
-        		try {
-        			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
-        			//rudderController.rotate(new MBoolean(direction));
-        			rudderController.rotateMultiple(Constants.RUDDER.ROTATIONS, new MBoolean(direction));
-        			response.setEntity("Rotating the rudder MORE in the direction set by direction = " + direction, MediaType.TEXT_PLAIN);
-        		} catch (InterruptedException e) {
-        			response.setStatus(Status.INFO_PROCESSING, "The rudder rotateMore routine has been interrupted");
-        			e.printStackTrace();
-				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The transaction has failed");
-					e.printStackTrace();
-				}
-            }
-        };
-        
-        // Create the rotation handler
-        //TODO Change this to a Resource
-        Restlet angle = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		response.setCacheDirectives(cacheDirectives);
-        		try {
-        			MDecimal direction = rudderController.getAngle();
-        			response.setEntity(direction.toString(), MediaType.TEXT_PLAIN);
-        		} catch (NoConnection e) {
-        			response.setStatus(Status.INFO_CONTINUE, "Cannot set the rudder angle. NoConnection error returned.");
-        			e.printStackTrace();
-        		}
-            }
-        };
-        
-        // Create the rotation handler to rotate to the extremes
-        Restlet rotateFull = new Restlet() {
-        	@Override
-            public void handle(Request request, Response response) {
-        		response.setCacheDirectives(cacheDirectives);
-        		try {
-        			//TODO Handle parseException since parseBoolean doesn't check for and raise this exception
-        			boolean direction = Boolean.parseBoolean(request.getAttributes().get("direction").toString());
-        			rudderController.rotateExtreme(new MBoolean(direction));
-        			response.setEntity("Rotating the rudder to the extreme = " + direction, MediaType.TEXT_PLAIN);
-        		} catch (InterruptedException e) {
-        			response.setStatus(Status.INFO_PROCESSING, "The rudder rotateMore routine has been interrupted");
-        			e.printStackTrace();
-				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL, "The transaction has failed");
-					e.printStackTrace();
-				}
-            }
-        };
-        
-        router.attach("/rotate/{direction}", rotate);
-        router.attach("/rotateMore/{direction}", rotateMore);
-        router.attach("/angle", angle);
-        router.attach("/rotateFull/{direction}", rotateFull);
-        
-        return router;
-    }
+	@POST
+	@Produces("text/plain")
+	@Path("/centre")
+	public String centre() throws NoConnection, InterruptedException {
+		rudderControllerBean.getRudderController().rotateToCentre();
+		return "Rotating the rudder to the centre";
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/rotate/{direction}")
+	public String rotate(@PathParam("direction") boolean direction)
+			throws NoConnection, InterruptedException {
+		rudderControllerBean.getRudderController().rotate(
+				new MBoolean(direction));
+		return "Rotating the rudder in the direction set by direction = "
+				+ direction;
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/rotateMore/{direction}")
+	public String rotateMore(@PathParam("direction") boolean direction)
+			throws InterruptedException, NoConnection {
+		rudderControllerBean.getRudderController().rotateMultiple(
+				Constants.RUDDER.ROTATIONS, new MBoolean(direction));
+		return "Rotating the rudder more in the direction set by = "
+				+ direction;
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/rotateFull/{direction}")
+	public String rotateFull(@PathParam("direction") boolean direction)
+			throws InterruptedException, NoConnection {
+		rudderControllerBean.getRudderController().rotateExtreme(
+				new MBoolean(direction));
+		return "Rotating the rudder to the extreme in the direction set by = "
+				+ direction;
+	}
 }

@@ -23,6 +23,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.marssa.footprint.datatypes.decimal.MDecimal;
+import org.marssa.footprint.exceptions.NoConnection;
 import org.restlet.Application;
 
 @Path("/test/rudder")
@@ -32,7 +33,15 @@ public class RudderControllerTestApplication extends Application {
 	@GET
 	@Produces("application/json")
 	public String getAngle() {
-		return WebServicesTest.getRudderAngle().toString();
+		return WebServicesTest.getRudderAngle().toJSON().toString();
+	}
+
+	@POST
+	@Produces("text/plain")
+	@Path("/centre")
+	public String centre() throws NoConnection, InterruptedException {
+		WebServicesTest.setRudderAngle(new MDecimal(0));
+		return "Rotating the rudder to the centre";
 	}
 
 	@POST
