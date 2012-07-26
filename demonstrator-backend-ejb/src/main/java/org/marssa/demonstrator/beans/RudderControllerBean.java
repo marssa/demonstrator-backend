@@ -25,7 +25,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,7 +41,6 @@ import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.services.diagnostics.daq.LabJack;
-import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +48,8 @@ import org.slf4j.LoggerFactory;
  * @author Warren Zahra
  * 
  */
+@ApplicationScoped
 @Singleton
-@Startup
 public class RudderControllerBean {
 
 	private static final Logger logger = LoggerFactory
@@ -96,7 +95,7 @@ public class RudderControllerBean {
 					.getDaqPort()) {
 				ports.add(new MInteger(port.intValue()));
 			}
-			rudderController = new RudderController((LabJackUE9) lj, ports);
+			rudderController = new RudderController(lj, ports);
 		} else {
 			throw new ConfigurationError("Unknown Motor Controller type");
 		}

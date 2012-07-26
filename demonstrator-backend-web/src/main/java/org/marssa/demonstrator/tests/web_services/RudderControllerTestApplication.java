@@ -15,7 +15,6 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -27,7 +26,6 @@ import org.marssa.footprint.exceptions.NoConnection;
 import org.restlet.Application;
 
 @Path("/test/rudder")
-@RequestScoped
 public class RudderControllerTestApplication extends Application {
 
 	@GET

@@ -15,7 +15,6 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -26,7 +25,6 @@ import org.marssa.demonstrator.tests.web_services.WebServicesTest.LightState;
 import org.marssa.footprint.datatypes.MBoolean;
 
 @Path("/test/lights")
-@RequestScoped
 public class LightControllerTestApplication {
 
 	private final LightState currentLightState = new LightState();

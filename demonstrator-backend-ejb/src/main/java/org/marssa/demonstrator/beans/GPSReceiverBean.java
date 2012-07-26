@@ -23,6 +23,7 @@ import java.net.UnknownHostException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author Clayton Tabone
  * 
  */
+@ApplicationScoped
 @Singleton
 public class GPSReceiverBean {
 
@@ -72,7 +74,7 @@ public class GPSReceiverBean {
 				.getResourceAsStream("configuration/settings.xml");
 
 		Settings settings = (Settings) unmarshaller.unmarshal(is);
-		GPSType gpsEntry = (GPSType) settings.getGpsReceivers().getGps();
+		GPSType gpsEntry = settings.getGpsReceivers().getGps();
 		AddressType addressElement = gpsEntry.getSocket();
 		MString ip;
 		if (addressElement.getHost().getIp() == null

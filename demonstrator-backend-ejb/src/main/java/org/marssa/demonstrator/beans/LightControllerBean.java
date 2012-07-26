@@ -22,7 +22,7 @@ import java.net.UnknownHostException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
  * @author Clayton Tabone
  * 
  */
+@ApplicationScoped
 @Singleton
 public class LightControllerBean {
 

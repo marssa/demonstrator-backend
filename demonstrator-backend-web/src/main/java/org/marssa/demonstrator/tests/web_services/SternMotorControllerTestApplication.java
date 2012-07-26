@@ -15,138 +15,53 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import java.util.ArrayList;
+import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
-import org.marssa.demonstrator.constants.Constants;
 import org.marssa.demonstrator.tests.control.SternDriveMotorControllerTest;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
-import org.restlet.Application;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.Restlet;
-import org.restlet.data.CacheDirective;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.restlet.routing.Router;
 
-public class SternMotorControllerTestApplication extends Application {
+@Path("/test/motors/stern")
+public class SternMotorControllerTestApplication {
 
-	private final ArrayList<CacheDirective> cacheDirectives;
 	private SternDriveMotorControllerTest motorController;
 
-	public SternMotorControllerTestApplication(
-			ArrayList<CacheDirective> cacheDirectives) {
-		this.cacheDirectives = cacheDirectives;
+	@GET
+	@Produces("application/json")
+	@Path("/speed")
+	public String getSpeed() throws InterruptedException, ConfigurationError,
+			OutOfRange, NoConnection {
+		return motorController.getSpeed().toJSON().toString();
 	}
 
-	/**
-	 * Creates a root Restlet that will receive all incoming calls.
-	 */
-	@Override
-	public synchronized Restlet createInboundRoot() {
-		Router router = new Router(getContext());
+	@POST
+	@Produces("text/plain")
+	@Path("/stop")
+	public String stop() throws NoConnection {
+		motorController.stop();
+		return "Stopped stern drive motor";
+	}
 
-		// Create the motor speed control handler
-		Restlet turnOffMotor = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				response.setCacheDirectives(cacheDirectives);
-				try {
-					motorController.stop();
-				} catch (NumberFormatException e) {
-					response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-							"The value of the speed resource has an incorrect format");
-				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"There is no connection");
-					e.printStackTrace();
-				}
-			}
-		};
+	@POST
+	@Produces("text/plain")
+	@Path("/speed/increase")
+	public String increaseSpeed() throws InterruptedException,
+			ConfigurationError, OutOfRange, NoConnection {
+		motorController.increase();
+		return "Increased stern drive motor speed";
+	}
 
-		// Create the increase motor speed control handler
-		Restlet increaseSpeed = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				response.setCacheDirectives(cacheDirectives);
-				try {
-					motorController.increase();
-					response.setEntity("Increasing motor speed by "
-							+ Constants.MOTOR.STEP_SIZE + "%",
-							MediaType.TEXT_PLAIN);
-				} catch (NumberFormatException e) {
-					response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-							"The value of the speed resource has an incorrect format");
-				} catch (InterruptedException e) {
-					response.setStatus(Status.INFO_PROCESSING,
-							"The ramping algorithm has been interrupted");
-					e.printStackTrace();
-				} catch (ConfigurationError e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"The request has returned a ConfigurationError");
-					e.printStackTrace();
-				} catch (OutOfRange e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"The specified value is out of range");
-					e.printStackTrace();
-				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"No connection error has been returned");
-					e.printStackTrace();
-				}
-			}
-		};
-
-		// Create the decrease motor speed control handler
-		Restlet decreaseSpeed = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				response.setCacheDirectives(cacheDirectives);
-				try {
-					motorController.decrease();
-					response.setEntity("Decreasing motor speed by "
-							+ Constants.MOTOR.STEP_SIZE + "%",
-							MediaType.TEXT_PLAIN);
-				} catch (NumberFormatException e) {
-					response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST,
-							"The value of the speed resource has an incorrect format");
-				} catch (InterruptedException e) {
-					response.setStatus(Status.INFO_PROCESSING,
-							"The ramping routinee has been interrupted");
-					e.printStackTrace();
-				} catch (ConfigurationError e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"The request has returned a ConfigurationError");
-					e.printStackTrace();
-				} catch (OutOfRange e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"The specified value is out of range");
-					e.printStackTrace();
-				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"No connection error has been returned");
-					e.printStackTrace();
-				}
-			}
-		};
-
-		// Create the motor speed monitoring handler
-		Restlet speedMonitor = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				response.setCacheDirectives(cacheDirectives);
-				response.setEntity(motorController.getSpeed().toString(),
-						MediaType.TEXT_PLAIN);
-			}
-		};
-
-		router.attach("/stop", turnOffMotor);
-		router.attach("/increaseSpeed", increaseSpeed);
-		router.attach("/decreaseSpeed", decreaseSpeed);
-		router.attach("/speed", speedMonitor);
-
-		return router;
+	@POST
+	@Produces("text/plain")
+	@Path("/speed/decrease")
+	public String decreaseSpeed() throws InterruptedException,
+			ConfigurationError, OutOfRange, NoConnection {
+		motorController.decrease();
+		return "Decreased stern drive motor speed";
 	}
 }

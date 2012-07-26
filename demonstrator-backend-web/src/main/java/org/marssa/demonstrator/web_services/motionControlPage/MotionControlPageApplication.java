@@ -15,67 +15,34 @@
  */
 package org.marssa.demonstrator.web_services.motionControlPage;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
-import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
-import org.marssa.demonstrator.control.rudder.RudderController;
+import org.marssa.demonstrator.beans.MotorControllerBean;
+import org.marssa.demonstrator.beans.RudderControllerBean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.NoConnection;
-import org.restlet.Application;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.Restlet;
-import org.restlet.data.CacheDirective;
-import org.restlet.data.MediaType;
-import org.restlet.data.Status;
-import org.restlet.routing.Router;
 
-public class MotionControlPageApplication extends Application {
+@Path("/test/motionControlPage")
+public class MotionControlPageApplication {
 
-	private final ArrayList<CacheDirective> cacheDirectives;
-	private SternDriveMotorController motorController = null;
-	private RudderController rudderController = null;
+	@Inject
+	MotorControllerBean motorControllerBean;
 
-	public MotionControlPageApplication(
-			ArrayList<CacheDirective> cacheDirectives,
-			SternDriveMotorController motorController,
-			RudderController rudderController) {
-		this.cacheDirectives = cacheDirectives;
-		this.motorController = motorController;
-		this.rudderController = rudderController;
-	}
+	@Inject
+	RudderControllerBean rudderControllerBean;
 
-	/**
-	 * Creates a root Restlet that will receive all incoming calls.
-	 */
-	@Override
-	public synchronized Restlet createInboundRoot() {
-		Router router = new Router(getContext());
-
-		// Create the navigation lights state handler
-		Restlet rudderAndSpeedState = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				response.setCacheDirectives(cacheDirectives);
-				try {
-					MDecimal motorSpeed = motorController.getSpeed();
-					MDecimal rudderAngle = rudderController.getAngle();
-					response.setEntity("{\"motor\":"
-							+ motorSpeed.toJSON().getContents()
-							+ ",\"rudder\":"
-							+ rudderAngle.toJSON().getContents() + "}",
-							MediaType.APPLICATION_JSON);
-				} catch (NoConnection e) {
-					response.setStatus(Status.SERVER_ERROR_INTERNAL,
-							"No connection error has been returned");
-					e.printStackTrace();
-				}
-
-			}
-		};
-
-		router.attach("/rudderAndSpeed", rudderAndSpeedState);
-
-		return router;
+	@GET
+	@Produces("application/json")
+	@Path("/rudderAndSpeed")
+	public String getRudderAndSpeed() throws NoConnection {
+		MDecimal motorSpeed = motorControllerBean
+				.getSternDriveMotorController().getSpeed();
+		MDecimal rudderAngle = rudderControllerBean.getRudderController()
+				.getAngle();
+		return "{\"motor\":" + motorSpeed.toJSON().toString() + ",\"rudder\":"
+				+ rudderAngle.toJSON().toString() + "}";
 	}
 }

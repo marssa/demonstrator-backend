@@ -15,54 +15,26 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import java.util.ArrayList;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import org.marssa.demonstrator.tests.control.TestController;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
-import org.restlet.Application;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.Restlet;
-import org.restlet.data.CacheDirective;
-import org.restlet.data.MediaType;
-import org.restlet.routing.Router;
+import org.marssa.footprint.exceptions.NoConnection;
 
-public class MotionControlPageTestApplication extends Application {
+@Path("/test/motionControlPage")
+public class MotionControlPageTestApplication {
 
-	private final ArrayList<CacheDirective> cacheDirectives = new ArrayList<CacheDirective>();
-	private final TestController motorController;
+	private static final TestController motorController = new TestController();
 
-	public MotionControlPageTestApplication(
-			ArrayList<CacheDirective> cacheDirectives,
-			TestController motorController) {
-		this.cacheDirectives.addAll(cacheDirectives);
-		this.motorController = motorController;
-	}
-
-	/**
-	 * Creates a root Restlet that will receive all incoming calls.
-	 */
-	@Override
-	public synchronized Restlet createInboundRoot() {
-		Router router = new Router(getContext());
-
-		// Create the navigation lights state handler
-		Restlet rudderAndSpeedState = new Restlet() {
-			@Override
-			public void handle(Request request, Response response) {
-				MDecimal motorSpeed = motorController.getValue();
-				response.setCacheDirectives(cacheDirectives);
-				response.setEntity("{\"motor\":"
-						+ motorSpeed.toJSON().getContents()
-						+ ",\"rudder\":"
-						+ WebServicesTest.getRudderAngle().toJSON()
-								.getContents() + "}",
-						MediaType.APPLICATION_JSON);
-			}
-		};
-
-		router.attach("/rudderAndSpeed", rudderAndSpeedState);
-
-		return router;
+	@GET
+	@Produces("application/json")
+	@Path("/rudderAndSpeed")
+	public String getRudderAndSpeed() throws NoConnection {
+		MDecimal motorSpeed = motorController.getValue();
+		return "{\"motor\":" + motorSpeed.toJSON().getContents()
+				+ ",\"rudder\":"
+				+ WebServicesTest.getRudderAngle().toJSON().getContents() + "}";
 	}
 }

@@ -15,7 +15,6 @@
  */
 package org.marssa.demonstrator.web_services.motor;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -28,7 +27,6 @@ import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
 
 @Path("/motors/stern")
-@RequestScoped
 public class SternMotorControllerApplication {
 
 	@Inject
