@@ -30,15 +30,7 @@
 		<xsd:sequence>
 			<xsd:element name="rudderID" type="xsd:ID" />
 			<xsd:element name="name" type="marssa:MString" />
-			<xsd:element name="configuration" type="RudderConfigurationType" />
-			
-		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:complexType name="RudderConfigurationType">
-		<xsd:sequence>
-		<xsd:element name="type" type="marssa:MString" fixed="Rudder"/>
-		<xsd:element name="daqID" type="xsd:IDREF" />
+			<xsd:element name="daqID" type="xsd:IDREF" />
 			<xsd:element name="daqPorts">
 				<xsd:complexType>
 					<xsd:sequence>
@@ -49,6 +41,5 @@
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
-
 	
 </xsd:schema>
