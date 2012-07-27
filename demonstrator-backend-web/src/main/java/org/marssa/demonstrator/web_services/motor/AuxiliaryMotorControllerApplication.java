@@ -17,7 +17,7 @@ package org.marssa.demonstrator.web_services.motor;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -43,7 +43,7 @@ public class AuxiliaryMotorControllerApplication {
 				.toString();
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/stop")
 	public String stop() throws NoConnection {
@@ -51,7 +51,7 @@ public class AuxiliaryMotorControllerApplication {
 		return "Stopped auxiliary motor";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/increase")
 	public String increaseSpeed() throws InterruptedException,
@@ -60,7 +60,7 @@ public class AuxiliaryMotorControllerApplication {
 		return "Increased auxiliary motor speed";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/decrease")
 	public String decreaseSpeed() throws InterruptedException,
@@ -69,7 +69,7 @@ public class AuxiliaryMotorControllerApplication {
 		return "Decreased auxiliary motor speed";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/{speed}")
 	public String setSpeed(@PathParam("speed") String speed)

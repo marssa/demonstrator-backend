@@ -16,7 +16,7 @@
 package org.marssa.demonstrator.tests.web_services;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -34,7 +34,7 @@ public class RudderControllerTestApplication extends Application {
 		return WebServicesTest.getRudderAngle().toJSON().toString();
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/centre")
 	public String centre() throws NoConnection, InterruptedException {
@@ -42,7 +42,7 @@ public class RudderControllerTestApplication extends Application {
 		return "Rotating the rudder to the centre";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/rotate/{direction}")
 	public String rotate(@PathParam("direction") boolean direction) {
@@ -56,7 +56,7 @@ public class RudderControllerTestApplication extends Application {
 				+ direction;
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/rotateMore/{direction}")
 	public String rotateMore(@PathParam("direction") boolean direction) {
@@ -70,7 +70,7 @@ public class RudderControllerTestApplication extends Application {
 				+ direction;
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/rotateFull/{direction}")
 	public String rotateFull(@PathParam("direction") boolean direction) {
@@ -84,7 +84,7 @@ public class RudderControllerTestApplication extends Application {
 				+ direction;
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/rotate/{direction}/{amount}")
 	public String rotate(@PathParam("direction") boolean direction,

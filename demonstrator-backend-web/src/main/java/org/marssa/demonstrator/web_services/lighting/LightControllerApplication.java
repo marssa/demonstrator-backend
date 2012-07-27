@@ -17,7 +17,7 @@ package org.marssa.demonstrator.web_services.lighting;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -40,7 +40,7 @@ public class LightControllerApplication {
 				.getNavigationLightState().toJSON().toString();
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/navigation/{state}")
 	public String setNavLights(@PathParam("state") boolean state)
@@ -58,7 +58,7 @@ public class LightControllerApplication {
 				.getUnderwaterLightState().toJSON().toString();
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/underwater/{state}")
 	public String setUnderwaterLights(@PathParam("state") boolean state)

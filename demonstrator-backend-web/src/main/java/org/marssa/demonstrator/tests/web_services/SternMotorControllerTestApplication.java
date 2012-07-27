@@ -15,9 +15,8 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
@@ -39,7 +38,7 @@ public class SternMotorControllerTestApplication {
 		return motorController.getSpeed().toJSON().toString();
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/stop")
 	public String stop() throws NoConnection {
@@ -47,7 +46,7 @@ public class SternMotorControllerTestApplication {
 		return "Stopped stern drive motor";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/increase")
 	public String increaseSpeed() throws InterruptedException,
@@ -56,7 +55,7 @@ public class SternMotorControllerTestApplication {
 		return "Increased stern drive motor speed";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/decrease")
 	public String decreaseSpeed() throws InterruptedException,

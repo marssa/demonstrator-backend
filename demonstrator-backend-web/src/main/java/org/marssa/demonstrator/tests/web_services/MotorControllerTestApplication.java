@@ -16,7 +16,7 @@
 package org.marssa.demonstrator.tests.web_services;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -39,7 +39,7 @@ public class MotorControllerTestApplication {
 		return motorController.getValue().toJSON().toString();
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/{speed}")
 	public String setNavLights(@PathParam("speed") double speed)
@@ -48,7 +48,7 @@ public class MotorControllerTestApplication {
 		return "You entered the following parameter:\n" + speed;
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/increase")
 	public String increaseSpeed() throws InterruptedException,
@@ -57,7 +57,7 @@ public class MotorControllerTestApplication {
 		return "Increased stern drive motor speed";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/speed/decrease")
 	public String decreaseSpeed() throws InterruptedException,

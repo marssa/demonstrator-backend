@@ -17,7 +17,7 @@ package org.marssa.demonstrator.web_services.rudder;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -40,7 +40,7 @@ public class RudderControllerApplication {
 				.toString();
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/centre")
 	public String centre() throws NoConnection, InterruptedException {
@@ -48,7 +48,7 @@ public class RudderControllerApplication {
 		return "Rotating the rudder to the centre";
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/rotate/{direction}")
 	public String rotate(@PathParam("direction") boolean direction)
@@ -59,7 +59,7 @@ public class RudderControllerApplication {
 				+ direction;
 	}
 
-	@POST
+	@PUT
 	@Produces("text/plain")
 	@Path("/rotateMore/{direction}")
 	public String rotateMore(@PathParam("direction") boolean direction)
@@ -70,7 +70,7 @@ public class RudderControllerApplication {
 				+ direction;
 	}
 
-	// @POST
+	// @PUT
 	// @Produces("text/plain")
 	// @Path("/rotateFull/{direction}")
 	// public String rotateFull(@PathParam("direction") boolean direction)
