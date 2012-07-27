@@ -74,7 +74,7 @@ public class RudderControllerBean {
 
 		Settings settings = (Settings) unmarshaller.unmarshal(is);
 		RudderType rudder = settings.getRudder();
-		DAQType daq = (DAQType) (rudder.getConfiguration().getDaqID());
+		DAQType daq = (DAQType) (rudder.getDaqID());
 		AddressType addressElement = daq.getSocket();
 		LabJack lj;
 		logger.info("Found configuration for {} connected to {}",
@@ -89,16 +89,11 @@ public class RudderControllerBean {
 			lj = daqBean.getLabJackByIP(new MString(ip), new MInteger(
 					addressElement.getPort()));
 		}
-		if (rudder.getConfiguration().getType() != null) {
-			List<MInteger> ports = new ArrayList<MInteger>();
-			for (BigInteger port : rudder.getConfiguration().getDaqPorts()
-					.getDaqPort()) {
-				ports.add(new MInteger(port.intValue()));
-			}
-			rudderController = new RudderController(lj, ports);
-		} else {
-			throw new ConfigurationError("Unknown Motor Controller type");
+		List<MInteger> ports = new ArrayList<MInteger>();
+		for (BigInteger port : rudder.getDaqPorts().getDaqPort()) {
+			ports.add(new MInteger(port.intValue()));
 		}
+		rudderController = new RudderController(lj, ports);
 
 		logger.info("Initialized Motor Controller Bean");
 	}

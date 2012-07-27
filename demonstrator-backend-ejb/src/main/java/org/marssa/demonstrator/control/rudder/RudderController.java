@@ -17,7 +17,6 @@ package org.marssa.demonstrator.control.rudder;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.marssa.footprint.datatypes.MBoolean;
@@ -32,11 +31,10 @@ import org.marssa.services.diagnostics.daq.LabJack;
  * 
  */
 public class RudderController implements IRudderController {
-	private final ArrayList<MInteger> ports = new ArrayList<MInteger>();
-	private final MInteger STEPPER1 = ports.get(1);
-	private final MInteger STEPPER2 = ports.get(2);
-	private final MInteger STEPPER3 = ports.get(3);
-	private final MInteger STEPPER4 = ports.get(4);
+	private final MInteger STEPPER1;
+	private final MInteger STEPPER2;
+	private final MInteger STEPPER3;
+	private final MInteger STEPPER4;
 	private final MBoolean HIGH = new MBoolean(true);
 	private final MBoolean LOW = new MBoolean(false);
 
@@ -52,7 +50,10 @@ public class RudderController implements IRudderController {
 	public RudderController(LabJack lj, List<MInteger> ports)
 			throws NoConnection, InterruptedException {
 		this.lj = lj;
-		this.ports.addAll(ports);
+		STEPPER1 = ports.get(0);
+		STEPPER2 = ports.get(1);
+		STEPPER3 = ports.get(2);
+		STEPPER4 = ports.get(3);
 		rotate(new MBoolean(false));
 		rotate(new MBoolean(true));
 	}

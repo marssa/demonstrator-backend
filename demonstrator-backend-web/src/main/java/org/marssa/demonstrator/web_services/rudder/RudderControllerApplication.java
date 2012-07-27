@@ -70,14 +70,14 @@ public class RudderControllerApplication {
 				+ direction;
 	}
 
-	@POST
-	@Produces("text/plain")
-	@Path("/rotateFull/{direction}")
-	public String rotateFull(@PathParam("direction") boolean direction)
-			throws InterruptedException, NoConnection {
-		rudderControllerBean.getRudderController().rotateExtreme(
-				new MBoolean(direction));
-		return "Rotating the rudder to the extreme in the direction set by = "
-				+ direction;
-	}
+	// @POST
+	// @Produces("text/plain")
+	// @Path("/rotateFull/{direction}")
+	// public String rotateFull(@PathParam("direction") boolean direction)
+	// throws InterruptedException, NoConnection {
+	// rudderControllerBean.getRudderController().rotateExtreme(
+	// new MBoolean(direction));
+	// return "Rotating the rudder to the extreme in the direction set by = "
+	// + direction;
+	// }
 }

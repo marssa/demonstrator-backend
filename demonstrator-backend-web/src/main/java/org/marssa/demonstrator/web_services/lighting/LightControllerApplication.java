@@ -43,14 +43,11 @@ public class LightControllerApplication {
 	@POST
 	@Produces("text/plain")
 	@Path("/navigation/{state}")
-	public String setNavLights(@PathParam("state") String state)
+	public String setNavLights(@PathParam("state") boolean state)
 			throws NoConnection {
-		// TODO Handle parseException
-		// parseBoolean doesn't check for and raise this exception
-		boolean value = Boolean.parseBoolean(state);
 		lightControllerBean.getNavigationLightsController()
-				.setNavigationLightState(new MBoolean(value));
-		return "Set navigation lights state to " + (value ? "on" : "off");
+				.setNavigationLightState(new MBoolean(state));
+		return "Set navigation lights state to " + (state ? "on" : "off");
 	}
 
 	@GET
@@ -64,14 +61,11 @@ public class LightControllerApplication {
 	@POST
 	@Produces("text/plain")
 	@Path("/underwater/{state}")
-	public String setUnderwaterLights(@PathParam("state") String state)
+	public String setUnderwaterLights(@PathParam("state") boolean state)
 			throws NoConnection {
-		// TODO Handle parseException
-		// parseBoolean doesn't check for and raise this exception
-		boolean value = Boolean.parseBoolean(state);
 		lightControllerBean.getUnderWaterLightsController()
-				.setUnderwaterLightState(new MBoolean(value));
-		return "Set underwater lights state to " + (value ? "on" : "off");
+				.setUnderwaterLightState(new MBoolean(state));
+		return "Set underwater lights state to " + (state ? "on" : "off");
 	}
 
 	@GET

@@ -67,11 +67,11 @@
         	<type>Stern Drive Motor</type>
         	<daqPorts>
         		<daqPort>6008</daqPort>
-        		<daqPort>6009</daqPort>
         		<daqPort>6010</daqPort>
         		<daqPort>6011</daqPort>
         		<daqPort>6012</daqPort>
-        		<daqPort>6013</daqPort>
+        		<daqPort>6018</daqPort>
+        		<daqPort>6019</daqPort>
         	</daqPorts>
         </sternDriveMotor>
       </configuration>
@@ -94,10 +94,10 @@
     <name>Stern Rudder</name>
     <daqID>daq0</daqID>
     <daqPorts>
-      <daqPort>6002</daqPort>
-      <daqPort>6003</daqPort>
-      <daqPort>6004</daqPort>
-      <daqPort>6005</daqPort>
+      <daqPort>6014</daqPort>
+      <daqPort>6015</daqPort>
+      <daqPort>6016</daqPort>
+      <daqPort>6017</daqPort>
     </daqPorts>
   </rudder>
 </p:settings>

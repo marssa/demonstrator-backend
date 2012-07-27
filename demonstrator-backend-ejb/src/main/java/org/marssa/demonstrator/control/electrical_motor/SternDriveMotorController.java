@@ -59,7 +59,7 @@ public class SternDriveMotorController implements IMotorController {
 	}
 
 	private void labJackOutput(int speed) throws NoConnection {
-		logger.info("Current Speed " + speed);
+		logger.info("Get speed {}", getSpeed());
 		speed = Math.abs(speed);
 		boolean m = false;
 		int p = 0;
@@ -95,7 +95,7 @@ public class SternDriveMotorController implements IMotorController {
 	public void increase() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5) {
-			lj.write(new MInteger(6000), new MBoolean(false));
+			lj.write(ports.get(ports.size() - 1), new MBoolean(false));
 			logger.info("DPDT relay1----" + ports.get(ports.size() - 1)
 					+ " false ------ increase");
 			Thread.sleep(1000);
@@ -105,7 +105,6 @@ public class SternDriveMotorController implements IMotorController {
 		} else {
 			arrayValue++;
 			labJackOutput(speed[arrayValue]);
-
 		}
 	}
 
@@ -113,7 +112,7 @@ public class SternDriveMotorController implements IMotorController {
 	public void decrease() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5) {
-			lj.write(new MInteger(6000), new MBoolean(false));
+			lj.write(ports.get(ports.size() - 1), new MBoolean(true));
 			logger.info("DPDT relay2----" + ports.get(ports.size() - 1)
 					+ " true ------ decrease");
 			Thread.sleep(1000);
