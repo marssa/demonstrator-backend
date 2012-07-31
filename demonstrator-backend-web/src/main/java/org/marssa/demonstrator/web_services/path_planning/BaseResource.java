@@ -15,9 +15,6 @@
  */
 package org.marssa.demonstrator.web_services.path_planning;
 
-import java.util.concurrent.ConcurrentMap;
-
-import org.marssa.demonstrator.control.path_planning.Waypoint;
 import org.restlet.resource.ServerResource;
 
 /**
@@ -27,16 +24,16 @@ import org.restlet.resource.ServerResource;
  */
 public abstract class BaseResource extends ServerResource {
 
-	/**
-	 * Returns the map of items managed by this application.
-	 * 
-	 * @return the map of items managed by this application.
-	 */
-	protected ConcurrentMap<String, Waypoint> getWaypoints() {
-		// TODO changed from PathControllerTestApplication
-		// This was done since test scope is not visible from here
-		return ((PathControllerApplication) getApplication()).getWaypoints();
-		// Change back when on plug computer
-	}
+	// /**
+	// * Returns the map of items managed by this application.
+	// *
+	// * @return the map of items managed by this application.
+	// */
+	// protected ConcurrentMap<String, Waypoint> getWaypoints() {
+	// // TODO changed from PathControllerTestApplication
+	// // This was done since test scope is not visible from here
+	// return ((PathControllerApplication) getApplication()).getWaypoints();
+	// // Change back when on plug computer
+	// }
 
 }

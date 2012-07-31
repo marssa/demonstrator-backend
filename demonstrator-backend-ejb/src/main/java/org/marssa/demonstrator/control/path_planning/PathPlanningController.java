@@ -17,10 +17,14 @@ package org.marssa.demonstrator.control.path_planning;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.marssa.demonstrator.constants.Constants;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.composite.Coordinate;
+import org.marssa.footprint.datatypes.composite.Latitude;
+import org.marssa.footprint.datatypes.composite.Longitude;
+import org.marssa.footprint.datatypes.decimal.DegreesDecimal;
 import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
@@ -52,7 +56,7 @@ public class PathPlanningController extends MTimerTask {
 
 	private Coordinate nextHeading;
 	private int count = 0;
-	ArrayList<Waypoint> wayPointList;
+	List<Waypoint> wayPointList;
 	MTimerService timer;
 	boolean routeReverse = false;
 
@@ -71,11 +75,11 @@ public class PathPlanningController extends MTimerTask {
 		wayPointList = new ArrayList<Waypoint>();
 	}
 
-	public ArrayList<Waypoint> getPathList() {
+	public List<Waypoint> getPathList() {
 		return wayPointList;
 	}
 
-	public void setPathList(ArrayList<Waypoint> wayPointList) {
+	public void setPathList(List<Waypoint> wayPointList) {
 		this.wayPointList = wayPointList;
 	}
 
@@ -215,7 +219,12 @@ public class PathPlanningController extends MTimerTask {
 				logger.info("Arrived....next waypoint");
 				count++;
 				// we get the next way points from the list and drive.
-				setNextHeading(wayPointList.get(count).getCoordinate());
+				Latitude lat = new Latitude(new DegreesDecimal(wayPointList
+						.get(count).getLat()));
+				Longitude lng = new Longitude(new DegreesDecimal(wayPointList
+						.get(count).getLng()));
+				Coordinate coordinate = new Coordinate(lat, lng);
+				setNextHeading(coordinate);
 				readPosition();
 				drive();
 			} else {
@@ -262,7 +271,12 @@ public class PathPlanningController extends MTimerTask {
 			routeReverse = false;
 		}
 		// we set the next way point to the first in the list
-		setNextHeading(wayPointList.get(count).getCoordinate());
+		Latitude lat = new Latitude(new DegreesDecimal(wayPointList.get(count)
+				.getLat()));
+		Longitude lng = new Longitude(new DegreesDecimal(wayPointList
+				.get(count).getLng()));
+		Coordinate coordinate = new Coordinate(lat, lng);
+		setNextHeading(coordinate);
 		// we create the timer schedule for every 1 sec.
 		timer.addSchedule(this, 0, 10);
 	}

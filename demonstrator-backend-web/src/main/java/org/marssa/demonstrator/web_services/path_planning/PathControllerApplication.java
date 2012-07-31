@@ -101,6 +101,7 @@ public class PathControllerApplication extends Application {
 							waypoints.values());
 					pathPlanningController.setPathList(waypointList);
 					pathPlanningController.startFollowingPath();
+
 					response.setEntity(
 							"The system has started following the path ",
 							MediaType.TEXT_PLAIN);
@@ -181,7 +182,7 @@ public class PathControllerApplication extends Application {
 			}
 		};
 
-		router.attach("/waypoints", WayPointsResource.class);
+		// router.attach("/waypoints", WayPointsResource.class);
 		// the enterwaypoints method is called upon by the from end using a
 		// @post annotation. The waypointsresource class is used to receive the
 		// data.

@@ -159,11 +159,11 @@ public class WebServicesTest {
 		component.getDefaultHost()
 				.attach("", new StaticFileServerApplication());
 
-		// Attach the path planner application
-		component.getDefaultHost().attach(
-				"/pathPlanner",
-				new PathControllerTestApplication(cacheDirectives,
-						pathPlanningController));
+		// // Attach the path planner application
+		// component.getDefaultHost().attach(
+		// "/pathPlanner",
+		// new PathControllerTestApplication(cacheDirectives,
+		// pathPlanningController));
 
 		// Start the component
 		try {

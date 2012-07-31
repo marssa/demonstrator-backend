@@ -15,10 +15,6 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
-import java.util.concurrent.ConcurrentMap;
-
-import org.marssa.demonstrator.control.path_planning.Waypoint;
-import org.marssa.demonstrator.tests.web_services.PathControllerTestApplication;
 import org.restlet.resource.ServerResource;
 
 /**
@@ -33,9 +29,9 @@ public abstract class BaseResourceTest extends ServerResource {
 	 * 
 	 * @return the map of items managed by this application.
 	 */
-	protected ConcurrentMap<String, Waypoint> getWaypoints() {
-		return ((PathControllerTestApplication) getApplication())
-				.getWaypoints();
-	}
+	// protected ConcurrentMap<String, Waypoint> getWaypoints() {
+	// return ((PathControllerTestApplication) getApplication())
+	// .getWaypoints();
+	// }
 
 }
