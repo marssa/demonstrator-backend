@@ -15,30 +15,34 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.marssa.demonstrator.tests.beans.TestResourcesBean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.NoConnection;
-import org.restlet.Application;
 
 @Path("/test/rudder")
-public class RudderControllerTestApplication extends Application {
+public class RudderControllerTestApplication {
+
+	@Inject
+	TestResourcesBean testResourceBean;
 
 	@GET
 	@Produces("application/json")
 	public String getAngle() {
-		return WebServicesTest.getRudderAngle().toJSON().toString();
+		return testResourceBean.getRudderAngle().toJSON().toString();
 	}
 
 	@PUT
 	@Produces("text/plain")
 	@Path("/centre")
 	public String centre() throws NoConnection, InterruptedException {
-		WebServicesTest.setRudderAngle(new MDecimal(0));
+		testResourceBean.setRudderAngle(new MDecimal(0));
 		return "Rotating the rudder to the centre";
 	}
 
@@ -47,10 +51,10 @@ public class RudderControllerTestApplication extends Application {
 	@Path("/rotate/{direction}")
 	public String rotate(@PathParam("direction") boolean direction) {
 		if (direction)
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() + 1.0));
 		else
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() - 1.0));
 		return "Rotating the rudder in the direction set by direction = "
 				+ direction;
@@ -61,10 +65,10 @@ public class RudderControllerTestApplication extends Application {
 	@Path("/rotateMore/{direction}")
 	public String rotateMore(@PathParam("direction") boolean direction) {
 		if (direction)
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() + 5.0));
 		else
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() - 5.0));
 		return "Rotating the rudder more in the direction set by = "
 				+ direction;
@@ -75,10 +79,10 @@ public class RudderControllerTestApplication extends Application {
 	@Path("/rotateFull/{direction}")
 	public String rotateFull(@PathParam("direction") boolean direction) {
 		if (direction)
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() + 30.0));
 		else
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() - 30.0));
 		return "Rotating the rudder to the extreme in the direction set by = "
 				+ direction;
@@ -90,10 +94,10 @@ public class RudderControllerTestApplication extends Application {
 	public String rotate(@PathParam("direction") boolean direction,
 			@PathParam("amount") double amount) {
 		if (direction)
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() + amount));
 		else
-			WebServicesTest.setRudderAngle(new MDecimal(WebServicesTest
+			testResourceBean.setRudderAngle(new MDecimal(testResourceBean
 					.getRudderAngle().doubleValue() - amount));
 		return "Rotating the rudder by " + amount
 				+ " in the direction set by direction = " + direction;

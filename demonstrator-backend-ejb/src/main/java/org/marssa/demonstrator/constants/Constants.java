@@ -15,9 +15,6 @@
  */
 package org.marssa.demonstrator.constants;
 
-import java.io.File;
-
-import org.marssa.footprint.datatypes.MString;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.datatypes.integer.MInteger;
 
@@ -26,63 +23,6 @@ import org.marssa.footprint.datatypes.integer.MInteger;
  * 
  */
 public class Constants {
-	/**
-	 * System Properties
-	 * 
-	 * @author Clayton Tabone
-	 */
-	public final static class SYSTEM {
-		public final static MString ENVIRONMENT = new MString(
-				System.getProperty(
-						"org.marssa.demonstrator.constants.environment",
-						"production"));
-		public final static MString MODBUS_DEBUG = new MString(
-				System.getProperty("net.wimpi.modbus.debug", (ENVIRONMENT
-						.getContents() == "development") ? "true" : "false"));
-		public final static MString ROOT_URI = new MString(
-				(SYSTEM.ENVIRONMENT.getContents() == "production") ? "/root/demonstrator/theDemonStrator-Front-End"
-						: new File(
-								System.getProperty("org.marssa.demonstrator.constants.workspace"),
-								"demonstrator-jquerymobile").toString());
-	}
-
-	/**
-	 * LabJack Constants
-	 * 
-	 * @author Clayton Tabone
-	 */
-	public final static class LABJACKU3 {
-		public final static MString HOST = new MString("192.168.1.1");
-		public final static MInteger PORT = new MInteger(5021);
-
-	}
-
-	public final static class LABJACKUE9 {
-		public final static MString HOST = new MString("192.168.2.105");
-		public final static MInteger PORT = new MInteger(502);
-	}
-
-	/**
-	 * Web Services Constants
-	 * 
-	 * @author Clayton Tabone
-	 */
-	public final static class WEB_SERVICES {
-		public final static MString HOST = new MString(
-				(SYSTEM.ENVIRONMENT.getContents() == "production") ? "127.0.0.1"
-						: "localhost");
-		public final static MInteger PORT = new MInteger(8182);
-		public final static MInteger MAX_TOTAL_CONNECTIONS = new MInteger(150);
-	}
-
-	/**
-	 * Ramping Constants
-	 * 
-	 * @author Clayton Tabone
-	 */
-	public final static class RAMPING {
-		public final static MInteger RETRY_INTERVAL = new MInteger(5);
-	}
 
 	/**
 	 * Motor Constants
@@ -107,19 +47,13 @@ public class Constants {
 		public final static MInteger BIG_ROTATIONS = new MInteger(20);
 	}
 
+	/**
+	 * Path Planning Constants
+	 * 
+	 * @author Zak Borg
+	 */
 	public final static class PATH {
 		public final static MDecimal Path_Accuracy_Lower = new MDecimal(10);
 		public final static MDecimal Path_Accuracy_Upper = new MDecimal(20);
-
-	}
-
-	/**
-	 * GPS Constants
-	 * 
-	 * @author Clayton Tabone
-	 */
-	public final static class GPS {
-		public final static MString HOST = new MString("192.168.1.1");
-		public final static MInteger PORT = new MInteger(2947);
 	}
 }

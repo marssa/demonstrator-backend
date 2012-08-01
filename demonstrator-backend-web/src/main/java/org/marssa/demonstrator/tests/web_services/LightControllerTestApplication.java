@@ -15,59 +15,58 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.marssa.demonstrator.tests.web_services.WebServicesTest.LightState;
+import org.marssa.demonstrator.tests.beans.TestResourcesBean;
 import org.marssa.footprint.datatypes.MBoolean;
 
 @Path("/test/lights")
 public class LightControllerTestApplication {
 
-	private final LightState currentLightState = new LightState();
+	@Inject
+	TestResourcesBean testResourceBean;
 
 	@GET
 	@Produces("application/json")
 	@Path("/navigation")
 	public String getNavLights() {
-		return currentLightState.navLightState.toJSON().toString();
+		return testResourceBean.getNavigationLightState().toJSON().toString();
 	}
 
 	@PUT
 	@Produces("text/plain")
 	@Path("/navigation/{state}")
-	public String setNavLights(@PathParam("state") String state) {
-		boolean value = Boolean.parseBoolean(state);
-		currentLightState.navLightState = new MBoolean(value);
-		return "You entered the following parameter:\n" + value;
+	public String setNavLights(@PathParam("state") boolean state) {
+		testResourceBean.setNavigationLightState(new MBoolean(state));
+		return "You entered the following parameter:\n" + state;
 	}
 
 	@GET
 	@Produces("application/json")
 	@Path("/underwater")
 	public String getUnderwaterLights() {
-		return currentLightState.underwaterLightState.toJSON().toString();
+		return testResourceBean.getUnderwaterLightState().toJSON().toString();
 	}
 
 	@PUT
 	@Produces("text/plain")
 	@Path("/underwater/{state}")
-	public String setUnderwaterLights(@PathParam("state") String state) {
-		boolean value = Boolean.parseBoolean(state);
-		currentLightState.underwaterLightState = new MBoolean(value);
-		return "You entered the following parameter:\n" + value;
+	public String setUnderwaterLights(@PathParam("state") boolean state) {
+		testResourceBean.setUnderwaterLightState(new MBoolean(state));
+		return "You entered the following parameter:\n" + state;
 	}
 
 	@GET
 	@Produces("application/json")
 	public String getAllLights() {
 		return "{\"lights\":{" + "\"navigation\":"
-				+ WebServicesTest.getLightState().navLightState.toJSON()
+				+ testResourceBean.getNavigationLightState().toJSON()
 				+ ",\"underwater\":"
-				+ WebServicesTest.getLightState().underwaterLightState.toJSON()
-				+ "}}";
+				+ testResourceBean.getUnderwaterLightState().toJSON() + "}}";
 	}
 }

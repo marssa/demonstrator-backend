@@ -13,32 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.web_services.GPS_Receiver;
+package org.marssa.demonstrator.web_services.motion;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.marssa.demonstrator.beans.GPSReceiverBean;
-import org.marssa.footprint.exceptions.ConfigurationError;
+import org.marssa.demonstrator.beans.MotorControllerBean;
+import org.marssa.demonstrator.beans.RudderControllerBean;
+import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.NoConnection;
-import org.marssa.footprint.exceptions.NoValue;
-import org.marssa.footprint.exceptions.OutOfRange;
 
-@Path("/gps")
-public class GPSReceiverApplication {
+@Path("/motion")
+public class MotionControlApplication {
 
 	@Inject
-	GPSReceiverBean gpsReceiverBean;
+	MotorControllerBean motorControllerBean;
+
+	@Inject
+	RudderControllerBean rudderControllerBean;
 
 	@GET
 	@Produces("application/json")
-	@Path("/coordinates")
-	public String getCoordinate() throws OutOfRange, NoConnection, NoValue,
-			ConfigurationError {
-		return gpsReceiverBean.getGPSReceiver().getCoordinate().toJSON()
-				.toString();
+	@Path("/all")
+	public String getRudderAndSpeed() throws NoConnection {
+		MDecimal motorSpeed = motorControllerBean
+				.getSternDriveMotorController().getSpeed();
+		MDecimal rudderAngle = rudderControllerBean.getRudderController()
+				.getAngle();
+		return "{\"motor\":" + motorSpeed.toJSON().toString() + ",\"rudder\":"
+				+ rudderAngle.toJSON().toString() + "}";
 	}
 }

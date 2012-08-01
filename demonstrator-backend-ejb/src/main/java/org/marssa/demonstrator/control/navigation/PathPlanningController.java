@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.control.path_planning;
+package org.marssa.demonstrator.control.navigation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,13 +52,12 @@ public class PathPlanningController extends MTimerTask {
 	private final IGpsReceiver gpsReceiver;
 
 	private Coordinate currentPositionRead;
-	private double currentHeadingRead;
-
 	private Coordinate nextHeading;
+
 	private int count = 0;
-	List<Waypoint> wayPointList;
-	MTimerService timer;
-	boolean routeReverse = false;
+	private List<Waypoint> wayPointList;
+	private final MTimerService timer;
+	private boolean routeReverse = false;
 
 	/**
 	 * @throws ConfigurationError
@@ -76,7 +75,7 @@ public class PathPlanningController extends MTimerTask {
 	}
 
 	public List<Waypoint> getPathList() {
-		return wayPointList;
+		return new ArrayList<Waypoint>(wayPointList);
 	}
 
 	public void setPathList(List<Waypoint> wayPointList) {
@@ -254,10 +253,10 @@ public class PathPlanningController extends MTimerTask {
 
 	public void setCruisingThrust() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
-		motorController.stop();
-		motorController.increase();// 20% forward
-		motorController.increase();// 20% forward
-		motorController.increase();// 20% forward
+		motorController.stop(); // Stop motor
+		motorController.increase(); // Set speed to 1
+		motorController.increase(); // Set speed to 2
+		motorController.increase(); // Set speed to 3
 	}
 
 	// this method is called upon by the RESTlet web services.
@@ -282,8 +281,9 @@ public class PathPlanningController extends MTimerTask {
 	}
 
 	// This method is called upon by the RESTlet web services.
-	public void stopFollowingPath() {
+	public void stopFollowingPath() throws NoConnection {
 		timer.cancel(); // this cancels the timer.
+		motorController.stop();
 		wayPointList = new ArrayList<Waypoint>();
 	}
 

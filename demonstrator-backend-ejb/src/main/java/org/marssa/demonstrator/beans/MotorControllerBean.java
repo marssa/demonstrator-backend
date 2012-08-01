@@ -31,8 +31,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.marssa.demonstrator.control.electrical_motor.AuxiliaryMotorsController;
-import org.marssa.demonstrator.control.electrical_motor.SternDriveMotorController;
+import org.marssa.demonstrator.control.motors.AuxiliaryMotorsController;
+import org.marssa.demonstrator.control.motors.SternDriveMotorController;
 import org.marssa.demonstrator.daq.DAQCategory;
 import org.marssa.demonstrator.daq.DAQType;
 import org.marssa.demonstrator.motors.MotorType;

@@ -20,12 +20,17 @@ import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Clayton Tabone
  * 
  */
 public class SternDriveMotorControllerTest implements IMotorController {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(SternDriveMotorControllerTest.class.getName());
 
 	int ordinal;
 	// ------------ - - - - - + + + + +
@@ -84,10 +89,8 @@ public class SternDriveMotorControllerTest implements IMotorController {
 	public void increase() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5) {
-			System.out.println("DPDT relay1----6006 "
-					+ " false ------ increase");
-			System.out.println("DPDT relay2----6007 "
-					+ " false ------ increase");
+			logger.info("DPDT relay1----6006 false ------ increase");
+			logger.info("DPDT relay2----6007 false ------ increase");
 		}
 		if (arrayValue == 10) {
 			labJackOutput(speed[arrayValue]);
@@ -102,10 +105,8 @@ public class SternDriveMotorControllerTest implements IMotorController {
 	public void decrease() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
 		if (arrayValue == 5) {
-			System.out
-					.println("DPDT relay2----6006 " + " true ------ decrease");
-			System.out
-					.println("DPDT relay2----6007 " + " true ------ decrease");
+			logger.info("DPDT relay2----6006 true ------ decrease");
+			logger.info("DPDT relay2----6007 true ------ decrease");
 		}
 		if (arrayValue == 0) {
 			labJackOutput(speed[arrayValue]);

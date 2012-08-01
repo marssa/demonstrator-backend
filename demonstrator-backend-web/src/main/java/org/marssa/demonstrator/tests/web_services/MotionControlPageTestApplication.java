@@ -15,26 +15,29 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.marssa.demonstrator.tests.control.TestController;
+import org.marssa.demonstrator.tests.beans.TestResourcesBean;
 import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.exceptions.NoConnection;
 
-@Path("/test/motionControlPage")
+@Path("/test/motion")
 public class MotionControlPageTestApplication {
 
-	private static final TestController motorController = new TestController();
+	@Inject
+	TestResourcesBean testResourceBean;
 
 	@GET
 	@Produces("application/json")
-	@Path("/rudderAndSpeed")
+	@Path("/all")
 	public String getRudderAndSpeed() throws NoConnection {
-		MDecimal motorSpeed = motorController.getValue();
+		MDecimal motorSpeed = testResourceBean.getMotorController().getSpeed();
 		return "{\"motor\":" + motorSpeed.toJSON().getContents()
 				+ ",\"rudder\":"
-				+ WebServicesTest.getRudderAngle().toJSON().getContents() + "}";
+				+ testResourceBean.getRudderAngle().toJSON().getContents()
+				+ "}";
 	}
 }

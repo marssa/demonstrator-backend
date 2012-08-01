@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.control.path_planning;
+package org.marssa.demonstrator.control.navigation;
 
 import java.util.ArrayList;
 import java.util.List;

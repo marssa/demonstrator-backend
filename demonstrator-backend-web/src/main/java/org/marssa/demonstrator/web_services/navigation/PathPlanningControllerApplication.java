@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.tests.web_services;
+package org.marssa.demonstrator.web_services.navigation;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -22,24 +22,24 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.json.JSONException;
+import org.marssa.demonstrator.beans.PathPlanningBean;
 import org.marssa.demonstrator.control.navigation.Waypoints;
-import org.marssa.demonstrator.tests.beans.TestResourcesBean;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
 
-@Path("/test/path-planner")
-public class PathControllerTestApplication {
+@Path("/path-planner")
+public class PathPlanningControllerApplication {
 
 	@Inject
-	TestResourcesBean testResourceBean;
+	PathPlanningBean pathPlanningBean;
 
 	@PUT
 	@Produces("text/plain")
 	@Path("/start-following")
 	public String startFollowing() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
-		testResourceBean.getPathPlanningController().startFollowingPath();
+		pathPlanningBean.getPathPlanningController().startFollowingPath();
 
 		return "The system has started following the path";
 	}
@@ -49,7 +49,7 @@ public class PathControllerTestApplication {
 	@Path("/stop-following")
 	public String stopFollowing() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
-		testResourceBean.getPathPlanningController().stopFollowingPath();
+		pathPlanningBean.getPathPlanningController().stopFollowingPath();
 		return "The system has stopped following the path";
 	}
 
@@ -58,7 +58,7 @@ public class PathControllerTestApplication {
 	@Path("/come-home")
 	public String comeHome() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
-		testResourceBean.getPathPlanningController().returnHome();
+		pathPlanningBean.getPathPlanningController().returnHome();
 		return "The system is now coming home";
 	}
 
@@ -67,7 +67,7 @@ public class PathControllerTestApplication {
 	@Path("/reverse-route")
 	public String reverseRoute() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
-		testResourceBean.getPathPlanningController().reverseTheRoute();
+		pathPlanningBean.getPathPlanningController().reverseTheRoute();
 		return "The system has reversed the route";
 	}
 
@@ -78,7 +78,7 @@ public class PathControllerTestApplication {
 	public String getWaypoints(Waypoints waypoints) throws JSONException,
 			OutOfRange, NullPointerException {
 
-		testResourceBean.getPathPlanningController().setPathList(
+		pathPlanningBean.getPathPlanningController().setPathList(
 				waypoints.getWaypoints());
 
 		return "Received " + waypoints.getWaypoints().size() + " waypoints";

@@ -21,7 +21,7 @@ import javax.ejb.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.marssa.demonstrator.control.path_planning.PathPlanningController;
+import org.marssa.demonstrator.control.navigation.PathPlanningController;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

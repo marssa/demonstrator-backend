@@ -15,12 +15,13 @@
  */
 package org.marssa.demonstrator.tests.web_services;
 
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.marssa.demonstrator.tests.control.SternDriveMotorControllerTest;
+import org.marssa.demonstrator.tests.beans.TestResourcesBean;
 import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
@@ -28,21 +29,23 @@ import org.marssa.footprint.exceptions.OutOfRange;
 @Path("/test/motors/stern")
 public class SternMotorControllerTestApplication {
 
-	private SternDriveMotorControllerTest motorController;
+	@Inject
+	TestResourcesBean testResourcesBean;
 
 	@GET
 	@Produces("application/json")
 	@Path("/speed")
 	public String getSpeed() throws InterruptedException, ConfigurationError,
 			OutOfRange, NoConnection {
-		return motorController.getSpeed().toJSON().toString();
+		return testResourcesBean.getMotorController().getSpeed().toJSON()
+				.toString();
 	}
 
 	@PUT
 	@Produces("text/plain")
 	@Path("/stop")
 	public String stop() throws NoConnection {
-		motorController.stop();
+		testResourcesBean.getMotorController().stop();
 		return "Stopped stern drive motor";
 	}
 
@@ -51,7 +54,7 @@ public class SternMotorControllerTestApplication {
 	@Path("/speed/increase")
 	public String increaseSpeed() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
-		motorController.increase();
+		testResourcesBean.getMotorController().increase();
 		return "Increased stern drive motor speed";
 	}
 
@@ -60,7 +63,7 @@ public class SternMotorControllerTestApplication {
 	@Path("/speed/decrease")
 	public String decreaseSpeed() throws InterruptedException,
 			ConfigurationError, OutOfRange, NoConnection {
-		motorController.decrease();
+		testResourcesBean.getMotorController().decrease();
 		return "Decreased stern drive motor speed";
 	}
 }

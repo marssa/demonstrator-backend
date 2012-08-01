@@ -64,28 +64,6 @@
 			<artifactId>hibernate-jpa-2.0-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- Restlet dependencies -->
-		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet</artifactId>
-			<version>${org.restlet.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet.ext.json</artifactId>
-			<version>${org.restlet.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet.ext.xml</artifactId>
-			<version>${org.restlet.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet.ext.servlet</artifactId>
-			<version>${org.restlet.version}</version>
-		</dependency>
 		
 		<dependency>
 			<groupId>org.slf4j</groupId>

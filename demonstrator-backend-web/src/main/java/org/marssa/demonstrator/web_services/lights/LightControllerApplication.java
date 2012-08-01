@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.marssa.demonstrator.web_services.lighting;
+package org.marssa.demonstrator.web_services.lights;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;

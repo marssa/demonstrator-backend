@@ -27,8 +27,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.marssa.demonstrator.control.lighting.NavigationLightsController;
-import org.marssa.demonstrator.control.lighting.UnderwaterLightsController;
+import org.marssa.demonstrator.control.lights.NavigationLightsController;
+import org.marssa.demonstrator.control.lights.UnderwaterLightsController;
 import org.marssa.demonstrator.daq.DAQType;
 import org.marssa.demonstrator.lights.LightType;
 import org.marssa.demonstrator.network.AddressType;

@@ -20,7 +20,6 @@ import org.marssa.footprint.datatypes.decimal.MDecimal;
 import org.marssa.footprint.datatypes.integer.MInteger;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.interfaces.control.rudder.IRudderController;
-import org.marssa.services.diagnostics.daq.LabJackUE9;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,22 +27,14 @@ public class RudderControllerTest implements IRudderController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RudderControllerTest.class.getName());
 
-	private static MDecimal angle = new MDecimal(0);
 	private final IRudderController rudderPhysical;
-	private final LabJackUE9 lj;
 	private double rudderAngle = 0;
 
-	public RudderControllerTest(LabJackUE9 lj,
-			IRudderController rudderController) throws NoConnection,
-			InterruptedException {
-		this.lj = lj;
+	public RudderControllerTest(IRudderController rudderController)
+			throws NoConnection, InterruptedException {
 		rotate(new MBoolean(false));
 		rotate(new MBoolean(true));
 		rudderPhysical = rudderController;
-	}
-
-	public double getRudderAngle() {
-		return rudderAngle;
 	}
 
 	/**
@@ -56,10 +47,10 @@ public class RudderControllerTest implements IRudderController {
 		rudderPhysical.rotateMultiple(multiple, direction);
 		if (direction.getValue()) {
 			logger.info("Rotating Rudder Right" + multiple);
-			rudderAngle = rudderAngle + multiple.intValue();
+			rudderAngle += multiple.intValue();
 		} else {
 			logger.info("Rotating Rudder Left" + multiple);
-			rudderAngle = rudderAngle - multiple.intValue();
+			rudderAngle -= multiple.intValue();
 		}
 
 	}
@@ -89,7 +80,7 @@ public class RudderControllerTest implements IRudderController {
 	 */
 	@Override
 	public MDecimal getAngle() throws NoConnection {
-		return angle;
+		return new MDecimal(rudderAngle);
 	}
 
 	@Override
