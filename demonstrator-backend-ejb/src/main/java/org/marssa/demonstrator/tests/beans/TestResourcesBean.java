@@ -17,11 +17,13 @@ package org.marssa.demonstrator.tests.beans;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ejb.Singleton;
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
+import javax.ejb.TimerService;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.marssa.demonstrator.beans.RudderControllerBean;
 import org.marssa.demonstrator.control.navigation.PathPlanningController;
 import org.marssa.demonstrator.tests.control.GPSReceiverTest;
 import org.marssa.demonstrator.tests.control.RudderControllerTest;
@@ -35,13 +37,13 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @Singleton
-public class TestResourcesBean {
+public class TestResourcesBean implements TimedObject {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(TestResourcesBean.class.getName());
 
-	@Inject
-	RudderControllerBean rudderControllerBean;
+	@Resource
+	TimerService timerService;
 
 	private SternDriveMotorControllerTest motorController;
 
@@ -64,15 +66,14 @@ public class TestResourcesBean {
 		logger.info("Initializing Test Resources Bean");
 
 		logger.info("Initialising Path Planning controller ... ");
-		RudderControllerTest rudderController = new RudderControllerTest(
-				rudderControllerBean.getRudderController());
+		RudderControllerTest rudderController = new RudderControllerTest();
 
 		GPSReceiverTest gpsReceiver = new GPSReceiverTest(rudderController);
 
 		motorController = new SternDriveMotorControllerTest();
 
 		pathPlanningController = new PathPlanningController(motorController,
-				rudderController, gpsReceiver);
+				rudderController, gpsReceiver, timerService);
 
 		logger.info("Path Planning controller initialised successfully");
 
@@ -83,6 +84,9 @@ public class TestResourcesBean {
 	private void destroy() {
 		logger.info("Destroying Motor Controller Bean");
 		// TODO Add unimplemented method
+		for (Timer timer : timerService.getTimers()) {
+			timer.cancel();
+		}
 		logger.info("Destroyed Motor Controller Bean");
 	}
 
@@ -116,5 +120,10 @@ public class TestResourcesBean {
 
 	public void setUnderwaterLightState(MBoolean newLightState) {
 		underwaterLightState = newLightState;
+	}
+
+	@Override
+	public void ejbTimeout(Timer timer) {
+		pathPlanningController.ejbTimeout(timer);
 	}
 }

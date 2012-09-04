@@ -27,15 +27,7 @@ public class RudderControllerTest implements IRudderController {
 	private static final Logger logger = LoggerFactory
 			.getLogger(RudderControllerTest.class.getName());
 
-	private final IRudderController rudderPhysical;
-	private double rudderAngle = 0;
-
-	public RudderControllerTest(IRudderController rudderController)
-			throws NoConnection, InterruptedException {
-		rotate(new MBoolean(false));
-		rotate(new MBoolean(true));
-		rudderPhysical = rudderController;
-	}
+	private double rudderAngle = 0.0;
 
 	/**
 	 * The rotateMultiple is used to use the rotate method multiple times
@@ -43,21 +35,18 @@ public class RudderControllerTest implements IRudderController {
 	@Override
 	public synchronized void rotateMultiple(MInteger multiple,
 			MBoolean direction) throws InterruptedException, NoConnection {
-
-		rudderPhysical.rotateMultiple(multiple, direction);
 		if (direction.getValue()) {
-			logger.info("Rotating Rudder Right" + multiple);
+			logger.info("Rotating Rudder Right by {}", multiple);
 			rudderAngle += multiple.intValue();
 		} else {
-			logger.info("Rotating Rudder Left" + multiple);
+			logger.info("Rotating Rudder Left by {}", multiple);
 			rudderAngle -= multiple.intValue();
 		}
-
+		logger.info("New rudder angle: {}", rudderAngle);
 	}
 
 	@Override
 	public void rotateToCentre() throws NoConnection, InterruptedException {
-		rudderPhysical.rotateToCentre();
 		logger.info("Rotating Rudder to the Centre");
 		rudderAngle = 0;
 	}
@@ -72,7 +61,13 @@ public class RudderControllerTest implements IRudderController {
 	@Override
 	public void rotate(MBoolean direction) throws NoConnection,
 			InterruptedException {
-
+		if (direction.getValue()) {
+			logger.info("Rotating Rudder Right");
+			rudderAngle += 1;
+		} else {
+			logger.info("Rotating Rudder Left");
+			rudderAngle -= 1;
+		}
 	}
 
 	/**
@@ -84,10 +79,15 @@ public class RudderControllerTest implements IRudderController {
 	}
 
 	@Override
-	public void rotateExtreme(MBoolean arg0) throws InterruptedException,
+	public void rotateExtreme(MBoolean direction) throws InterruptedException,
 			NoConnection {
-		// TODO Auto-generated method stub
-
+		if (direction.getValue()) {
+			logger.info("Rotating Rudder to the extreme Right");
+			rudderAngle += 30;
+		} else {
+			logger.info("Rotating Rudder to the extreme Left");
+			rudderAngle -= 30;
+		}
 	}
 
 }

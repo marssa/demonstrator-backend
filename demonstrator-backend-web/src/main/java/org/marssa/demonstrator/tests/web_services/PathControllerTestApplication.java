@@ -17,6 +17,7 @@ package org.marssa.demonstrator.tests.web_services;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -28,11 +29,44 @@ import org.marssa.footprint.exceptions.ConfigurationError;
 import org.marssa.footprint.exceptions.NoConnection;
 import org.marssa.footprint.exceptions.OutOfRange;
 
+import flexjson.JSONSerializer;
+
 @Path("/test/path-planner")
 public class PathControllerTestApplication {
 
 	@Inject
 	TestResourcesBean testResourceBean;
+
+	@GET
+	@Produces("application/json")
+	@Path("/path")
+	public String getPath() {
+		return "{\"path\":"
+				+ new JSONSerializer().deepSerialize(testResourceBean
+						.getPathPlanningController().getPath()) + "}";
+	}
+
+	@GET
+	@Produces("application/json")
+	@Path("/waypoints")
+	public String getWaypoints() {
+		return "{\"waypoints\":"
+				+ new JSONSerializer().deepSerialize(testResourceBean
+						.getPathPlanningController().getWayPoints()) + "}";
+	}
+
+	@PUT
+	@Path("/waypoints")
+	@Consumes("application/json")
+	@Produces("text/plain")
+	public String setWaypoints(Waypoints waypoints) throws JSONException,
+			OutOfRange, NullPointerException {
+
+		testResourceBean.getPathPlanningController().setWayPoints(
+				waypoints.getWaypoints());
+
+		return "Received " + waypoints.getWaypoints().size() + " waypoints";
+	}
 
 	@PUT
 	@Produces("text/plain")
@@ -69,18 +103,5 @@ public class PathControllerTestApplication {
 			ConfigurationError, OutOfRange {
 		testResourceBean.getPathPlanningController().reverseTheRoute();
 		return "The system has reversed the route";
-	}
-
-	@PUT
-	@Path("/waypoints")
-	@Consumes("application/json")
-	@Produces("text/plain")
-	public String getWaypoints(Waypoints waypoints) throws JSONException,
-			OutOfRange, NullPointerException {
-
-		testResourceBean.getPathPlanningController().setPathList(
-				waypoints.getWaypoints());
-
-		return "Received " + waypoints.getWaypoints().size() + " waypoints";
 	}
 }

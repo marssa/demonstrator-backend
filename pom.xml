@@ -39,7 +39,6 @@
 		<java.version>1.6</java.version>
 		<org.marssa.version>0.1.0-beta-02-SNAPSHOT</org.marssa.version>
 		<org.slf4j.version>1.6.4</org.slf4j.version>
-		<org.restlet.version>2.0.14</org.restlet.version>
 	</properties>
 
 	<organization>
@@ -198,6 +197,18 @@
 				<version>1.9.0</version>
 				<configuration>
 					<header>HEADER</header>
+					<excludes>
+						<exclude>README</exclude>
+						<exclude>LICENSE</exclude>
+						<exclude>HEADER</exclude>
+						<exclude>.travis.yml</exclude>
+	                    <exclude>*.gitignore</exclude>
+	                    <exclude>*.gitmodules</exclude>
+	                    <exclude>*.txt</exclude>
+	                    <exclude>*.html</exclude>
+	                    <exclude>*.js</exclude>
+	                    <exclude>*.css</exclude>
+	                </excludes>
 				</configuration>
 				<executions>
 					<execution>

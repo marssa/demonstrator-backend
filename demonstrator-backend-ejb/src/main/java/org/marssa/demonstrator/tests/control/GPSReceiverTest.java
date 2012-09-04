@@ -35,11 +35,19 @@ import org.marssa.footprint.interfaces.navigation.IGpsReceiver;
 public class GPSReceiverTest implements IGpsReceiver {
 
 	private Coordinate currentPositionRead;
-	private double currentHeadingRead;
+	private double currentHeadingRead = 95.0;
 	private final RudderControllerTest rudderControllerTest;
 
 	public GPSReceiverTest(RudderControllerTest _rudderControllerTest) {
 		rudderControllerTest = _rudderControllerTest;
+		try {
+			currentPositionRead = new Coordinate(new Latitude(
+					new DegreesDecimal(35.88920175103929)), new Longitude(
+					new DegreesDecimal(14.511201851806618)));
+		} catch (OutOfRange e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void COGEstimate() throws NoConnection {

@@ -17,7 +17,11 @@ package org.marssa.demonstrator.beans;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ejb.Singleton;
+import javax.ejb.TimedObject;
+import javax.ejb.Timer;
+import javax.ejb.TimerService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -28,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 @Singleton
-public class PathPlanningBean {
+public class PathPlanningBean implements TimedObject {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(PathPlanningBean.class.getName());
@@ -41,6 +45,9 @@ public class PathPlanningBean {
 
 	@Inject
 	RudderControllerBean rudderControllerBean;
+
+	@Resource
+	TimerService timerService;
 
 	private PathPlanningController pathPlanningController;
 
@@ -57,7 +64,7 @@ public class PathPlanningBean {
 		pathPlanningController = new PathPlanningController(
 				motorControllerBean.getSternDriveMotorController(),
 				rudderControllerBean.getRudderController(),
-				gpsReceiverBean.getGPSReceiver());
+				gpsReceiverBean.getGPSReceiver(), timerService);
 		logger.info("Initialized Path Planner Controller Bean");
 
 		// wps.setWaypoints(waypoints);
@@ -71,11 +78,19 @@ public class PathPlanningBean {
 	private void destroy() {
 		logger.info("Destroying Motor Controller Bean");
 		// TODO Add unimplemented method
+		for (Timer timer : timerService.getTimers()) {
+			timer.cancel();
+		}
 		logger.info("Destroyed Motor Controller Bean");
 	}
 
 	public PathPlanningController getPathPlanningController() {
 		return pathPlanningController;
+	}
+
+	@Override
+	public void ejbTimeout(Timer timer) {
+		pathPlanningController.ejbTimeout(timer);
 	}
 
 }

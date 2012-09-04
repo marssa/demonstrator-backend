@@ -14,17 +14,7 @@
 
 	<name>demonstrator-backend Web module</name>
 
-	<repositories>
-		<!-- Official Restlet repository -->
-		<repository>
-			<id>maven-restlet</id>
-			<name>Public online Restlet repository</name>
-			<url>http://maven.restlet.org</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
-
 		<!-- Dependency on the EJB module so we can use it's services if needed -->
 		<dependency>
 			<groupId>org.marssa</groupId>

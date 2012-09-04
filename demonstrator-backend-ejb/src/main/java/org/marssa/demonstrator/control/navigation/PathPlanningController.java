@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.ejb.Timer;
+import javax.ejb.TimerService;
+
 import org.marssa.demonstrator.constants.Constants;
 import org.marssa.footprint.datatypes.MBoolean;
 import org.marssa.footprint.datatypes.composite.Coordinate;
@@ -33,8 +36,6 @@ import org.marssa.footprint.exceptions.OutOfRange;
 import org.marssa.footprint.interfaces.control.motor.IMotorController;
 import org.marssa.footprint.interfaces.control.rudder.IRudderController;
 import org.marssa.footprint.interfaces.navigation.IGpsReceiver;
-import org.marssa.services.scheduling.MTimerService;
-import org.marssa.services.scheduling.MTimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Clayton Tabone
  * 
  */
-public class PathPlanningController extends MTimerTask {
+public class PathPlanningController {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(PathPlanningController.class);
@@ -50,13 +51,16 @@ public class PathPlanningController extends MTimerTask {
 	private final IMotorController motorController;
 	private final IRudderController rudderController;
 	private final IGpsReceiver gpsReceiver;
+	private final TimerService timerService;
+	private Timer timer = null;
 
 	private Coordinate currentPositionRead;
 	private Coordinate nextHeading;
 
 	private int count = 0;
-	private List<Waypoint> wayPointList;
-	private final MTimerService timer;
+	private final List<Waypoint> wayPointList = new ArrayList<Waypoint>();
+	private final List<Coordinate> path = new ArrayList<Coordinate>();
+
 	private boolean routeReverse = false;
 
 	/**
@@ -66,20 +70,27 @@ public class PathPlanningController extends MTimerTask {
 	 * 
 	 */
 	public PathPlanningController(IMotorController motorController,
-			IRudderController rudderController, IGpsReceiver gpsReceiver) {
+			IRudderController rudderController, IGpsReceiver gpsReceiver,
+			TimerService timerService) {
+		logger.info("Creating Path Planning Controller ...");
 		this.motorController = motorController;
 		this.rudderController = rudderController;
 		this.gpsReceiver = gpsReceiver;
-		timer = MTimerService.getInstance();
-		wayPointList = new ArrayList<Waypoint>();
+		this.timerService = timerService;
+		logger.info("Created Path Planning Controller");
 	}
 
-	public List<Waypoint> getPathList() {
+	public List<Waypoint> getWayPoints() {
 		return new ArrayList<Waypoint>(wayPointList);
 	}
 
-	public void setPathList(List<Waypoint> wayPointList) {
-		this.wayPointList = wayPointList;
+	public void setWayPoints(List<Waypoint> wayPointList) {
+		this.wayPointList.clear();
+		this.wayPointList.addAll(wayPointList);
+	}
+
+	public List<Coordinate> getPath() {
+		return new ArrayList<Coordinate>(path);
 	}
 
 	public Coordinate getNextHeading() {
@@ -90,11 +101,12 @@ public class PathPlanningController extends MTimerTask {
 		this.nextHeading = nextHeading;
 	}
 
-	public void readPosition() throws NoConnection, NoValue, OutOfRange {
+	private void readPosition() throws NoConnection, NoValue, OutOfRange {
 		currentPositionRead = gpsReceiver.getCoordinate();
+		path.add(currentPositionRead);
 	}
 
-	public void shortestAngle(double _currentHeading, double _targetHeading,
+	private void shortestAngle(double _currentHeading, double _targetHeading,
 			MInteger angleOut) throws NoConnection, NoValue, OutOfRange,
 			InterruptedException {
 		if (_targetHeading > _currentHeading) {
@@ -123,7 +135,6 @@ public class PathPlanningController extends MTimerTask {
 		double difference = Math.abs(currentHeading - targetHeading);
 
 		if (difference < Constants.PATH.Path_Accuracy_Lower.doubleValue()) {
-
 			rudderController.rotateToCentre();
 		}
 		if ((difference >= Constants.PATH.Path_Accuracy_Lower.doubleValue())
@@ -163,7 +174,7 @@ public class PathPlanningController extends MTimerTask {
 	// destination. This is calculated if the distance between our current
 	// position and
 	// the target waypoint is less than 10 meters
-	public boolean arrived() throws NoConnection, NoValue, OutOfRange {
+	private boolean arrived() throws NoConnection, NoValue, OutOfRange {
 		double earthRadius = 3958.75;
 		double dLat = Math.toRadians(nextHeading.getLatitude().getDMS()
 				.doubleValue()
@@ -181,18 +192,19 @@ public class PathPlanningController extends MTimerTask {
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 		double distance = (earthRadius * c);
 
-		// logger.info("Distance to Next Waypoint:"+distance);
 		if (distance < 0.0621371192) // 10 meters in miles
 		{
+			logger.info("Waypoint reached");
 			return true;
 		} else {
+			logger.info("Distance to Next Waypoint: {}", distance);
 			return false;
 		}
 	}
 
 	// This method is used in order to check if the end of the trip has been
 	// reached, i.e there are no more way points in the list.
-	public boolean endOfTrip() {
+	private boolean endOfTrip() {
 		if (count == wayPointList.size() - 1) {
 			return true;
 		} else {
@@ -200,22 +212,26 @@ public class PathPlanningController extends MTimerTask {
 		}
 	}
 
-	// This method is called upon every 1 second by the timer event.
-	@Override
-	public void run() {
+	public void ejbTimeout(Timer timer) {
 		try {
+			readPosition();
 			boolean arrive = arrived();
 			if (arrive && endOfTrip()) {
 				// If we have arrived and its the end of the trip (no more way
 				// points)
+				logger.info("Arrived at destination");
+				if (timer != null) {
+					timer.cancel();
+					timer = null;
+				}
 				motorController.stop();
-				logger.info("Kill Engines");
-				timer.cancel();
-				wayPointList = new ArrayList<Waypoint>();
+				wayPointList.clear();
 			} else if (arrive && !endOfTrip()) {
 				// if we have arrived at our next way point but its not the end
 				// of the trip
-				logger.info("Arrived....next waypoint");
+				logger.info(
+						"Arrived at waypoint {}. Following path to waypoint {}",
+						wayPointList.get(count), wayPointList.get(count + 1));
 				count++;
 				// we get the next way points from the list and drive.
 				Latitude lat = new Latitude(new DegreesDecimal(wayPointList
@@ -224,12 +240,10 @@ public class PathPlanningController extends MTimerTask {
 						.get(count).getLng()));
 				Coordinate coordinate = new Coordinate(lat, lng);
 				setNextHeading(coordinate);
-				readPosition();
 				drive();
 			} else {
 				// else if we are on our way to the next way point we continue
 				// driving the vessel
-				readPosition();
 				drive();
 			}
 		} catch (NoConnection e) {
@@ -245,10 +259,6 @@ public class PathPlanningController extends MTimerTask {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
-		 * catch (ConfigurationError e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
 	}
 
 	public void setCruisingThrust() throws NoConnection, InterruptedException,
@@ -259,9 +269,9 @@ public class PathPlanningController extends MTimerTask {
 		motorController.increase(); // Set speed to 3
 	}
 
-	// this method is called upon by the RESTlet web services.
 	public void startFollowingPath() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
+		logger.info("Start following path");
 		// POP OUT ITEM SOMEHOW
 		count = 0;
 		setCruisingThrust();
@@ -277,18 +287,23 @@ public class PathPlanningController extends MTimerTask {
 		Coordinate coordinate = new Coordinate(lat, lng);
 		setNextHeading(coordinate);
 		// we create the timer schedule for every 1 sec.
-		timer.addSchedule(this, 0, 10);
+		if (timer != null) {
+			timer.cancel();
+		}
+		timer = timerService.createTimer(0, 200, this.getClass().getName());
 	}
 
-	// This method is called upon by the RESTlet web services.
 	public void stopFollowingPath() throws NoConnection {
-		timer.cancel(); // this cancels the timer.
+		logger.info("Stop following path");
+		// Cancel the timer
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
 		motorController.stop();
-		wayPointList = new ArrayList<Waypoint>();
+		wayPointList.clear();
+		path.clear();
 	}
-
-	// Path Planning Controller
-	// Motor Controller
 
 	public void returnHome() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
@@ -301,8 +316,10 @@ public class PathPlanningController extends MTimerTask {
 
 	public void reverseTheRoute() throws NoConnection, InterruptedException,
 			ConfigurationError, OutOfRange {
-		timer.cancel();
+		if (timer != null) {
+			timer.cancel();
+			timer = null;
+		}
 		routeReverse = true;
 	}
-
 }

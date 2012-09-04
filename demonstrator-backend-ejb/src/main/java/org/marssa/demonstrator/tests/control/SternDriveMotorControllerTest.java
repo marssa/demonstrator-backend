@@ -45,11 +45,11 @@ public class SternDriveMotorControllerTest implements IMotorController {
 	 */
 	public SternDriveMotorControllerTest() {
 		arrayValue = 5;
-		System.out.print("Neutral");
+		logger.info("Setting test motor to Neutral");
 	}
 
 	private void labJackOutput(int speed) throws NoConnection {
-		System.out.print("Current Speed" + speed);
+		logger.info("Setting test motor speed to {}", speed);
 		speed = Math.abs(speed);
 		boolean m = false;
 		int p = 0;
@@ -61,8 +61,7 @@ public class SternDriveMotorControllerTest implements IMotorController {
 			if (r > 0) {
 				m = true;
 			}
-			System.out.print(6001 + p);
-			System.out.println(m ? true : false);
+			logger.info("Setting test motor port {} to {}", 6001 + p, m);
 			// lj.write(new MInteger(6000 + p), new MBoolean(m ? true : false));
 			m = false;
 			p++;
@@ -82,6 +81,7 @@ public class SternDriveMotorControllerTest implements IMotorController {
 
 	@Override
 	public void stop() throws NoConnection {
+		logger.info("Stopping Stern Drive Motor");
 		labJackOutput(speed[5]);
 	}
 
