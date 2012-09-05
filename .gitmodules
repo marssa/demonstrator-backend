@@ -1,0 +1,3 @@
+[submodule "demonstrator-backend-web/src/main/webapp"]
+	path = demonstrator-backend-web/src/main/webapp
+	url = git@github.com:marssa/demonstrator-jquerymobile.git

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2012 MARSEC-XL International Limited Licensed under the Apache 
+	License, Version 2.0 (the "License"); you may not use this file except in 
+	compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+	Unless required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+
+<?xml-stylesheet type="text/xsl" href="xs3p_links.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="settings.demonstrator.marssa.org" xmlns="settings.demonstrator.marssa.org"
+	xmlns:daq="daq.demonstrator.marssa.org" xmlns:room="rooms.demonstrator.marssa.org"
+	xmlns:rudder="rudder.demonstrator.marssa.org" xmlns:lights="lights.demonstrator.marssa.org"
+	xmlns:motors="motors.demonstrator.marssa.org" xmlns:gps="gps.demonstrator.marssa.org"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="2.0">
+
+	<xsd:import namespace="rooms.demonstrator.marssa.org"
+		schemaLocation="rooms.xsd" />
+	<xsd:import namespace="daq.demonstrator.marssa.org"
+		schemaLocation="daq.xsd" />
+	<xsd:import namespace="lights.demonstrator.marssa.org"
+		schemaLocation="lights.xsd" />
+	<xsd:import namespace="motors.demonstrator.marssa.org"
+		schemaLocation="motors.xsd" />
+	<xsd:import namespace="gps.demonstrator.marssa.org"
+		schemaLocation="gps.xsd" />
+	<xsd:import namespace="rudder.demonstrator.marssa.org"
+		schemaLocation="rudder.xsd" />
+
+	<xsd:element name="settings">
+		<xsd:complexType>
+			<xsd:sequence>
+
+				<xsd:element name="rooms" type="room:RoomsType" />
+				<xsd:element name="daqs" type="daq:DAQsType" />
+				<xsd:element name="lights" type="lights:LightsType" />
+				<xsd:element name="motors" type="motors:MotorsType" />
+				<xsd:element name="gps-receivers" type="gps:GPSReceiversType" />
+				<xsd:element name="rudder" type="rudder:RudderType" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>
