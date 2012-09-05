@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2012 MARSEC-XL International Limited
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<?xml-stylesheet type="text/xsl" href="xs3p.xsl"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="rooms.demonstrator.marssa.org" xmlns="rooms.demonstrator.marssa.org"
+	xmlns:marssa="datatypes.footprint.marssa.org" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	jxb:version="2.0">
+
+	<xsd:import namespace="datatypes.footprint.marssa.org"
+		schemaLocation="../generated/schemas/datatypes.xsd" />
+
+	<!-- Room -->
+	<xsd:complexType name="RoomsType">
+		<xsd:sequence>
+			<xsd:element name="room" type="RoomType" minOccurs="1" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RoomType">
+		<xsd:sequence>
+			<xsd:element name="roomID" type="xsd:ID" />
+			<xsd:element name="name" type="RoomNamesType" />
+			<xsd:element name="level" type="RoomLevelsType" />
+			<xsd:element name="section" type="RoomSectionsType" />
+			<xsd:element name="side" type="RoomSidesType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<!-- Enumerations -->
+	<xsd:simpleType name="RoomNamesType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Guest Cabins"></xsd:enumeration>
+			<xsd:enumeration value="Crew quarters"></xsd:enumeration>
+			<xsd:enumeration value="Bath Room"></xsd:enumeration>
+			<xsd:enumeration value="Shower Room"></xsd:enumeration>
+			<xsd:enumeration value="Master Suite"></xsd:enumeration>
+			<xsd:enumeration value="Engine Room"></xsd:enumeration>
+			<xsd:enumeration value="Salon"></xsd:enumeration>
+			<xsd:enumeration value="Dining Room"></xsd:enumeration>
+			<xsd:enumeration value="Galley"></xsd:enumeration>
+			<xsd:enumeration value="Entrance"></xsd:enumeration>
+			<xsd:enumeration value="Study room"></xsd:enumeration>
+			<xsd:enumeration value="Roof"></xsd:enumeration>
+			<xsd:enumeration value="State room"></xsd:enumeration>
+			<xsd:enumeration value="Bar"></xsd:enumeration>
+			<xsd:enumeration value="Bridge"></xsd:enumeration>
+			<xsd:enumeration value="Other"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RoomLevelsType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Lower Deck"></xsd:enumeration>
+			<xsd:enumeration value="Main Deck"></xsd:enumeration>
+			<xsd:enumeration value="Upper Deck"></xsd:enumeration>
+			<xsd:enumeration value="Sun Deck"></xsd:enumeration>
+			<xsd:enumeration value="Lower &amp; Main Deck"></xsd:enumeration>
+			<xsd:enumeration value="Main &amp; Upper Deck"></xsd:enumeration>
+			<xsd:enumeration value="Entire vessel"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RoomSectionsType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Stern"></xsd:enumeration>
+			<xsd:enumeration value="Stern-Amidships"></xsd:enumeration>
+			<xsd:enumeration value="Amidships"></xsd:enumeration>
+			<xsd:enumeration value="Amidships-Bow"></xsd:enumeration>
+			<xsd:enumeration value="Bow"></xsd:enumeration>
+			<xsd:enumeration value="Entire Floor"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="RoomSidesType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Port"></xsd:enumeration>
+			<xsd:enumeration value="Starboard"></xsd:enumeration>
+			<xsd:enumeration value="Port-Starboard"></xsd:enumeration>
+			<xsd:enumeration value="Entire Floor"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- Enumerations -->
+
+</xsd:schema>
